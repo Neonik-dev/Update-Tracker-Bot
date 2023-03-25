@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.responses;
+package ru.tinkoff.edu.java.bot.dto;
 
 
 public record ApiErrorResponse(

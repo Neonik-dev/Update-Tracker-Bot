@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.responses;
+package ru.tinkoff.edu.java.scrapper.dto;
 
 
 public record ApiErrorResponse(

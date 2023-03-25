@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.tinkoff.edu.java.scrapper.requests.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.requests.RemoveLinkRequest;
-import ru.tinkoff.edu.java.scrapper.responses.LinkResponse;
-import ru.tinkoff.edu.java.scrapper.responses.ListLinkResponse;
+import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
+import ru.tinkoff.edu.java.scrapper.dto.ListLinkResponse;
 
 
 @RestController
