@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.tinkoff.edu.java.bot.requests.LinkUpdateRequest;
 
 @RestController
-@RequestMapping("/updates")
+@RequestMapping("bot/updates")
 public class UpdateController {
     @PostMapping
     @ResponseStatus(HttpStatus.OK)

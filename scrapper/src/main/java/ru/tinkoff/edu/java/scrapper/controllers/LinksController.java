@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.controllers;
 
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.tinkoff.edu.java.scrapper.requests.AddLinkRequest;
 import ru.tinkoff.edu.java.scrapper.requests.RemoveLinkRequest;
@@ -10,26 +10,27 @@ import ru.tinkoff.edu.java.scrapper.dto.ListLinkResponse;
 
 
 @RestController
-@RequestMapping("/links")
+@RequestMapping("scrapper/links")
+@ResponseStatus(HttpStatus.OK)
 public class LinksController {
     @GetMapping
-    public ResponseEntity<ListLinkResponse> getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
-        return ResponseEntity.ok().body(new ListLinkResponse(null, 0));
+    public ListLinkResponse getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
+        return new ListLinkResponse(null, 0);
     }
 
     @PostMapping
-    public ResponseEntity<LinkResponse> postLink(
+    public LinkResponse postLink(
             @RequestHeader("Tg-Chat-Id") Long tgChatId,
             @RequestBody AddLinkRequest request
     ) {
-        return ResponseEntity.ok().body(new LinkResponse(tgChatId, request.url()));
+        return new LinkResponse(tgChatId, request.url());
     }
 
     @DeleteMapping
-    public ResponseEntity<LinkResponse> deleteLink(
+    public LinkResponse deleteLink(
             @RequestHeader("Tg-Chat-Id") Long tgChatId,
             @RequestBody RemoveLinkRequest request
     ) {
-        return ResponseEntity.ok().body(new LinkResponse(tgChatId, request.url()));
+        return new LinkResponse(tgChatId, request.url());
     }
 }

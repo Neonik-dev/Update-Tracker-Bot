@@ -4,15 +4,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/tg-chat/{id}")
+@RequestMapping("scrapper/tg-chat/{id}")
+@ResponseStatus(HttpStatus.OK)
 public class TgChatController {
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
     public void postTgChat(@PathVariable("id") Long id) {
     }
 
     @DeleteMapping
-    @ResponseStatus(HttpStatus.OK)
     public void deleteTgChat(@PathVariable("id") Long id) {
     }
 }
