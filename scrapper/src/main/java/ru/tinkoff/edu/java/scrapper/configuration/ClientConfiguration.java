@@ -16,4 +16,9 @@ public class ClientConfiguration {
     public VisitorStackOverFlow getVisitorStackOverFlow() {
         return new VisitorStackOverFlow();
     }
+
+    @Bean
+    public long schedulerIntervalMs(ApplicationConfig config) {
+        return config.scheduler().interval().toMillis();
+    }
 }
