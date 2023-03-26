@@ -1,42 +1,32 @@
 package ru.tinkoff.edu.java.scrapper.clients.visitors;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.reactive.function.client.WebClient;
+import ru.tinkoff.edu.java.scrapper.clients.dto.BaseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.dto.GitHubResponse;
 
-public class VisitorGitHub implements LinkVisitor{
+public class VisitorGitHub {
+    private static final String baseUrl = "https://api.github.com";
     private final WebClient.Builder builder;
-    @Value("${github.token}")
-    private String token;
 
     public VisitorGitHub() {
-
-        this("https://api.github.com/repos/Neonik228/Tinkoff_project");
+        this(baseUrl);
     }
 
     public VisitorGitHub(String baseUrl) {
-        builder = WebClient.builder()
-                .defaultHeader("Authorization", token)
-                .defaultHeader("X-GitHub-Api-Version", "2022-11-28")
-                .defaultHeader("Accept", "application/vnd.github+json")
-                .baseUrl(baseUrl);
+        builder = WebClient.builder().baseUrl(baseUrl);
     }
 
-    public GitHubResponse getInformation() {
-        return builder.build().get().retrieve().bodyToMono(GitHubResponse.class).block();
+    public BaseResponse getInformation(String user, String repo) {
+        return builder.build().get().uri("repos/{user}/{repo}", user, repo).retrieve().bodyToMono(GitHubResponse.class).block();
     }
 
 //    public static void main(String[] args) {
-//        String url = "https://api.github.com/repos/gleb/compas-analysis";
-//
-//        WebClient.Builder builder = WebClient.builder()
-//                .defaultHeader("Authorization", token)
-//                .defaultHeader("X-GitHub-Api-Version", "2022-11-28")
-//                .defaultHeader("Accept", "application/vnd.github+json")
-//                .baseUrl(url);
+//        WebClient.Builder builder = WebClient.builder().baseUrl(baseUrl);
+//        String user = "Neonik228";
+//        String repo = "Tinkoff_project";
 //
 //
-//        GitHubResponse parse = builder.build().get().retrieve().bodyToMono(GitHubResponse.class).block();
+//        GitHubResponse parse = builder.build().get().uri("repos/{user}/{repo}", user, repo).retrieve().bodyToMono(GitHubResponse.class).block();
 //        System.out.println("-----------------------------------");
 //        System.out.println(parse);
 //        System.out.println("-----------------------------------");

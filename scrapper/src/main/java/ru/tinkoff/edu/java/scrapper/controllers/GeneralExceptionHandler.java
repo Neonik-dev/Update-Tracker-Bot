@@ -1,6 +1,5 @@
 package ru.tinkoff.edu.java.scrapper.controllers;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +12,7 @@ import ru.tinkoff.edu.java.scrapper.dto.ApiErrorResponse;
 @RestControllerAdvice
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(@NotNull HttpMessageNotReadableException ex, @NotNull HttpHeaders headers, @NotNull HttpStatusCode status, @NotNull WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                                 "Invalid parameters in request",
                                 status.toString(),

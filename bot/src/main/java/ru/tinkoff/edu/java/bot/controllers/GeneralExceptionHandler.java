@@ -1,6 +1,5 @@
 package ru.tinkoff.edu.java.bot.controllers;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import ru.tinkoff.edu.java.bot.dto.ApiErrorResponse;
 @RestControllerAdvice
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(@NotNull HttpMessageNotReadableException ex, @NotNull HttpHeaders headers, @NotNull HttpStatusCode status, @NotNull WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 "Invalid parameters in request",
                 status.toString(),
