@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.requests;
+package ru.tinkoff.edu.java.bot.dto;
 
 import org.springframework.validation.annotation.Validated;
 

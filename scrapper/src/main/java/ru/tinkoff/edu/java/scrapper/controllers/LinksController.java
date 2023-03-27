@@ -1,17 +1,15 @@
 package ru.tinkoff.edu.java.scrapper.controllers;
 
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.tinkoff.edu.java.scrapper.requests.AddLinkRequest;
-import ru.tinkoff.edu.java.scrapper.requests.RemoveLinkRequest;
+import ru.tinkoff.edu.java.scrapper.dto.AddLinkRequest;
+import ru.tinkoff.edu.java.scrapper.dto.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinkResponse;
 
 
 @RestController
-@RequestMapping("scrapper/links")
-@ResponseStatus(HttpStatus.OK)
+@RequestMapping("/links")
 public class LinksController {
     @GetMapping
     public ListLinkResponse getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
