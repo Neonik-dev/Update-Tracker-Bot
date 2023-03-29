@@ -27,6 +27,7 @@
         <spring-boot-starter-validation.version>3.0.4</spring-boot-starter-validation.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.0.2</springdoc-openapi-starter-webmvc-ui.version>
         <spring-boot-starter-webflux.version>3.0.5</spring-boot-starter-webflux.version>
+        <java-telegram-bot-api.version>6.5.0</java-telegram-bot-api.version>
     </properties>
 
     <dependencies>
@@ -100,6 +101,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-webflux</artifactId>
                 <version>${spring-boot-starter-webflux.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pengrad</groupId>
+                <artifactId>java-telegram-bot-api</artifactId>
+                <version>${java-telegram-bot-api.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
