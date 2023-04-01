@@ -26,6 +26,44 @@ public class GitHubParserTest {
     }
 
     @Test
+    void GitHubParser_InvalidDomain_Null() {
+        String link = "https://githb.com//Tinkoff_project/pull/3";
+
+        GitHubResponse response = useParser(link);
+
+        assertNull(response);
+    }
+
+    @Test
+    void GitHubParser_OnlyDomain_Null() {
+        String link = "https://githb.com";
+
+        GitHubResponse response = useParser(link);
+
+        assertNull(response);
+    }
+
+    @Test
+    void GitHubParser_ShortLinkWithSlash_OK() {
+        String link = "https://github.com/Neonik/Tinkoff/";
+
+        GitHubResponse response = useParser(link);
+
+        assertEquals(response.repo(), "Tinkoff");
+        assertEquals(response.user(), "Neonik");
+    }
+
+    @Test
+    void GitHubParser_ShortLinkWithoutSlash_OK() {
+        String link = "https://github.com/Neonik/Tinkoff";
+
+        GitHubResponse response = useParser(link);
+
+        assertEquals(response.repo(), "Tinkoff");
+        assertEquals(response.user(), "Neonik");
+    }
+
+    @Test
     void GitHubParser_GoodLink_OK() {
         String link = "https://github.com/Neonik228/Tinkoff_project/pull/3";
 

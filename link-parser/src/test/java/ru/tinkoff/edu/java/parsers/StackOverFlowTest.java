@@ -27,6 +27,60 @@ public class StackOverFlowTest {
     }
 
     @Test
+    void StackParser_InvalidDomain_Null() {
+        String link = "https://stackоverfloy.com/questions/121212/what-is-the-operator-in-c";
+
+        StackOverflowResponse response = useParser(link);
+
+        assertNull(response);
+    }
+
+    @Test
+    void StackParser_OnlyDomain_Null() {
+        String link = "https://stackoverflow.com/";
+
+        StackOverflowResponse response = useParser(link);
+
+        assertNull(response);
+    }
+
+    @Test
+    void StackParser_WithoutQuestionId_Null() {
+        String link = "https://stackoverflow.com/questions/";
+
+        StackOverflowResponse response = useParser(link);
+
+        assertNull(response);
+    }
+
+    @Test
+    void StackParser_ShortLinkWithSlash_OK() {
+        String link = "https://stackoverflow.com/questions/1/";
+
+        StackOverflowResponse response = useParser(link);
+
+        assertEquals(response.questionId(), "1");
+    }
+
+    @Test
+    void StackParser_ShortLinkWithoutSlash_OK() {
+        String link = "https://stackoverflow.com/questions/1";
+
+        StackOverflowResponse response = useParser(link);
+
+        assertEquals(response.questionId(), "1");
+    }
+
+    @Test
+    void StackParser_LargeID_OK() {
+        String link = "https://stackoverflow.com/questions/16677777777777777777777777777777777777777777777777777777777";
+
+        StackOverflowResponse response = useParser(link);
+
+        assertEquals(response.questionId(), "16677777777777777777777777777777777777777777777777777777777");
+    }
+
+    @Test
     void StackParser_GoodLink_OK() {
         String link = "https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c";
 
