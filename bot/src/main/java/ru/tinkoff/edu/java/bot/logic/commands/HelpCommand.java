@@ -2,29 +2,24 @@ package ru.tinkoff.edu.java.bot.logic.commands;
 
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
+import lombok.Getter;
 
 import java.util.HashMap;
 
+@Getter
 public class HelpCommand implements BaseCommand{
-    private final HashMap<String, BaseCommand> COMMANDS = new Commands().getBaseCommands();
-    private final String name = "/help";
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return name + " -> выводит все доступные команды";
-    }
+    private static final HashMap<String, BaseCommand> COMMANDS = InitBaseCommands.getCommands();
+    private final String description = "выводит все доступные команды";
 
     @Override
     public SendMessage execute(Message message) {
         StringBuilder text = new StringBuilder("Список всех команд:");
-        for (BaseCommand command : COMMANDS.values())
+        for (String nameCommand : COMMANDS.keySet())
         {
             text.append("\n");
-            text.append(command.getDescription());
+            text.append(nameCommand);
+            text.append(" -> ");
+            text.append(COMMANDS.get(nameCommand).getDescription());
         }
         return new SendMessage(message.chat().id(), text.toString());
     }

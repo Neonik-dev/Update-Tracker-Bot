@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.*;
 public class TgChatController {
     @PostMapping
     public void postTgChat(@PathVariable("id") Long id) {
+        UserManager.add(id);
     }
 
     @DeleteMapping
     public void deleteTgChat(@PathVariable("id") Long id) {
+        UserManager.remove(id);
     }
 }

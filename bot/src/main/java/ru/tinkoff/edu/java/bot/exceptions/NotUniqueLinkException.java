@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.logic.exceptions;
+package ru.tinkoff.edu.java.bot.exceptions;
 
 public class NotUniqueLinkException extends Exception {
     public NotUniqueLinkException(String message) {

@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.bot.controllers;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,12 +15,15 @@ import ru.tinkoff.edu.java.bot.dto.ApiErrorResponse;
 
 @RestControllerAdvice
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
+    private static final String DESCRIPTION_400 = "Invalid request parameters";
+    private static final String STATUS_CODE_400 = String.valueOf(HttpStatus.BAD_REQUEST.value());
+
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
-                "Invalid parameters in request",
-                status.toString(),
-                "HttpMessageNotReadableException",
+                DESCRIPTION_400,
+                STATUS_CODE_400,
+                ex.getClass().getSimpleName(),
                 ex.getMessage(),
                 ex.getStackTrace()
         ));
@@ -27,11 +31,10 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ApiErrorResponse> handlerInvalidRequestParameters(MethodArgumentTypeMismatchException exception) {
-
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
-                "Invalid request parameters",
-                "400",
-                "MethodArgumentTypeMismatchException",
+                DESCRIPTION_400,
+                STATUS_CODE_400,
+                exception.getClass().getSimpleName(),
                 exception.getMessage(),
                 exception.getStackTrace()
         ));

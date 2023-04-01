@@ -2,23 +2,17 @@ package ru.tinkoff.edu.java.bot.logic.commands;
 
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
+import lombok.Getter;
 
+@Getter
 public class StartCommand implements BaseCommand{
-    private final String name = "/start";
-    @Override
-    public String getName() {
-        return name;
-    }
 
-    @Override
-    public String getDescription() {
-        return name + " -> регистрирует пользователя";
-    }
+    private final String description = "регистрирует пользователя";
+    private static final String GREETING = "Добро пожаловать!\nДля списка всех команд напишите команду /help";
 
     @Override
     public SendMessage execute(Message message) {
         System.out.println("Происходит проверка на регистрацию пользователя");
-        String text = "Добро пожаловать!";
-        return new SendMessage(message.chat().id(), text);
+        return new SendMessage(message.chat().id(), GREETING);
     }
 }

@@ -28,6 +28,8 @@
         <springdoc-openapi-starter-webmvc-ui.version>2.0.2</springdoc-openapi-starter-webmvc-ui.version>
         <spring-boot-starter-webflux.version>3.0.5</spring-boot-starter-webflux.version>
         <java-telegram-bot-api.version>6.5.0</java-telegram-bot-api.version>
+        <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
     </properties>
 
     <dependencies>
@@ -148,5 +150,18 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+        </plugins>
     </build>
 </project>

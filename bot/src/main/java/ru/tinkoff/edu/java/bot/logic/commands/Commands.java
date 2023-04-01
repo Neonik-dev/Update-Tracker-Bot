@@ -8,30 +8,21 @@ public class Commands {
 
     public Commands() {
         if (COMMANDS.isEmpty()) {
-            StartCommand startCommand = new StartCommand();
-            COMMANDS.put(startCommand.getName(), startCommand);
-
-            HelpCommand helpCommand = new HelpCommand();
-            COMMANDS.put(helpCommand.getName(), helpCommand);
-
-            TrackCommand trackCommand = new TrackCommand();
-            COMMANDS.put(trackCommand.getName(), trackCommand);
-            REPLY_COMMANDS.put(trackCommand.getReply(), trackCommand);
-
-            UntrackCommand untrackCommand = new UntrackCommand();
-            COMMANDS.put(untrackCommand.getName(), untrackCommand);
-            REPLY_COMMANDS.put(untrackCommand.getReply(), untrackCommand);
-
-            ListCommand listCommand = new ListCommand();
-            COMMANDS.put(listCommand.getName(), listCommand);
-
+            for(InitBaseCommands command : InitBaseCommands.values()) {
+                COMMANDS.put(command.getName(), command.getCommand());
+            }
+        }
+        if (REPLY_COMMANDS.isEmpty()) {
+            for(InitReplyCommands command : InitReplyCommands.values()) {
+                REPLY_COMMANDS.put(command.getName(), command.getCommand());
+            }
         }
     }
 
-    public HashMap<String, BaseCommand> getBaseCommands() {
+    public static HashMap<String, BaseCommand> getBaseCommands() {
         return COMMANDS;
     }
-    public HashMap<String, ReplyCommand> getReplyCommands() {
+    public static HashMap<String, ReplyCommand> getReplyCommands() {
         return REPLY_COMMANDS;
     }
 }

@@ -21,7 +21,7 @@ public class ClientConfiguration {
         return new StackOverFlowClient(stackOverFlowConfig);
     }
 
-    @Bean("SchedulerUpdateLink")
+    @Bean("schedulerIntervalMs")
     public long schedulerIntervalMs(ApplicationConfig config) {
         return config.scheduler().interval().toMillis();
     }

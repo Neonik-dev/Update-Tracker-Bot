@@ -1,12 +1,12 @@
 package ru.tinkoff.edu.java.bot.logic.utils;
 
-import ru.tinkoff.edu.java.bot.logic.exceptions.NotUniqueLinkException;
+import ru.tinkoff.edu.java.bot.exceptions.NotUniqueLinkException;
 
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ManagerCollection {
-    private static final ArrayList<URI> LINKS = new ArrayList<>();
+    private static final HashSet<URI> LINKS = new HashSet<>();
 
     public static void add(URI link) throws NotUniqueLinkException {
         if (LINKS.contains(link)) {
@@ -22,7 +22,7 @@ public class ManagerCollection {
         LINKS.remove(link);
     }
 
-    public static ArrayList<URI> getLinks() {
+    public static HashSet<URI> getLinks() {
         return LINKS;
     }
 }

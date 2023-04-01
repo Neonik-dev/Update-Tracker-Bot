@@ -3,23 +3,17 @@ package ru.tinkoff.edu.java.bot.logic.commands;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.request.ForceReply;
 import com.pengrad.telegrambot.request.SendMessage;
-import ru.tinkoff.edu.java.bot.logic.exceptions.NotUniqueLinkException;
+import lombok.Getter;
+import ru.tinkoff.edu.java.bot.exceptions.InvalidLinkException;
+import ru.tinkoff.edu.java.bot.exceptions.NotUniqueLinkException;
 import ru.tinkoff.edu.java.bot.logic.utils.LinkValidation;
 import ru.tinkoff.edu.java.bot.logic.utils.ManagerCollection;
 
+@Getter
 public class TrackCommand implements BaseCommand, ReplyCommand {
-    private static final String REPLY = "Напишите ссылку, которую хотите начать отслеживать";
-    private final String name = "/track";
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getDescription() {
-        return name + " -> начинает отслеживание ссылки";
-    }
+    private final String description = "начинает отслеживание ссылки";
+    public static final String REPLY = "Напишите ссылку, которую хотите начать отслеживать";
+    private static final String FINISH_TEXT = "Ссылка успешно добавилась";
 
     @Override
     public SendMessage execute(Message message) {
@@ -31,15 +25,10 @@ public class TrackCommand implements BaseCommand, ReplyCommand {
         String text;
         try {
             ManagerCollection.add(LinkValidation.validate(message.text()));
-            text = "Ссылка успешно добавилась";
-        } catch (NotUniqueLinkException e) {
+            text = FINISH_TEXT;
+        } catch (NotUniqueLinkException | InvalidLinkException e) {
             text = e.getMessage();
         }
         return new SendMessage(message.chat().id(), text);
-    }
-
-    @Override
-    public String getReply() {
-        return REPLY;
     }
 }

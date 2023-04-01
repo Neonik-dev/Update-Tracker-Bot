@@ -11,26 +11,27 @@ import ru.tinkoff.edu.java.scrapper.dto.ApiErrorResponse;
 
 @RestControllerAdvice
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
+    private static final String DESCRIPTION_400 = "Invalid request parameters";
+    private static final String STATUS_CODE_400 = String.valueOf(HttpStatus.BAD_REQUEST.value());
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
-                                "Invalid parameters in request",
-                                status.toString(),
-                                "HttpMessageNotReadableException",
-                                ex.getMessage(),
-                                ex.getStackTrace()
+                DESCRIPTION_400,
+                STATUS_CODE_400,
+                ex.getClass().getSimpleName(),
+                ex.getMessage(),
+                ex.getStackTrace()
         ));
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ApiErrorResponse> handlerInvalidRequestParameters(MethodArgumentTypeMismatchException exception) {
-
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
-                                "Invalid request parameters",
-                                "400",
-                                "MethodArgumentTypeMismatchException",
-                                exception.getMessage(),
-                                exception.getStackTrace()
-                        ));
+                DESCRIPTION_400,
+                STATUS_CODE_400,
+                exception.getClass().getSimpleName(),
+                exception.getMessage(),
+                exception.getStackTrace()
+        ));
     }
 }

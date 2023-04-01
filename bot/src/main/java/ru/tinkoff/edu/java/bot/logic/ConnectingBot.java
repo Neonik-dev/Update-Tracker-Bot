@@ -4,22 +4,41 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import ru.tinkoff.edu.java.bot.configuration.ApplicationConfig;
+import ru.tinkoff.edu.java.bot.configuration.ClientConfig;
 import ru.tinkoff.edu.java.bot.logic.utils.InputHandler;
+import ru.tinkoff.edu.java.bot.logic.wrapper.TgBot;
 
 import java.util.List;
 
-public class ConnectingBot {
-    private final TelegramBot bot;
+
+public class ConnectingBot implements TgBot {
+    private TelegramBot bot;
+    private final ApplicationConfig config;
+    private final InputHandler inputHandler = new InputHandler();
 
     public ConnectingBot(ApplicationConfig config) {
+        this.config = config;
+    }
+
+    @Override
+    public void start() {
         bot = new TelegramBot(config.token());
-        bot.setUpdatesListener(new UpdatesListener() {
-            private final InputHandler inputHandler = new InputHandler();
-            @Override
-            public int process(List<Update> updates) {
-                inputHandler.run(bot, updates);
-                return UpdatesListener.CONFIRMED_UPDATES_ALL;
-            }
-        });
+        bot.setUpdatesListener(this);
+    }
+
+    @Override
+    public void close() {
+        bot.removeGetUpdatesListener();
+    }
+
+    @Override
+    public void setUpdatesListener() {
+        TgBot.super.setUpdatesListener();
+    }
+
+    @Override
+    public int process(List<Update> updates) {
+        inputHandler.run(bot, updates);
+        return UpdatesListener.CONFIRMED_UPDATES_ALL;
     }
 }
