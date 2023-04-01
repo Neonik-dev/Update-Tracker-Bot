@@ -30,9 +30,16 @@
         <java-telegram-bot-api.version>6.5.0</java-telegram-bot-api.version>
         <maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
         <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
+        <spring-boot-starter-test.version>3.0.5</spring-boot-starter-test.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot-starter-test.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -103,6 +110,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-webflux</artifactId>
                 <version>${spring-boot-starter-webflux.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pengrad</groupId>
+                <artifactId>java-telegram-bot-api</artifactId>
+                <version>${java-telegram-bot-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.pengrad</groupId>
