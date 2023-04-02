@@ -11,7 +11,6 @@ import ru.tinkoff.edu.java.bot.logic.utils.ManagerCollection;
 
 @Getter
 public class TrackCommand implements BaseCommand, ReplyCommand {
-    private final String description = "начинает отслеживание ссылки";
     public static final String REPLY = "Напишите ссылку, которую хотите начать отслеживать";
     private static final String FINISH_TEXT = "Ссылка успешно добавилась";
 

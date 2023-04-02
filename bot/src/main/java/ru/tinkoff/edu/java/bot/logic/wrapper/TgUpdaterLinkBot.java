@@ -1,11 +1,10 @@
-package ru.tinkoff.edu.java.bot.logic;
+package ru.tinkoff.edu.java.bot.logic.wrapper;
 
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Update;
 import lombok.RequiredArgsConstructor;
 import ru.tinkoff.edu.java.bot.configuration.ApplicationConfig;
-import ru.tinkoff.edu.java.bot.logic.utils.InputHandler;
-import ru.tinkoff.edu.java.bot.logic.wrapper.TgBot;
+import ru.tinkoff.edu.java.bot.logic.commands.InputHandler;
 
 import java.util.List;
 

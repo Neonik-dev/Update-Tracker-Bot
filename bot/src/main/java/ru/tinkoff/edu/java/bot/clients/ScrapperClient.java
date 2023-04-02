@@ -2,9 +2,9 @@ package ru.tinkoff.edu.java.bot.clients;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.reactive.function.client.WebClient;
-import ru.tinkoff.edu.java.bot.clients.dto.AddLinkRequest;
-import ru.tinkoff.edu.java.bot.clients.dto.ListLinksResponse;
-import ru.tinkoff.edu.java.bot.clients.dto.RemoveLinkRequest;
+import ru.tinkoff.edu.java.bot.dto.scrapper.AddLinkRequest;
+import ru.tinkoff.edu.java.bot.dto.scrapper.ListLinksResponse;
+import ru.tinkoff.edu.java.bot.dto.scrapper.RemoveLinkRequest;
 import ru.tinkoff.edu.java.bot.configuration.ScrapperConfiguration;
 
 @RequiredArgsConstructor

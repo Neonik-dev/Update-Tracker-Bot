@@ -1,15 +1,16 @@
-package ru.tinkoff.edu.java.bot.logic.utils;
+package ru.tinkoff.edu.java.bot.logic.commands;
 
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SendMessage;
-import ru.tinkoff.edu.java.bot.logic.commands.*;
+import ru.tinkoff.edu.java.bot.logic.commands.enums.InitBaseCommands;
+import ru.tinkoff.edu.java.bot.logic.commands.enums.InitReplyCommands;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class InputHandler {
-    private static final HashMap<String, BaseCommand> COMMANDS = InitBaseCommands.getCommands();
-    private static final HashMap<String, ReplyCommand> REPLY_COMMANDS = InitReplyCommands.getCommands();
+    private static final Map<String, BaseCommand> COMMANDS = InitBaseCommands.getCommands();
+    private static final Map<String, ReplyCommand> REPLY_COMMANDS = InitReplyCommands.getCommands();
 
     public SendMessage run(Update update) {
         Message message = update.message();

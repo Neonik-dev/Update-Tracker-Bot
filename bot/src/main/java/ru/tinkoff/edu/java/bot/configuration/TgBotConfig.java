@@ -4,8 +4,8 @@ import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.tinkoff.edu.java.bot.logic.TgUpdaterLinkBot;
-import ru.tinkoff.edu.java.bot.logic.utils.InputHandler;
+import ru.tinkoff.edu.java.bot.logic.wrapper.TgUpdaterLinkBot;
+import ru.tinkoff.edu.java.bot.logic.commands.InputHandler;
 
 @Configuration
 @RequiredArgsConstructor
@@ -13,9 +13,10 @@ public class TgBotConfig {
     private TgUpdaterLinkBot tgBot;
     private final ApplicationConfig config;
     private final InputHandler inputHandler;
-    @Bean("TgBot")
+    @Bean("tgBot")
     public TgUpdaterLinkBot getTgBot() {
         tgBot = new TgUpdaterLinkBot(config, inputHandler);
+        tgBot.start();
         return tgBot;
     }
 

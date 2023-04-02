@@ -11,7 +11,6 @@ import ru.tinkoff.edu.java.bot.logic.utils.ManagerCollection;
 
 @Getter
 public class UntrackCommand implements BaseCommand, ReplyCommand{
-    private final String description = "прекращает отслеживание ссылки";
     public static final String REPLY = "Напишите ссылку, отслеживание которой хотите прекратить";
     private static final String FINISH_TEXT = "Ссылка успешно удалена из списка";
 

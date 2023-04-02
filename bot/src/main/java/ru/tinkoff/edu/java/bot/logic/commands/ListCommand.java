@@ -10,7 +10,6 @@ import java.util.HashSet;
 
 @Getter
 public class ListCommand implements BaseCommand {
-    private final String description = "выводит список отслеживающих ссылок";
     private static final String LINKS_MISSING = "Пока нет ни одной отслеживаемой ссылки.\nДобавить ссылку можно с помощью команды /track";
 
     @Override

@@ -6,8 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class StartCommand implements BaseCommand{
-
-    private final String description = "регистрирует пользователя";
     private static final String GREETING = "Добро пожаловать!\nДля списка всех команд напишите команду /help";
 
     @Override
