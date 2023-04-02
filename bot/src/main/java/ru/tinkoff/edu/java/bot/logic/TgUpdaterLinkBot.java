@@ -14,7 +14,7 @@ import java.util.List;
 public class TgUpdaterLinkBot implements TgBot {
     private TelegramBot bot;
     private final ApplicationConfig config;
-    private final InputHandler inputHandler = new InputHandler();
+    private final InputHandler inputHandler;
 
     @Override
     public void start() {
