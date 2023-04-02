@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.Getter;
 import ru.tinkoff.edu.java.bot.logic.utils.ManagerCollection;
+import ru.tinkoff.edu.java.bot.logic.wrapper.SendSimpleMessage;
 
 import java.net.URI;
 import java.util.HashSet;
@@ -26,6 +27,6 @@ public class ListCommand implements BaseCommand {
             }
             text = textLinks.toString();
         }
-        return new SendMessage(message.chat().id(), text);
+        return SendSimpleMessage.create(message, text);
     }
 }

@@ -3,6 +3,7 @@ package ru.tinkoff.edu.java.bot.logic.commands;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.Getter;
+import ru.tinkoff.edu.java.bot.logic.wrapper.SendSimpleMessage;
 
 @Getter
 public class StartCommand implements BaseCommand{
@@ -11,6 +12,6 @@ public class StartCommand implements BaseCommand{
     @Override
     public SendMessage execute(Message message) {
         System.out.println("Происходит проверка на регистрацию пользователя");
-        return new SendMessage(message.chat().id(), GREETING);
+        return SendSimpleMessage.create(message, GREETING);
     }
 }

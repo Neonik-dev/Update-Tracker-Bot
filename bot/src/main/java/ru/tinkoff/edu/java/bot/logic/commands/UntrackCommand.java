@@ -1,13 +1,13 @@
 package ru.tinkoff.edu.java.bot.logic.commands;
 
 import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.model.request.ForceReply;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.Getter;
 import ru.tinkoff.edu.java.bot.exceptions.InvalidLinkException;
 import ru.tinkoff.edu.java.bot.exceptions.NotUniqueLinkException;
 import ru.tinkoff.edu.java.bot.logic.utils.LinkValidation;
 import ru.tinkoff.edu.java.bot.logic.utils.ManagerCollection;
+import ru.tinkoff.edu.java.bot.logic.wrapper.SendSimpleMessage;
 
 @Getter
 public class UntrackCommand implements BaseCommand, ReplyCommand{
@@ -16,8 +16,7 @@ public class UntrackCommand implements BaseCommand, ReplyCommand{
 
     @Override
     public SendMessage execute(Message message) {
-        return new SendMessage(message.chat().id(), REPLY).replyMarkup(new ForceReply());
-//        return new SendSimpleMessage(message.chat().id(), REPLY).replyMarkup(new ForceReply());
+        return SendSimpleMessage.create(message, REPLY, true);
     }
 
     @Override
@@ -29,6 +28,6 @@ public class UntrackCommand implements BaseCommand, ReplyCommand{
         } catch (NotUniqueLinkException | InvalidLinkException e) {
             text = e.getMessage();
         }
-        return new SendMessage(message.chat().id(), text);
+        return SendSimpleMessage.create(message, text);
     }
 }

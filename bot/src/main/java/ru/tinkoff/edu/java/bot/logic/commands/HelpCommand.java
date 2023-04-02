@@ -4,6 +4,7 @@ import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.Getter;
 import ru.tinkoff.edu.java.bot.logic.commands.enums.InitBaseCommands;
+import ru.tinkoff.edu.java.bot.logic.wrapper.SendSimpleMessage;
 
 @Getter
 public class HelpCommand implements BaseCommand{
@@ -15,6 +16,6 @@ public class HelpCommand implements BaseCommand{
             text.append("\n");
             text.append(command);
         }
-        return new SendMessage(message.chat().id(), text.toString());
+        return SendSimpleMessage.create(message, text.toString());
     }
 }
