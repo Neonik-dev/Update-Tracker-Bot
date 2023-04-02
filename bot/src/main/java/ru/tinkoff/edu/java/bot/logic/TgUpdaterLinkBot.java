@@ -4,19 +4,18 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
 import ru.tinkoff.edu.java.bot.configuration.ApplicationConfig;
-import ru.tinkoff.edu.java.bot.configuration.ClientConfig;
 import ru.tinkoff.edu.java.bot.logic.utils.InputHandler;
 import ru.tinkoff.edu.java.bot.logic.wrapper.TgBot;
 
 import java.util.List;
 
 
-public class ConnectingBot implements TgBot {
+public class TgUpdaterLinkBot implements TgBot {
     private TelegramBot bot;
     private final ApplicationConfig config;
     private final InputHandler inputHandler = new InputHandler();
 
-    public ConnectingBot(ApplicationConfig config) {
+    public TgUpdaterLinkBot(ApplicationConfig config) {
         this.config = config;
     }
 
@@ -29,11 +28,6 @@ public class ConnectingBot implements TgBot {
     @Override
     public void close() {
         bot.removeGetUpdatesListener();
-    }
-
-    @Override
-    public void setUpdatesListener() {
-        TgBot.super.setUpdatesListener();
     }
 
     @Override

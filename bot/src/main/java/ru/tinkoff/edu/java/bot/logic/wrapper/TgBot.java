@@ -13,8 +13,4 @@ public interface TgBot extends AutoCloseable, UpdatesListener {
 
     @Override
     void close();
-
-    default void setUpdatesListener() {
-
-    }
 }
