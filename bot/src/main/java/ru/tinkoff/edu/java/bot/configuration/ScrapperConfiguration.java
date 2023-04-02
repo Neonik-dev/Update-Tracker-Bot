@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @ConfigurationProperties(prefix = "client.scrapper")
 @Configuration("scrapper")
-public class ScrapperConfig {
+public class ScrapperConfiguration {
     @Value("${baseUrl:http://localhost:8080}")
     private static String baseUrl;
 

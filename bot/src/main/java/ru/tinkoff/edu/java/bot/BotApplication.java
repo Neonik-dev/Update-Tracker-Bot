@@ -12,11 +12,8 @@ public class BotApplication {
     public static void main(String[] args) {
         var ctx = SpringApplication.run(BotApplication.class, args);
         ApplicationConfig config = ctx.getBean(ApplicationConfig.class);
-        new TgUpdaterLinkBot(config).start();
-
-//        try(var bot = new ConnectingBot(config)) {
-//            bot.start();
-//        }
+        TgUpdaterLinkBot tgBot = ctx.getBean("TgBot", TgUpdaterLinkBot.class);
+        tgBot.start();
         System.out.println(config);
     }
 }

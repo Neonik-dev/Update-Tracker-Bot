@@ -5,14 +5,14 @@ import org.springframework.web.reactive.function.client.WebClient;
 import ru.tinkoff.edu.java.bot.clients.dto.AddLinkRequest;
 import ru.tinkoff.edu.java.bot.clients.dto.ListLinksResponse;
 import ru.tinkoff.edu.java.bot.clients.dto.RemoveLinkRequest;
-import ru.tinkoff.edu.java.bot.configuration.ScrapperConfig;
+import ru.tinkoff.edu.java.bot.configuration.ScrapperConfiguration;
 
 @RequiredArgsConstructor
 public class ScrapperClient {
     private final WebClient webClient;
 
-    public ScrapperClient(ScrapperConfig scrapperConfig) {
-        webClient = WebClient.builder().baseUrl(ScrapperConfig.getBaseUrl()).build();
+    public ScrapperClient(ScrapperConfiguration scrapperConfig) {
+        webClient = WebClient.builder().baseUrl(ScrapperConfiguration.getBaseUrl()).build();
     }
 
     public ListLinksResponse getListLinks(Long chatId) {
