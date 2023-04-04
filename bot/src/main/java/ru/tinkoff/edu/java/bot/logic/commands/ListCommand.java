@@ -7,7 +7,7 @@ import ru.tinkoff.edu.java.bot.logic.utils.ManagerCollection;
 import ru.tinkoff.edu.java.bot.logic.wrapper.SendSimpleMessage;
 
 import java.net.URI;
-import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 public class ListCommand implements BaseCommand {
@@ -15,7 +15,7 @@ public class ListCommand implements BaseCommand {
 
     @Override
     public SendMessage execute(Message message) {
-        HashSet<URI> links = ManagerCollection.getLinks();
+        Set<URI> links = ManagerCollection.getLinks();
         String text;
         if (links.isEmpty()) {
             text = LINKS_MISSING;

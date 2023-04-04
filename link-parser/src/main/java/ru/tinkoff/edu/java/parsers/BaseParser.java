@@ -2,6 +2,8 @@ package ru.tinkoff.edu.java.parsers;
 
 import ru.tinkoff.edu.java.responses.BaseResponse;
 
+import java.util.Optional;
+
 
 public sealed abstract class BaseParser implements Parser permits GitHubParser, StackOverflowParser{
     private Parser successor;
@@ -10,7 +12,7 @@ public sealed abstract class BaseParser implements Parser permits GitHubParser, 
         this.successor = successor;
     }
 
-    protected BaseResponse nextParse(String url) {
+    protected BaseResponse nextParse(Optional<String> url) {
         return successor != null ? successor.parseUrl(url) : null;
     }
 }

@@ -1,92 +1,81 @@
 package ru.tinkoff.edu.java.parsers;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import ru.tinkoff.edu.java.App;
 import ru.tinkoff.edu.java.responses.StackOverflowResponse;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNull;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StackOverFlowTest {
-    static Parser parser;
-    @BeforeAll
-    static void beforeAll() {
-        parser = ParseChain.chain();
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "https://stackoverflow.com/questions/",
+            "https://stackoverflow.com/",
+            "https://slackoverflow.com/questions/68538851/lombok-and-autowired",
+            "https://stackoverflow.com/question/68538851/lombok-and-autowired",
+            "https://stackoverflow.com/questions/lombok-and-autowired/12",
+            "https://stackoverflow.com/questions/68538851w/lombok-and-autowired",
+            "https://stackoverflow.com/questions//lombok-and-autowired"
+    })
+    void invalidLink_Null(String link) {
+        // given
+
+        // when
+        StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
+
+        // then
+        assertAll(
+                () -> assertNull(response)
+        );
     }
 
-    private StackOverflowResponse useParser(String link) {
-        return (StackOverflowResponse) parser.parseUrl(link);
-    }
-    @Test
-    void StackParser_LinkWithoutQuestion_Null() {
-        String link = "https://stackoverflow.com/questions//what-is-the-operator-in-c";
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "https://stackoverflow.com/questions/68538851/lombok-and-autowired",
+            "https://stackoverflow.com/questions/68538851/",
+            "https://stackoverflow.com/questions/68538851",
+            "https://stackoverflow.com/questions/68538851/lombok-and-autowired/more-info/mooore-info",
+    })
+    void validLink_OK(String link) {
+        // given
 
-        StackOverflowResponse response = useParser(link);
+        // when
+        StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
 
-        assertNull(response);
-    }
-
-    @Test
-    void StackParser_InvalidDomain_Null() {
-        String link = "https://stackоverfloy.com/questions/121212/what-is-the-operator-in-c";
-
-        StackOverflowResponse response = useParser(link);
-
-        assertNull(response);
-    }
-
-    @Test
-    void StackParser_OnlyDomain_Null() {
-        String link = "https://stackoverflow.com/";
-
-        StackOverflowResponse response = useParser(link);
-
-        assertNull(response);
-    }
-
-    @Test
-    void StackParser_WithoutQuestionId_Null() {
-        String link = "https://stackoverflow.com/questions/";
-
-        StackOverflowResponse response = useParser(link);
-
-        assertNull(response);
+        // then
+        assertAll(
+                () -> assertEquals(response.questionId(), "68538851")
+        );
     }
 
     @Test
-    void StackParser_ShortLinkWithSlash_OK() {
-        String link = "https://stackoverflow.com/questions/1/";
-
-        StackOverflowResponse response = useParser(link);
-
-        assertEquals(response.questionId(), "1");
-    }
-
-    @Test
-    void StackParser_ShortLinkWithoutSlash_OK() {
+    void shortQuestionId_OK() {
+        // given
         String link = "https://stackoverflow.com/questions/1";
 
-        StackOverflowResponse response = useParser(link);
+        // when
+        StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
 
-        assertEquals(response.questionId(), "1");
+        // then
+        assertAll(
+                () -> assertEquals(response.questionId(), "1")
+        );
     }
 
     @Test
-    void StackParser_LargeID_OK() {
+    void largeQuestionId_OK() {
+        // given
         String link = "https://stackoverflow.com/questions/16677777777777777777777777777777777777777777777777777777777";
 
-        StackOverflowResponse response = useParser(link);
+        // when
+        StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
 
-        assertEquals(response.questionId(), "16677777777777777777777777777777777777777777777777777777777");
+        // then
+        assertAll(
+                () -> assertEquals(response.questionId(), "16677777777777777777777777777777777777777777777777777777777")
+        );
     }
-
-    @Test
-    void StackParser_GoodLink_OK() {
-        String link = "https://stackoverflow.com/questions/1642028/what-is-the-operator-in-c";
-
-        StackOverflowResponse response = useParser(link);
-
-        assertEquals(response.questionId(), "1642028");
-    }
-
 }

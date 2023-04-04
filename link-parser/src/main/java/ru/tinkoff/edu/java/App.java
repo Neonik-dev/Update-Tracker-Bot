@@ -4,6 +4,8 @@ import ru.tinkoff.edu.java.parsers.ParseChain;
 import ru.tinkoff.edu.java.parsers.Parser;
 import ru.tinkoff.edu.java.responses.BaseResponse;
 
+import java.util.Optional;
+
 
 public class App
 {
@@ -11,6 +13,6 @@ public class App
     {
         // Chain of responsibility
         Parser parser = ParseChain.chain();
-        return parser.parseUrl(link);
+        return parser.parseUrl(Optional.ofNullable(link));
     }
 }

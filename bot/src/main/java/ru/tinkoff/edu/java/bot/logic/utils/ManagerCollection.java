@@ -4,9 +4,10 @@ import ru.tinkoff.edu.java.bot.exceptions.NotUniqueLinkException;
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Set;
 
 public class ManagerCollection {
-    private static final HashSet<URI> LINKS = new HashSet<>();
+    private static final Set<URI> LINKS = new HashSet<>();
 
     public static void add(URI link) throws NotUniqueLinkException {
         if (LINKS.contains(link)) {
@@ -22,7 +23,7 @@ public class ManagerCollection {
         LINKS.remove(link);
     }
 
-    public static HashSet<URI> getLinks() {
+    public static Set<URI> getLinks() {
         return LINKS;
     }
 }

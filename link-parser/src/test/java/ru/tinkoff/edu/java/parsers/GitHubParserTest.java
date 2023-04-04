@@ -1,76 +1,87 @@
 package ru.tinkoff.edu.java.parsers;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import ru.tinkoff.edu.java.App;
 import ru.tinkoff.edu.java.responses.GitHubResponse;
 
-import static junit.framework.Assert.*;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class GitHubParserTest {
-    static Parser parser;
-    @BeforeAll
-    static void beforeAll() {
-        parser = ParseChain.chain();
+    @ParameterizedTest(name = "{index} - {0} is a bad link")
+    @NullAndEmptySource
+    void linkIsNullOrEmpty_Null(String link) {
+        // given
+
+        // when
+        GitHubResponse response = (GitHubResponse) new App().main(link);
+
+        // then
+        assertAll(
+                () -> assertNull(response)
+        );
     }
 
-    private GitHubResponse useParser(String link) {
-        return (GitHubResponse) parser.parseUrl(link);
-    }
-    @Test
-    void GitHubParser_LinkWithoutRepo_Null() {
-        String link = "https://github.com//Tinkoff_project/pull/3";
+    @ParameterizedTest(name = "{index} - {0} is a bad link")
+    @ValueSource(strings = {
+            "https://github.com//Tinkoff_project/pull/3",
+            "https://githb.com/Name/Tinkoff_project/pull/3",
+            "https://githb.com",
+            "https://githb.com/Name",
+            "https://githb.com/Name/",
+            "https://githb.com/Name//"
+    })
+    void invalidLink_Null(String link) {
+        // given
 
-        GitHubResponse response = useParser(link);
+        // when
+        GitHubResponse response = (GitHubResponse) new App().main(link);
 
-        assertNull(response);
-    }
-
-    @Test
-    void GitHubParser_InvalidDomain_Null() {
-        String link = "https://githb.com//Tinkoff_project/pull/3";
-
-        GitHubResponse response = useParser(link);
-
-        assertNull(response);
-    }
-
-    @Test
-    void GitHubParser_OnlyDomain_Null() {
-        String link = "https://githb.com";
-
-        GitHubResponse response = useParser(link);
-
-        assertNull(response);
+        // then
+        assertAll(
+                () -> assertNull(response)
+        );
     }
 
-    @Test
-    void GitHubParser_ShortLinkWithSlash_OK() {
-        String link = "https://github.com/Neonik/Tinkoff/";
+    @ParameterizedTest(name = "{index} - {0} is a valid link")
+    @ValueSource(strings = {
+            "https://github.com/Neonik228/Tinkoff_project/pull/3",
+            "https://github.com/Neonik228/Tinkoff_project/",
+            "https://github.com/Neonik228/Tinkoff_project",
+    })
+    void validLink_OK(String link) {
+        // given
 
-        GitHubResponse response = useParser(link);
+        // when
+        GitHubResponse response = (GitHubResponse) new App().main(link);
 
-        assertEquals(response.repo(), "Tinkoff");
-        assertEquals(response.user(), "Neonik");
+        // then
+        assertAll(
+                () -> assertEquals(response.repo(), "Tinkoff_project"),
+                () -> assertEquals(response.user(), "Neonik228")
+        );
     }
 
-    @Test
-    void GitHubParser_ShortLinkWithoutSlash_OK() {
-        String link = "https://github.com/Neonik/Tinkoff";
+    @ParameterizedTest()
+    @ValueSource(strings = {
+            "https://github.com/Gram3r/Tinkoff-tourism",
+            "https://github.com/Gram3r/Tinkoff-tourism/blob/main/src/main/java/tinkoff/tourism/controller/dto/RouteRequest.java",
+    })
+    void changeParserChain_OK(String link) {
+        // given
+        Parser parseChain = ParseChain.chain(new StackOverflowParser(), new GitHubParser());
 
-        GitHubResponse response = useParser(link);
+        // when
+        GitHubResponse response = (GitHubResponse) parseChain.parseUrl(Optional.ofNullable(link));
 
-        assertEquals(response.repo(), "Tinkoff");
-        assertEquals(response.user(), "Neonik");
+        // then
+        assertAll(
+                () -> assertEquals(response.user(), "Gram3r"),
+                () -> assertEquals(response.repo(), "Tinkoff-tourism")
+        );
     }
-
-    @Test
-    void GitHubParser_GoodLink_OK() {
-        String link = "https://github.com/Neonik228/Tinkoff_project/pull/3";
-
-        GitHubResponse response = useParser(link);
-
-        assertEquals(response.repo(), "Tinkoff_project");
-        assertEquals(response.user(), "Neonik228");
-    }
-
 }

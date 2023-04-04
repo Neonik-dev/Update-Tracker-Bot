@@ -14,9 +14,8 @@ public class InputHandler {
 
     public SendMessage run(Update update) {
         Message message = update.message();
-        BaseCommand baseCommand = COMMANDS.get(message.text());
-
         try {
+            BaseCommand baseCommand = COMMANDS.get(message.text());
             return baseCommand.execute(message);
         } catch (NullPointerException e) {
             return checkReplyMessage(message);
