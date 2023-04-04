@@ -11,7 +11,6 @@ public class StartCommand implements BaseCommand{
 
     @Override
     public SendMessage execute(Message message) {
-        System.out.println("Происходит проверка на регистрацию пользователя");
         return SendSimpleMessage.create(message, GREETING);
     }
 }
