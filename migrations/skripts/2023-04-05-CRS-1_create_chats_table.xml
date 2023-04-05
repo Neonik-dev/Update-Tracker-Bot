@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+       http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="CRS-1_add_chats_sequence" author="g.liseychikov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="chats_id_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="chats_id_seq" incrementBy="1" cacheSize="1" startValue="1"/>
+    </changeSet>
+
+    <changeSet id="CRS-1_create_chats_table" author="g.liseychikov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="chats"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="chats">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="chats_id_seq" remarks="Идентификатор чата">
+                <constraints primaryKey="true" primaryKeyName="chat__id_idx"/>
+            </column>
+            <column name="name" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_date" defaultValueComputed="CURRENT_TIMESTAMP" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_call_date" defaultValueComputed="CURRENT_TIMESTAMP"
+                    type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

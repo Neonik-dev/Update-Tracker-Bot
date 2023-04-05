@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+       http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="CRS-4_create_human_interests_table" author="g.liseychikov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="human_interests"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="human_interests">
+            <column name="chat_id" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="chat__id_idx"/>
+                <constraints foreignKeyName="human_interests_chat_id_chats_id"
+                             referencedTableName="chats" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet  id="CRS-4_add_primary_key_link_id" author="g.liseychikov">
+        <addPrimaryKey tableName="human_interests" columnNames="links_id" constraintName="primary_key_links_id"
+                       foreignKeyName="human_interests_link_id_links_id"
+                       referencedTableName="links" referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

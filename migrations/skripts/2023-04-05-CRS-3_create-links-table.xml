@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd
+       http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="CRS-3_add_links_sequence" author="g.liseychikov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="links_id_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="links_id_seq" incrementBy="1" cacheSize="1" startValue="1"/>
+    </changeSet>
+
+    <changeSet id="CRS-3_create_links_table" author="g.liseychikov">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="links"/>
+            </not>
+        </preConditions>
+
+        <createTable tableName="links">
+            <column name="id" type="BIGINT" defaultValueSequenceNext="links_id_seq" remarks="Идентификатор ссылки">
+                <constraints primaryKey="true" primaryKeyName="link__id_idx"/>
+            </column>
+            <column name="link" type="TEXT">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="updated_date" defaultValueComputed="CURRENT_TIMESTAMP" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_check_date" defaultValueComputed="CURRENT_TIMESTAMP"
+                    type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="domain_id" >
+                <constraints nullable="false"
+                             foreignKeyName="links_domain_id_domains_id"
+                             referencedTableName="domains" referencedColumnNames="id"/>
+            </column>
+            <column name="data_changes" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
