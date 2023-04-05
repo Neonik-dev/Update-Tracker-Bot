@@ -6,13 +6,13 @@ import java.util.Optional;
 
 
 public sealed abstract class BaseParser implements Parser permits GitHubParser, StackOverflowParser{
-    private Optional<Parser> successor;
+    private Parser successor;
 
     public void setSuccessor(Parser successor) {
-        this.successor = Optional.of(successor);
+        this.successor = successor;
     }
 
-    protected BaseResponse nextParse(String url) {
-        return successor.isPresent() ? successor.get().parseUrl(url) : null;
+    protected BaseResponse nextParse(Optional<String> url) {
+        return successor != null ? successor.parseUrl(url) : null;
     }
 }

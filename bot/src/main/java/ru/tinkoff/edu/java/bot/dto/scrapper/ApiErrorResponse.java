@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.dto;
+package ru.tinkoff.edu.java.bot.dto.scrapper;
 
 
 public record ApiErrorResponse(

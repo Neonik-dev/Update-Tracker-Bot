@@ -11,17 +11,17 @@ import ru.tinkoff.edu.java.scrapper.clients.clients.GitHubClient;
 public class ClientConfiguration {
     private final GitHubConfig gitHubConfig;
     private final StackOverFlowConfig stackOverFlowConfig;
-    @Bean("GitHubClient")
+    @Bean("gitHubClient")
     public GitHubClient getGitHubClient() {
         return new GitHubClient(gitHubConfig);
     }
 
-    @Bean("StackOverFlowClient")
+    @Bean("stackOverFlowClient")
     public StackOverFlowClient getStackOverFlowClient() {
         return new StackOverFlowClient(stackOverFlowConfig);
     }
 
-    @Bean("SchedulerUpdateLink")
+    @Bean("schedulerIntervalMs")
     public long schedulerIntervalMs(ApplicationConfig config) {
         return config.scheduler().interval().toMillis();
     }
