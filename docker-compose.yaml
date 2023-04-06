@@ -31,5 +31,8 @@ services:
     networks:
       - backend
 
+networks:
+  backend:
+
 volumes:
   postgres-data:
