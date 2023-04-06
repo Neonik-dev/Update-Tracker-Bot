@@ -16,7 +16,7 @@ import java.util.HashSet;
 import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
-public class ListCommandIT extends CommandTest {
+public class ListCommandTest extends CommandTest {
     @Test
     void listLinkEmpty_SpecialText() {
         // given

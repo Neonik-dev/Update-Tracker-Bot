@@ -21,9 +21,7 @@ public class GitHubParserTest {
         GitHubResponse response = (GitHubResponse) new App().main(link);
 
         // then
-        assertAll(
-                () -> assertNull(response)
-        );
+        assertNull(response);
     }
 
     @ParameterizedTest(name = "{index} - {0} is a bad link")
@@ -42,9 +40,7 @@ public class GitHubParserTest {
         GitHubResponse response = (GitHubResponse) new App().main(link);
 
         // then
-        assertAll(
-                () -> assertNull(response)
-        );
+        assertNull(response);
     }
 
     @ParameterizedTest(name = "{index} - {0} is a valid link")
