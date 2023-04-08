@@ -5,12 +5,12 @@ services:
     restart: always
     ports:
       - 5432:5432
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: scrapper
       POSTGRES_USER: tinkoff
       POSTGRES_PASSWORD: he_is_the_only_one
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - backend
 
