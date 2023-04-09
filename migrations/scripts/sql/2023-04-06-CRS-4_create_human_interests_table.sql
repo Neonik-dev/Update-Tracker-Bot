@@ -7,6 +7,3 @@ CREATE TABLE IF NOT EXISTS human_interests
     link_id         BIGINT      REFERENCES links(id)        NOT NULL,
     PRIMARY KEY (chat_id, link_id)
 );
-
---changeset g.liseychikov:CRS-4_add_index_chat_link_id
-CREATE INDEX idx_chat_link_id ON human_interests(chat_id, link_id);

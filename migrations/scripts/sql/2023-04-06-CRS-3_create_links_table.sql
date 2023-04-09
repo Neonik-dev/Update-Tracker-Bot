@@ -17,6 +17,3 @@ CREATE TABLE IF NOT EXISTS links
     domain_id       BIGINT                              REFERENCES domains(id)                  NOT NULL,
     data_changes    JSONB                                                                       NOT NULL
 );
-
---changeset g.liseychikov:CRS-3_add_index_links_id
-CREATE INDEX idx_link_id ON links(id);
