@@ -27,9 +27,7 @@ public class StackOverFlowTest {
         StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
 
         // then
-        assertAll(
-                () -> assertNull(response)
-        );
+        assertNull(response);
     }
 
     @ParameterizedTest
@@ -46,9 +44,7 @@ public class StackOverFlowTest {
         StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
 
         // then
-        assertAll(
-                () -> assertEquals(response.questionId(), "68538851")
-        );
+        assertEquals(response.questionId(), "68538851");
     }
 
     @Test
@@ -60,9 +56,7 @@ public class StackOverFlowTest {
         StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
 
         // then
-        assertAll(
-                () -> assertEquals(response.questionId(), "1")
-        );
+        assertEquals(response.questionId(), "1");
     }
 
     @Test
@@ -74,8 +68,6 @@ public class StackOverFlowTest {
         StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
 
         // then
-        assertAll(
-                () -> assertEquals(response.questionId(), "16677777777777777777777777777777777777777777777777777777777")
-        );
+        assertEquals(response.questionId(), "16677777777777777777777777777777777777777777777777777777777");
     }
 }
