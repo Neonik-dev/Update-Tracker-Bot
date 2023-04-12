@@ -11,6 +11,6 @@ CREATE SEQUENCE IF NOT EXISTS domain_id_seq
 CREATE TABLE IF NOT EXISTS domains
 (
     id              BIGINT      primary key         default nextval('domain_id_seq'),
-    name            TEXT                                                                    NOT NULL,
-    created_date    TIMESTAMP WITHOUT TIME ZONE     default now()                           NOT NULL
+    name            TEXT        UNIQUE                                      NOT NULL,
+    created_date    Date        default now()                               NOT NULL
 );

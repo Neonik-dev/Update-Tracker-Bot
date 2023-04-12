@@ -9,5 +9,5 @@
     <include file="scripts/sql/2023-04-06-CRS-1_create_chats_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/sql/2023-04-06-CRS-2_create_domains_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/sql/2023-04-06-CRS-3_create_links_table.sql" relativeToChangelogFile="true"/>
-    <include file="scripts/sql/2023-04-06-CRS-4_create_human_interests_table.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/sql/2023-04-06-CRS-4_create_chat_link_table.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

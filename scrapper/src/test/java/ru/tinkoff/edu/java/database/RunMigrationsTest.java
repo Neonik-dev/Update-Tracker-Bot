@@ -26,7 +26,7 @@ public class RunMigrationsTest extends IntegrationEnvironment {
 
         // then
         assertTrue(rows.contains("chats"));
-        assertTrue(rows.contains("human_interests"));
+        assertTrue(rows.contains("chat_link"));
         assertTrue(rows.contains("links"));
         assertTrue(rows.contains("domains"));
     }
