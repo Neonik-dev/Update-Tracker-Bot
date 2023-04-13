@@ -2,6 +2,7 @@ package ru.tinkoff.edu.java.database;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,19 +19,24 @@ import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.DomainRepositoryImpl;
 
 import java.time.LocalDate;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {DomainRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class})
-public class JdbcDomainIT {
+@ContextConfiguration(classes = {DomainRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+public class JdbcDomainIT extends IntegrationEnvironment{
     private final DomainRepositoryImpl domainRepository;
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<DomainData> rowMapper = new DataClassRowMapper<>(DomainData.class);
-    private final String NAME = "noNameSiteForTest";
+    private final JdbcUtils utils;
+    private DomainData domainData;
+
+    @BeforeEach
+    public void initDomainData() {
+        domainData = utils.createDomainData();
+    }
 
     @Test
     @SneakyThrows
@@ -38,8 +44,6 @@ public class JdbcDomainIT {
     @Rollback
     void addUniqueDomainName_OK() {
         // given
-        DomainData domainData = new DomainData();
-        domainData.setName(NAME);
 
         // when
         domainRepository.add(domainData);
@@ -58,8 +62,6 @@ public class JdbcDomainIT {
     @Rollback
     void addExistsDomainName_ThrowsDuplicateUniqueFieldException() {
         // given
-        DomainData domainData = new DomainData();
-        domainData.setName(NAME);
         jdbcTemplate.update("INSERT INTO domains(name) VALUES (?)", domainData.getName());
 
         // when/then
@@ -71,7 +73,6 @@ public class JdbcDomainIT {
     @Rollback
     void addExistsDomainId_ThrowsDuplicateUniqueFieldException() {
         // given
-        DomainData domainData = createDomainData();
         jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", domainData.getId(), domainData.getName());
 
         // when/then
@@ -83,14 +84,13 @@ public class JdbcDomainIT {
     @Rollback
     void removeByExistsId_OK() {
         // given
-        DomainData domainData = createDomainData();
         jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", domainData.getId(), domainData.getName());
 
-        // then
+        // when
         domainRepository.remove(domainData.getId());
 
-        // when
-        assertTrue(checkMissingData(domainData.getId()));
+        // then
+        assertTrue(utils.checkMissingDataDomain(domainData.getId()));
     }
 
     @Test
@@ -98,13 +98,12 @@ public class JdbcDomainIT {
     @Rollback
     void removeByNotExistsId_OK() {
         // given
-        DomainData domainData = createDomainData();
-
-        // then
-        domainRepository.remove(domainData.getId());
 
         // when
-        assertTrue(checkMissingData(domainData.getId()));
+        domainRepository.remove(domainData.getId());
+
+        // then
+        assertTrue(utils.checkMissingDataDomain(domainData.getId()));
     }
 
     @Test
@@ -112,14 +111,13 @@ public class JdbcDomainIT {
     @Rollback
     void removeByExistsName_OK() {
         // given
-        DomainData domainData = createDomainData();
         jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", domainData.getId(), domainData.getName());
 
-        // then
+        // when
         domainRepository.remove(domainData.getName());
 
-        // when
-        assertTrue(checkMissingData(domainData.getName()));
+        // then
+        assertTrue(utils.checkMissingDataDomain(domainData.getName()));
     }
 
     @Test
@@ -127,35 +125,11 @@ public class JdbcDomainIT {
     @Rollback
     void removeByNotExistsName_OK() {
         // given
-        DomainData domainData = createDomainData();
-
-        // then
-        domainRepository.remove(domainData.getName());
 
         // when
-        assertTrue(checkMissingData(domainData.getName()));
+        domainRepository.remove(domainData.getName());
+
+        // then
+        assertTrue(utils.checkMissingDataDomain(domainData.getName()));
     }
-
-    private DomainData createDomainData() {
-        long domainId;
-        do {
-            domainId = new Random().nextLong();
-        } while (!checkMissingData(domainId));
-
-        DomainData domainData = new DomainData();
-        domainData.setName(NAME);
-        domainData.setId(domainId);
-        return domainData;
-    }
-
-    private boolean checkMissingData(Long domainId) {
-        Integer result = jdbcTemplate.queryForObject("SELECT count(*) FROM domains where id = ?", Integer.class, domainId);
-        return result == null || result == 0;
-    }
-    private boolean checkMissingData(String name) {
-        Integer result = jdbcTemplate.queryForObject("SELECT count(*) FROM domains where name = ?", Integer.class, name);
-        return result == null || result == 0;
-    }
-
-
 }

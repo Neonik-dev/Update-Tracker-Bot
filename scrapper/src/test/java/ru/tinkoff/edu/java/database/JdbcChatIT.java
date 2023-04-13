@@ -2,8 +2,7 @@ package ru.tinkoff.edu.java.database;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.DataClassRowMapper;
@@ -21,17 +20,23 @@ import org.junit.jupiter.api.Test;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.ChatRepositoryImpl;
 
 import java.time.LocalDate;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {ChatRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class})
-public class JdbcChatIT {
+@ContextConfiguration(classes = {ChatRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+public class JdbcChatIT extends IntegrationEnvironment{
     private final ChatRepositoryImpl chatRepository;
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<ChatData> rowMapper = new DataClassRowMapper<>(ChatData.class);
+    private final JdbcUtils utils;
+    private ChatData chatData;
+
+    @BeforeEach
+    public void initChatData() {
+        chatData = utils.createChatData();
+    }
 
     @Test
     @SneakyThrows
@@ -39,54 +44,43 @@ public class JdbcChatIT {
     @Rollback
     void addUniqueChat_OK() {
         // given
-        long chatId = generateChatId();
-        ChatData chatData = new ChatData();
-        chatData.setId(chatId);
 
         // when
         chatRepository.add(chatData);
 
         // then
-        assertResult(chatId);
+        assertResult(chatData.getId());
     }
 
     @Test
     void addExistsChat_ThrowsDuplicateUniqueFieldException() {
         // given
-        long chatId = generateChatId();
-        ChatData chatData = new ChatData();
-        chatData.setId(chatId);
-        jdbcTemplate.update("INSERT INTO chats(id) VALUES (?)", chatId);
+        jdbcTemplate.update("INSERT INTO chats(id) VALUES (?)", chatData.getId());
 
         // then/when
         assertThrows(DuplicateUniqueFieldException.class, () -> chatRepository.add(chatData));
 
-        // when
-        assertResult(chatId);
-        jdbcTemplate.update("DELETE FROM chats WHERE id=?", chatId);
+        // then
+        assertResult(chatData.getId());
+        jdbcTemplate.update("DELETE FROM chats WHERE id=?", chatData.getId());
     }
 
-    @ParameterizedTest
-    @NullSource
-    void addNullChatId_ThrowsBadEntityException(Long chatId) {
+    @Test
+    void addNullChatId_ThrowsBadEntityException() {
         // given
-        ChatData chatData = new ChatData();
-        chatData.setId(chatId);
+        chatData.setId(null);
 
         // then/when
         assertThrows(BadEntityException.class, () -> chatRepository.add(chatData));
-
-        // when
-        assertTrue(checkMissingData(chatId));
     }
 
     @Test
     void addNullChat_ThrowsBadEntityException() {
         // given
-        ChatData chatData = null;
+        ChatData nullChatData = null;
 
         // then/when
-        assertThrows(BadEntityException.class, () -> chatRepository.add(chatData));
+        assertThrows(BadEntityException.class, () -> chatRepository.add(nullChatData));
     }
 
     @Test
@@ -94,14 +88,13 @@ public class JdbcChatIT {
     @Rollback
     void removeExistsChatId_OK () {
         // given
-        long chatId = generateChatId();
-        jdbcTemplate.update("INSERT INTO chats(id) VALUES (?)", chatId);
+        jdbcTemplate.update("INSERT INTO chats(id) VALUES (?)", chatData.getId());
 
         // when
-        chatRepository.remove(chatId);
+        chatRepository.remove(chatData.getId());
 
         // then
-        assertTrue(checkMissingData(chatId));
+        assertTrue(utils.checkMissingDataChat(chatData.getId()));
     }
 
     @Test
@@ -109,26 +102,12 @@ public class JdbcChatIT {
     @Rollback
     void removeNotExistsChatId_OK () {
         // given
-        long chatId = generateChatId();
 
         // when
-        chatRepository.remove(chatId);
+        chatRepository.remove(chatData.getId());
 
         // then
-        assertTrue(checkMissingData(chatId));
-    }
-
-    private long generateChatId() {
-        long chatId;
-        do {
-            chatId = new Random().nextLong();
-        } while (!checkMissingData(chatId));
-        return chatId;
-    }
-
-    private boolean checkMissingData(Long chatId) {
-        Integer result = jdbcTemplate.queryForObject("SELECT count(*) FROM chats where id = ?", Integer.class, chatId);
-        return result == null || result == 0;
+        assertTrue(utils.checkMissingDataChat(chatData.getId()));
     }
 
     private void assertResult(long chatId) {

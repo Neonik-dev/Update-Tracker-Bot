@@ -21,18 +21,16 @@ import ru.tinkoff.edu.java.scrapper.persistence.entity.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.LinkRepositoryImpl;
 
-import java.util.Map;
-import java.util.Random;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {LinkRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class})
-public class JdbcLinkIT {
+@ContextConfiguration(classes = {LinkRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+public class JdbcLinkIT extends IntegrationEnvironment{
     private final JdbcTemplate jdbcTemplate;
     private final LinkRepositoryImpl linkRepository;
+    private final JdbcUtils utils;
     private final RowMapper<LinkData> rowMapper = (rs, rowNum) -> {
         LinkData linkDataBD = new LinkData();
         linkDataBD.setLink(rs.getString(1));
@@ -40,21 +38,11 @@ public class JdbcLinkIT {
         linkDataBD.setDataChanges(new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(3)));
         return linkDataBD;
     };
-    private final String LINK = "http://noNameSiteForTest.com/no-name-site-for-test";
-    private final String DOMAIN = "noNameSiteForTest";
     private LinkData linkData;
 
     @BeforeEach
     public void createLinkData() {
-        long domainId;
-        do {
-            domainId = new Random().nextLong();
-        } while (!checkMissingDomainId(domainId));
-
-        linkData = new LinkData();
-        linkData.setLink(LINK);
-        linkData.setDataChanges(Map.of("commits", "15", "comments", "11"));
-        linkData.setDomainId(domainId);
+        linkData = utils.createLinkData();
     }
 
     @Test
@@ -63,12 +51,12 @@ public class JdbcLinkIT {
     @Rollback
     void addLinkWithExistsDomainId_OK() {
         // given
-        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), DOMAIN);
-
-        // then
-        linkRepository.add(linkData);
+        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), utils.DOMAIN_NAME);
 
         // when
+        linkRepository.add(linkData);
+
+        // then
         LinkData result = jdbcTemplate.queryForObject(
                 "SELECT link, domain_id, data_changes FROM links where link = ?",
                 rowMapper,
@@ -86,7 +74,7 @@ public class JdbcLinkIT {
     @Test
     @Transactional
     @Rollback
-    void addLinkWithNoExistsDomainId_Throws() {
+    void addLinkWithNoExistsDomainId_ThrowsForeignKeyNotExistsException() {
         // given
 
         // then/when
@@ -139,7 +127,7 @@ public class JdbcLinkIT {
         linkRepository.remove(linkId);
 
         // then
-        assertTrue(checkMissingLink(linkData.getLink()));
+        assertTrue(utils.checkMissingDataLink(linkData.getLink()));
     }
 
     @Test
@@ -153,23 +141,12 @@ public class JdbcLinkIT {
         linkRepository.remove(linkData.getLink());
 
         // then
-        assertTrue(checkMissingLink(linkData.getLink()));
-    }
-
-    private boolean checkMissingLink(String link) {
-        Integer result = jdbcTemplate.queryForObject("SELECT count(*) FROM links where link = ?", Integer.class, link);
-        return result == null || result == 0;
-    }
-
-    private boolean checkMissingDomainId(Long domainId) {
-        Integer result = jdbcTemplate.queryForObject("SELECT count(*) FROM domains where id = ?", Integer.class, domainId);
-        return result == null || result == 0;
+        assertTrue(utils.checkMissingDataLink(linkData.getLink()));
     }
 
     @SneakyThrows
     private void addDomainAndLink() {
-        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), DOMAIN);
+        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), utils.DOMAIN_NAME);
         linkRepository.add(linkData);
     }
-
 }

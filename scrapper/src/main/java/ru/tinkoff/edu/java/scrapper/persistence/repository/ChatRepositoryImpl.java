@@ -25,13 +25,12 @@ public class ChatRepositoryImpl implements ChatRepository {
 
     @Override
     public void add(ChatData chatData) throws DuplicateUniqueFieldException, BadEntityException {
+        checkEntity(chatData);
         try {
-            checkEntity(chatData);
             template.update("INSERT INTO chats(id) VALUES (?)", chatData.getId());
         } catch (DuplicateKeyException e) {
             throw new DuplicateUniqueFieldException("Пользователь с таким id уже существует");
         }
-
     }
 
     @Override
