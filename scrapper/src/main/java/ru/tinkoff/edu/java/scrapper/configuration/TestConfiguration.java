@@ -8,7 +8,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.sql.DataSource;
 
 @RequiredArgsConstructor
-public class TransactionTestConfiguration {
+public class TestConfiguration {
     private final DataSource dataSource;
     @Bean
     public PlatformTransactionManager transactionManager() {

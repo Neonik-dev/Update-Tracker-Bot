@@ -1,11 +1,13 @@
 package ru.tinkoff.edu.java.scrapper.persistence.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
 
 import java.util.List;
@@ -16,26 +18,29 @@ public class DomainRepositoryImpl implements DomainRepository {
     private final JdbcTemplate template;
     private final RowMapper<DomainData> rowMapper = new DataClassRowMapper<>(DomainData.class);
 
-    @Override
-    public void add(DomainData domain) {
-        template.update("INSERT INTO domains(name) VALUES (?)", domain.getName());
-        printAll();
+    void checkEntity(DomainData domainData) throws BadEntityException {
+        if (domainData == null || domainData.getName() == null)
+            throw new BadEntityException();
     }
 
-    private void printAll() {
-        findAll().forEach(System.out::println);
+    @Override
+    public void add(DomainData domainData) throws BadEntityException, DuplicateUniqueFieldException {
+        try {
+            checkEntity(domainData);
+            template.update("INSERT INTO domains(name) VALUES (?)", domainData.getName());
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateUniqueFieldException("Имя/id домена уже существует");
+        }
     }
 
     @Override
     public void remove(long id) {
-        template.update("DELETE FROM domain WHERE id=?", id);
-        printAll();
+        template.update("DELETE FROM domains WHERE id=?", id);
     }
 
     @Override
     public void remove(String name) {
-        template.update("DELETE FROM domain WHERE name=?", name);
-        printAll();
+        template.update("DELETE FROM domains WHERE name=?", name);
     }
 
     @Override
