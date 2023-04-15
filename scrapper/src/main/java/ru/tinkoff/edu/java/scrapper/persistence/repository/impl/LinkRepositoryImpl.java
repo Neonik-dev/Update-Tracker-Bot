@@ -17,7 +17,9 @@ import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
 
+import java.time.ZoneOffset;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 @Repository
 @RequiredArgsConstructor
@@ -66,6 +68,30 @@ public class LinkRepositoryImpl implements LinkRepository {
     @Override
     public void remove(String link) {
         template.update("DELETE FROM links WHERE link=?", link);
+    }
+
+    @Override
+    public LinkData getOldestUpdateLink() throws EmptyResultException {
+        try {
+            return template.queryForObject(
+                    "SELECT id, link, domain_id, data_changes, page_updated_date FROM links ORDER BY scheduler_updated_date LIMIT 1",
+                    (rs, rowNum) -> {
+                        LinkData linkDataBD = new LinkData();
+                        linkDataBD.setId(rs.getLong(1));
+                        linkDataBD.setLink(rs.getString(2));
+                        linkDataBD.setDomainId(rs.getLong(3));
+                        linkDataBD.setDataChanges(new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(4)));
+                        linkDataBD.setPageUpdateDate(new Date(rs.getDate(5).getTime()).toInstant().atOffset(ZoneOffset.UTC));
+                        return linkDataBD;
+                    });
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultException("Ещё нет ни одной ссылки");
+        }
+    }
+
+    @Override
+    public void updateUpdatedDateLink(long linkId) {
+        template.update("UPDATE links SET scheduler_updated_date = now() WHERE id = ?", linkId);
     }
 
     public LinkData getByLink(String link) throws EmptyResultException {

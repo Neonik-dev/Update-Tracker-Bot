@@ -14,8 +14,11 @@ public interface LinkRepository {
     void add(LinkData link) throws BadEntityException, ForeignKeyNotExistsException, DuplicateUniqueFieldException;
     void remove(long id);
     void remove(String link);
+    LinkData getOldestUpdateLink() throws EmptyResultException;
+
+    void updateUpdatedDateLink(long linkId);
+
     LinkData getByLink(String link) throws EmptyResultException;
     List<LinkData> findAll();
-
     List<LinkData> getByLinkIds(List<Long> arrChatLink);
 }

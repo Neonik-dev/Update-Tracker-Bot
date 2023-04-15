@@ -11,7 +11,8 @@ public class LinkData {
     @Id
     private long id;
     private String link;
-    private OffsetDateTime updateDate;
+    private OffsetDateTime schedulerUpdateDate;
+    private OffsetDateTime pageUpdateDate;
     private OffsetDateTime userCheckDate;
     private Long domainId;
     private Map<String, String> dataChanges;

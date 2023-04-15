@@ -19,6 +19,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class JdbcLinkService implements LinkService {
         linkData.setDomainId(domainData.getId());
         try {
             linkRepository.add(linkData);
-        } catch (DuplicateUniqueFieldException e) {
+        } catch (DuplicateUniqueFieldException e) { // пустой catch пофиксю/пофикшу. У меня тут баг небольшой имеется
         }
         LinkData result = linkRepository.getByLink(linkData.getLink());
         ChatLinkData chatLinkData = new ChatLinkData();
@@ -61,5 +62,16 @@ public class JdbcLinkService implements LinkService {
         List<ChatLinkData> arrChatLink = chatLinkRepository.findAllByChatId(tgChatId);
         List<Long> linkIds = arrChatLink.stream().map(ChatLinkData::getLinkId).toList();
         return linkRepository.getByLinkIds(linkIds);
+    }
+
+    @Override
+    public Optional<LinkData> getOldestUpdateLink() {
+        try {
+            LinkData linkData = linkRepository.getOldestUpdateLink();
+            linkRepository.updateUpdatedDateLink(linkData.getId());
+            return Optional.of(linkData);
+        } catch (EmptyResultException e) {
+            return Optional.empty();
+        }
     }
 }
