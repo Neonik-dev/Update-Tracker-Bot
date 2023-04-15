@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.repository;
+package ru.tinkoff.edu.java.scrapper.persistence.repository.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;

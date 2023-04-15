@@ -1,10 +1,9 @@
-package ru.tinkoff.edu.java.database;
+package ru.tinkoff.edu.java.database.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 

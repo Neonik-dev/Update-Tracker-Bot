@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.database;
+package ru.tinkoff.edu.java.database.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,14 +12,18 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.LinkRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.impl.LinkRepositoryImpl;
+
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @ContextConfiguration(classes = {LinkRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
-public class JdbcLinkIT extends IntegrationEnvironment{
+public class JdbcLinkIT extends IntegrationEnvironment {
     private final JdbcTemplate jdbcTemplate;
     private final LinkRepositoryImpl linkRepository;
     private final JdbcUtils utils;
@@ -62,13 +66,7 @@ public class JdbcLinkIT extends IntegrationEnvironment{
                 rowMapper,
                 linkData.getLink()
         );
-        assertNotNull(result);
-        assertAll(
-                () -> assertEquals(result.getLink(), linkData.getLink()),
-                () -> assertEquals(result.getDomainId(), linkData.getDomainId()),
-                () -> assertEquals(result.getDataChanges().get("commits"), "15"),
-                () -> assertEquals(result.getDataChanges().get("comments"), "11")
-        );
+        assertResult(result);
     }
 
     @Test
@@ -88,9 +86,12 @@ public class JdbcLinkIT extends IntegrationEnvironment{
     void addExistsLink_ThrowsDuplicateUniqueFieldException() {
         // given
         addDomainAndLink();
-
+        LinkData linkData1 = new LinkData();
+        linkData1.setLink("https");
+        linkData1.setDomainId(2L);
+        linkData1.setDataChanges(Map.of("commits", "15"));
         // then/when
-        assertThrows(DuplicateUniqueFieldException.class, () -> linkRepository.add(linkData));
+        assertThrows(DuplicateUniqueFieldException.class, () -> linkRepository.add(linkData1));
     }
 
     @Test
@@ -142,6 +143,42 @@ public class JdbcLinkIT extends IntegrationEnvironment{
 
         // then
         assertTrue(utils.checkMissingDataLink(linkData.getLink()));
+    }
+
+    @Test
+    @SneakyThrows
+    @Transactional
+    @Rollback
+    void getByExistsName_OK() {
+        // given
+        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), utils.DOMAIN_NAME);
+        linkRepository.add(linkData);
+
+        // when
+        LinkData result = linkRepository.getByLink(linkData.getLink());
+
+        // then
+        assertResult(result);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void getByNotExistsName_OK() {
+        // given
+
+        // when/then
+        assertThrows(EmptyResultException.class, () -> linkRepository.getByLink(linkData.getLink()));
+    }
+
+    void assertResult(LinkData result) {
+        assertNotNull(result);
+        assertAll(
+                () -> assertEquals(result.getLink(), linkData.getLink()),
+                () -> assertEquals(result.getDomainId(), linkData.getDomainId()),
+                () -> assertEquals(result.getDataChanges().get("commits"), "15"),
+                () -> assertEquals(result.getDataChanges().get("comments"), "11")
+        );
     }
 
     @SneakyThrows

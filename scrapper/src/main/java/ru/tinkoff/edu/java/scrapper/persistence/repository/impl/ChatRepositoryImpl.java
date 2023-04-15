@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.repository;
+package ru.tinkoff.edu.java.scrapper.persistence.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatRepository;
 
 import java.util.List;
 

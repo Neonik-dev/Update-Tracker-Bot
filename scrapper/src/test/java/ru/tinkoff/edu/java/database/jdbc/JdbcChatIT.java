@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.database;
+package ru.tinkoff.edu.java.database.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -11,13 +11,14 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.context.ContextConfiguration;
+import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
 import org.junit.jupiter.api.Test;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.ChatRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.impl.ChatRepositoryImpl;
 
 import java.time.LocalDate;
 
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @ContextConfiguration(classes = {ChatRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
-public class JdbcChatIT extends IntegrationEnvironment{
+public class JdbcChatIT extends IntegrationEnvironment {
     private final ChatRepositoryImpl chatRepository;
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<ChatData> rowMapper = new DataClassRowMapper<>(ChatData.class);

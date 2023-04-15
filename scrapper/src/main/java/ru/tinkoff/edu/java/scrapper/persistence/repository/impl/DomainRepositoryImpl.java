@@ -1,14 +1,17 @@
-package ru.tinkoff.edu.java.scrapper.persistence.repository;
+package ru.tinkoff.edu.java.scrapper.persistence.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.DomainRepository;
 
 import java.util.List;
 
@@ -21,6 +24,15 @@ public class DomainRepositoryImpl implements DomainRepository {
     void checkEntity(DomainData domainData) throws BadEntityException {
         if (domainData == null || domainData.getName() == null)
             throw new BadEntityException();
+    }
+
+    @Override
+    public DomainData getByName(String name) throws EmptyResultException {
+        try {
+            return template.queryForObject("SELECT * FROM domains WHERE name=?", rowMapper, name);
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultException("Программа пока не может отслеживать ссылки с доменом " + name);
+        }
     }
 
     @Override

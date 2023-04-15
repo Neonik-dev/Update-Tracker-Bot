@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.database;
+package ru.tinkoff.edu.java.database.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,13 +12,14 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.*;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.ChatLinkRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.impl.ChatLinkRepositoryImpl;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @ContextConfiguration(classes = {ChatLinkRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
-public class JdbcChatLinkIT extends IntegrationEnvironment{
+public class JdbcChatLinkIT extends IntegrationEnvironment {
     private final ChatLinkRepositoryImpl chatLinkRepository;
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<ChatLinkData> rowMapper = new DataClassRowMapper<>(ChatLinkData.class);

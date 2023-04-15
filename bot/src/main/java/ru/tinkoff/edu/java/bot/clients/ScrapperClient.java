@@ -11,7 +11,7 @@ import ru.tinkoff.edu.java.bot.configuration.ScrapperConfiguration;
 public class ScrapperClient {
     private final WebClient webClient;
 
-    public ScrapperClient(ScrapperConfiguration scrapperConfig) {
+    public ScrapperClient() {
         webClient = WebClient.builder().baseUrl(ScrapperConfiguration.getBaseUrl()).build();
     }
 

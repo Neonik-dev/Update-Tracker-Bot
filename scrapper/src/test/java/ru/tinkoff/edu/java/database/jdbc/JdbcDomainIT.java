@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.database;
+package ru.tinkoff.edu.java.database.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -12,11 +12,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.DomainRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.impl.DomainRepositoryImpl;
 
 import java.time.LocalDate;
 
@@ -26,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @ContextConfiguration(classes = {DomainRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
-public class JdbcDomainIT extends IntegrationEnvironment{
+public class JdbcDomainIT extends IntegrationEnvironment {
     private final DomainRepositoryImpl domainRepository;
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<DomainData> rowMapper = new DataClassRowMapper<>(DomainData.class);
@@ -50,11 +52,7 @@ public class JdbcDomainIT extends IntegrationEnvironment{
 
         // then
         DomainData result = jdbcTemplate.queryForObject("SELECT * FROM domains where name = ?", rowMapper, domainData.getName());
-        assertNotNull(result);
-        assertAll(
-                () -> assertEquals(result.getName(), domainData.getName()),
-                () -> assertEquals(result.getCreatedDate(), LocalDate.now())
-        );
+        assertResult(result);
     }
 
     @Test
@@ -131,5 +129,38 @@ public class JdbcDomainIT extends IntegrationEnvironment{
 
         // then
         assertTrue(utils.checkMissingDataDomain(domainData.getName()));
+    }
+
+    @Test
+    @SneakyThrows
+    @Transactional
+    @Rollback
+    void getByExistsName_OK() {
+        // given
+        domainRepository.add(domainData);
+
+        // when
+        DomainData result = domainRepository.getByName(domainData.getName());
+
+        // then
+        assertResult(result);
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void getByNotExistsName_OK() {
+        // given
+
+        // when/then
+        assertThrows(EmptyResultException.class, () -> domainRepository.getByName(domainData.getName()));
+    }
+
+    void assertResult(DomainData result) {
+        assertNotNull(result);
+        assertAll(
+                () -> assertEquals(result.getName(), domainData.getName()),
+                () -> assertEquals(result.getCreatedDate(), LocalDate.now())
+        );
     }
 }

@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.repository;
+package ru.tinkoff.edu.java.scrapper.persistence.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -11,12 +11,13 @@ import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatLinkRepository;
 
 import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class ChatLinkRepositoryImpl implements ChatLinkRepository{
+public class ChatLinkRepositoryImpl implements ChatLinkRepository {
     private final JdbcTemplate template;
     private final RowMapper<ChatLinkData> rowMapper = new DataClassRowMapper<>(ChatLinkData.class);
 
@@ -36,7 +37,7 @@ public class ChatLinkRepositoryImpl implements ChatLinkRepository{
         } catch (DuplicateKeyException e) {
             throw new DuplicateUniqueFieldException("У пользователя уже отслуживается данная ссылка");
         } catch (DataIntegrityViolationException e) {
-            throw new ForeignKeyNotExistsException("Отсутствует внешний ключ");
+            throw new ForeignKeyNotExistsException("Отсутствует внешний ключ chat_id/link_id");
         }
     }
 
@@ -48,5 +49,10 @@ public class ChatLinkRepositoryImpl implements ChatLinkRepository{
     @Override
     public List<ChatLinkData> findAll() {
         return template.query("SELECT * FROM chat_link", rowMapper);
+    }
+
+    @Override
+    public List<ChatLinkData> findAllByChatId(long chatId) {
+        return template.query("SELECT * FROM chat_link WHERE chat_id=?", rowMapper, chatId);
     }
 }
