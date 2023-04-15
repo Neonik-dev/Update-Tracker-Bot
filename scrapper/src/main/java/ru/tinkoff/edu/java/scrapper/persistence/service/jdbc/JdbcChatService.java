@@ -2,6 +2,7 @@ package ru.tinkoff.edu.java.scrapper.persistence.service.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
@@ -13,6 +14,7 @@ import ru.tinkoff.edu.java.scrapper.persistence.service.ChatService;
 public class JdbcChatService implements ChatService {
     private final ChatRepository chatRepository;
     @Override
+    @Transactional
     public void register(Long tgChatId) throws DuplicateUniqueFieldException, BadEntityException {
         ChatData chatData = new ChatData();
         chatData.setId(tgChatId);
@@ -20,6 +22,7 @@ public class JdbcChatService implements ChatService {
     }
 
     @Override
+    @Transactional
     public void unregister(Long tgChatId) {
         chatRepository.remove(tgChatId);
     }

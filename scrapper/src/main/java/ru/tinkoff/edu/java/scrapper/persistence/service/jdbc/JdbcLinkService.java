@@ -51,6 +51,7 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
+    @Transactional
     public LinkData remove(long chatId, URI url) throws EmptyResultException {
         LinkData linkData = linkRepository.getByLink(url.toString());
         chatLinkRepository.remove(chatId, linkData.getId());
@@ -58,6 +59,7 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
+    @Transactional
     public Collection<LinkData> listAll(long tgChatId) {
         List<ChatLinkData> arrChatLink = chatLinkRepository.findAllByChatId(tgChatId);
         List<Long> linkIds = arrChatLink.stream().map(ChatLinkData::getLinkId).toList();
@@ -65,6 +67,7 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
+    @Transactional
     public Optional<LinkData> getOldestUpdateLink() {
         try {
             LinkData linkData = linkRepository.getOldestUpdateLink();
