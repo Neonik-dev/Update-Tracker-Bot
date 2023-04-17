@@ -2,17 +2,12 @@ package ru.tinkoff.edu.java.scrapper.persistence.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.postgresql.util.PGobject;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
@@ -21,6 +16,7 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class LinkRepositoryImpl implements LinkRepository {
@@ -56,23 +52,15 @@ public class LinkRepositoryImpl implements LinkRepository {
     }
 
     @Override
-    @Transactional
-    public void add(LinkData link) throws BadEntityException, ForeignKeyNotExistsException, DuplicateUniqueFieldException {
-        try {
-            checkEntity(link);
-            template.update(
-                    INSERT_QUERY,
-                    link.getLink(),
-                    link.getDomainId(),
-                    new ConvertorFromMapToJson().convertToDatabaseColumn(link.getDataChanges())
-            );
-        }  catch (DuplicateKeyException e) {
-            throw new DuplicateUniqueFieldException("Такой id/link в таблице links уже существует");
-        } catch (DataIntegrityViolationException e) {
-            throw new ForeignKeyNotExistsException(
-                    String.format("Ключ (domain_id)=(%d) отсутствует в таблице \"domains\"", link.getDomainId())
-            );
-        }
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void add(LinkData link) throws BadEntityException {
+        checkEntity(link);
+        template.update(
+                INSERT_QUERY,
+                link.getLink(),
+                link.getDomainId(),
+                new ConvertorFromMapToJson().convertToDatabaseColumn(link.getDataChanges())
+        );
     }
 
     @Override
@@ -90,12 +78,8 @@ public class LinkRepositoryImpl implements LinkRepository {
         template.update(UPDATE_LATEST_SCHEDULER_DATE_QUERY, linkId);
     }
 
-    public LinkData getByLink(String link) throws EmptyResultException {
-        try {
-            return template.queryForObject(SELECT_BY_LINK_QUERY, rowMapper, link);
-        } catch (EmptyResultDataAccessException e) {
-            throw new EmptyResultException(String.format("Ссылка (%s) отсутвствует в базе данных", link));
-        }
+    public LinkData getByLink(String link) {
+        return template.queryForObject(SELECT_BY_LINK_QUERY, rowMapper, link);
     }
 
     @Override
@@ -113,7 +97,7 @@ public class LinkRepositoryImpl implements LinkRepository {
 
     @Override
     public List<LinkData> getByLinkIds(List<Long> arrChatLink) {
-        String inSql = String.join(",", Collections.nCopies(arrChatLink.size(), "?"));
+        String inSql = String.join(",", Collections.nCopies(arrChatLink.size(), "?" ));
         return template.query(
                 String.format(SELECT_BY_MANY_LINK_ID_QUERY, inSql),
                 rowMapper,

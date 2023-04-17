@@ -8,13 +8,10 @@ import ru.tinkoff.edu.java.GeneralParseLink;
 import ru.tinkoff.edu.java.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.clients.TgBotClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
-import ru.tinkoff.edu.java.scrapper.clients.dto.LinkUpdateRequest;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.service.ChatLinkService;
 import ru.tinkoff.edu.java.scrapper.persistence.service.LinkService;
 
-import java.net.URI;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -33,11 +30,11 @@ public class LinkUpdaterScheduler {
             return;
         LinkData clearLinkData = linkData.get();
         BaseParseResponse parseResponse = new GeneralParseLink().main(clearLinkData.getLink());
-        Map<String, String> response = sitesMap.getClient(URI.create(clearLinkData.getLink()).getHost()).getUpdates(parseResponse).getMap();
-        Map<String, String> dataChanges = clearLinkData.getDataChanges();
-        if (!clearLinkData.getPageUpdateDate().toString().equals(response.get("updated_date"))) { // сделать это безопасно
-            botClient.postUpdates(new LinkUpdateRequest(clearLinkData.getId(), URI.create(clearLinkData.getLink()), "Есть обновление", chatLinkService.getAllChat(clearLinkData.getId())));
-        }
+//        Map<String, String> response = sitesMap.getClient(URI.create(clearLinkData.getLink()).getHost()).getUpdates(parseResponse).getMap();
+//        Map<String, String> dataChanges = clearLinkData.getDataChanges();
+//        if (!clearLinkData.getPageUpdateDate().toString().equals(response.get("updated_date"))) { // сделать это безопасно
+//            botClient.postUpdates(new LinkUpdateRequest(clearLinkData.getId(), URI.create(clearLinkData.getLink()), "Есть обновление", chatLinkService.getAllChat(clearLinkData.getId())));
+//        }
         log.info("Updating the link on a schedule id = " + clearLinkData.getId());
     }
 }

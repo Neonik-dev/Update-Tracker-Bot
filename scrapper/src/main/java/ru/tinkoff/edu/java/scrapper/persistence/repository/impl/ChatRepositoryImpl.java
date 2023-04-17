@@ -1,13 +1,11 @@
 package ru.tinkoff.edu.java.scrapper.persistence.repository.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatRepository;
 
@@ -29,13 +27,9 @@ public class ChatRepositoryImpl implements ChatRepository {
     }
 
     @Override
-    public void add(ChatData chatData) throws DuplicateUniqueFieldException, BadEntityException {
+    public void add(ChatData chatData) throws BadEntityException {
         checkEntity(chatData);
-        try {
         template.update(INSERT_QUERY, chatData.getId());
-        } catch (DuplicateKeyException e) {
-            throw new DuplicateUniqueFieldException("Пользователь с таким id уже существует");
-        }
     }
 
     @Override

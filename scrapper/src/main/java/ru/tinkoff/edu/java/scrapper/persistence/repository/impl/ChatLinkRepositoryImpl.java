@@ -1,15 +1,11 @@
 package ru.tinkoff.edu.java.scrapper.persistence.repository.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatLinkRepository;
 
@@ -31,20 +27,11 @@ public class ChatLinkRepositoryImpl implements ChatLinkRepository {
         if (chatLinkData == null || chatLinkData.getChatId() == null || chatLinkData.getLinkId() == null)
             throw new BadEntityException();
     }
+
     @Override
-    public void add(ChatLinkData chatLinkData) throws DuplicateUniqueFieldException, BadEntityException, ForeignKeyNotExistsException {
+    public void add(ChatLinkData chatLinkData) throws BadEntityException {
         checkEntity(chatLinkData);
-        try {
-            template.update(
-                    INSERT_QUERY,
-                    chatLinkData.getChatId(),
-                    chatLinkData.getLinkId()
-            );
-        } catch (DuplicateKeyException e) {
-            throw new DuplicateUniqueFieldException("У пользователя уже отслуживается данная ссылка");
-        } catch (DataIntegrityViolationException e) {
-            throw new ForeignKeyNotExistsException("Отсутствует внешний ключ chat_id/link_id");
-        }
+        template.update(INSERT_QUERY, chatLinkData.getChatId(), chatLinkData.getLinkId());
     }
 
     @Override

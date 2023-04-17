@@ -1,6 +1,10 @@
 package ru.tinkoff.edu.java.scrapper.persistence.service.jdbc;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
@@ -23,12 +27,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class JdbcLinkService implements LinkService {
     private final DomainRepository domainRepository;
     private final ChatLinkRepository chatLinkRepository;
     private final LinkRepository linkRepository;
     private final ChatLinkService chatLinkService;
-    private final Map<String, String> dataChanges = Map.of("commits", "0", "comments", "0");
+    private final Map<String, String> dataChanges = Map.of("commits", "0", "comments", "0" );
 
     @Override
     @Transactional
@@ -36,17 +41,33 @@ public class JdbcLinkService implements LinkService {
         LinkData linkData = new LinkData();
         linkData.setLink(url.toString());
         linkData.setDataChanges(dataChanges);
-        DomainData domainData = domainRepository.getByName(url.getHost());
-        linkData.setDomainId(domainData.getId());
+
+        try {
+            DomainData domainData = domainRepository.getByName(url.getHost());
+            linkData.setDomainId(domainData.getId());
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultException("Программа пока не может отслеживать ссылки с доменом " + url.getHost());
+        }
+
         try {
             linkRepository.add(linkData);
-        } catch (DuplicateUniqueFieldException e) { // пустой catch пофиксю/пофикшу. У меня тут баг небольшой имеется
+        } catch (DuplicateKeyException e) {
+            log.warn(String.format("This (link)=(%s) already exists", linkData.getLink()));
         }
+
         LinkData result = linkRepository.getByLink(linkData.getLink());
         ChatLinkData chatLinkData = new ChatLinkData();
         chatLinkData.setLinkId(result.getId());
         chatLinkData.setChatId(chatId);
-        chatLinkRepository.add(chatLinkData);
+        try {
+            chatLinkRepository.add(chatLinkData);
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateUniqueFieldException("У пользователя уже отслуживается данная ссылка" );
+        } catch (DataIntegrityViolationException e) {
+            throw new ForeignKeyNotExistsException(
+                    String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatLinkData.getChatId())
+            );
+        }
 
         return result;
     }
@@ -54,13 +75,16 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public LinkData remove(long chatId, URI url) throws EmptyResultException {
-        LinkData linkData = linkRepository.getByLink(url.toString());
-        chatLinkRepository.remove(chatId, linkData.getId());
-        return linkData;
+        try {
+            LinkData linkData = linkRepository.getByLink(url.toString());
+            chatLinkRepository.remove(chatId, linkData.getId());
+            return linkData;
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultException(String.format("Ссылка (%s) отсутвствует в базе данных", url));
+        }
     }
 
     @Override
-    @Transactional
     public Collection<LinkData> listAll(long tgChatId) {
         return linkRepository.getByLinkIds(chatLinkService.getAllLink(tgChatId));
     }
