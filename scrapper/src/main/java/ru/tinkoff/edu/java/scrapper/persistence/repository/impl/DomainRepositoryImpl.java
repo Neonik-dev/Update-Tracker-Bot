@@ -18,6 +18,11 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class DomainRepositoryImpl implements DomainRepository {
+    private static final String SELECT_BY_NAME_QUERY = "SELECT * FROM domains WHERE name=?";
+    private static final String INSERT_QUERY = "INSERT INTO domains(name) VALUES (?)";
+    private static final String DELETE_BY_ID_QUERY = "DELETE FROM domains WHERE id=?";
+    private static final String DELETE_BY_NAME_QUERY = "DELETE FROM domains WHERE name=?";
+    private static final String SELECT_ALL_QUERY = "SELECT * FROM domains";
     private final JdbcTemplate template;
     private final RowMapper<DomainData> rowMapper = new DataClassRowMapper<>(DomainData.class);
 
@@ -29,7 +34,7 @@ public class DomainRepositoryImpl implements DomainRepository {
     @Override
     public DomainData getByName(String name) throws EmptyResultException {
         try {
-            return template.queryForObject("SELECT * FROM domains WHERE name=?", rowMapper, name);
+            return template.queryForObject(SELECT_BY_NAME_QUERY, rowMapper, name);
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultException("Программа пока не может отслеживать ссылки с доменом " + name);
         }
@@ -39,7 +44,7 @@ public class DomainRepositoryImpl implements DomainRepository {
     public void add(DomainData domainData) throws BadEntityException, DuplicateUniqueFieldException {
         try {
             checkEntity(domainData);
-            template.update("INSERT INTO domains(name) VALUES (?)", domainData.getName());
+            template.update(INSERT_QUERY, domainData.getName());
         } catch (DuplicateKeyException e) {
             throw new DuplicateUniqueFieldException("Имя/id домена уже существует");
         }
@@ -47,16 +52,16 @@ public class DomainRepositoryImpl implements DomainRepository {
 
     @Override
     public void remove(long id) {
-        template.update("DELETE FROM domains WHERE id=?", id);
+        template.update(DELETE_BY_ID_QUERY, id);
     }
 
     @Override
     public void remove(String name) {
-        template.update("DELETE FROM domains WHERE name=?", name);
+        template.update(DELETE_BY_NAME_QUERY, name);
     }
 
     @Override
     public List<DomainData> findAll() {
-        return template.query("SELECT * FROM domains", rowMapper);
+        return template.query(SELECT_ALL_QUERY, rowMapper);
     }
 }

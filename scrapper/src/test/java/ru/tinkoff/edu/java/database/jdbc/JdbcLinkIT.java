@@ -14,7 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
-import ru.tinkoff.edu.java.scrapper.configuration.TestConfiguration;
+import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
@@ -22,8 +22,6 @@ import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsExc
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.impl.LinkRepositoryImpl;
-
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -86,12 +84,9 @@ public class JdbcLinkIT extends IntegrationEnvironment {
     void addExistsLink_ThrowsDuplicateUniqueFieldException() {
         // given
         addDomainAndLink();
-        LinkData linkData1 = new LinkData();
-        linkData1.setLink("https");
-        linkData1.setDomainId(2L);
-        linkData1.setDataChanges(Map.of("commits", "15"));
+
         // then/when
-        assertThrows(DuplicateUniqueFieldException.class, () -> linkRepository.add(linkData1));
+        assertThrows(DuplicateUniqueFieldException.class, () -> linkRepository.add(linkData));
     }
 
     @Test

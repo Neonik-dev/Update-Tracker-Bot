@@ -19,6 +19,10 @@ public class ChatRepositoryImpl implements ChatRepository {
     private final JdbcTemplate template;
     private final RowMapper<ChatData> rowMapper = new DataClassRowMapper<>(ChatData.class);
 
+    private static final String INSERT_QUERY = "INSERT INTO chats(id) VALUES (?)";
+    private static final String SELECT_ALL_QUERY = "SELECT * FROM chats";
+    private static final String DELETE_BY_ID_QUERY = "DELETE FROM chats WHERE id=?";
+
     void checkEntity(ChatData chatData) throws BadEntityException {
         if (chatData == null || chatData.getId() == null)
             throw new BadEntityException();
@@ -28,7 +32,7 @@ public class ChatRepositoryImpl implements ChatRepository {
     public void add(ChatData chatData) throws DuplicateUniqueFieldException, BadEntityException {
         checkEntity(chatData);
         try {
-            template.update("INSERT INTO chats(id) VALUES (?)", chatData.getId());
+        template.update(INSERT_QUERY, chatData.getId());
         } catch (DuplicateKeyException e) {
             throw new DuplicateUniqueFieldException("Пользователь с таким id уже существует");
         }
@@ -36,11 +40,11 @@ public class ChatRepositoryImpl implements ChatRepository {
 
     @Override
     public List<ChatData> findAll() {
-        return template.query("SELECT * FROM chats", rowMapper);
+        return template.query(SELECT_ALL_QUERY, rowMapper);
     }
 
     @Override
     public void remove(long id) {
-        template.update("DELETE FROM chats WHERE id=?", id);
+        template.update(DELETE_BY_ID_QUERY, id);
     }
 }

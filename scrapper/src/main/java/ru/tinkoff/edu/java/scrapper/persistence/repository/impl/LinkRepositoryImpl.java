@@ -30,9 +30,24 @@ public class LinkRepositoryImpl implements LinkRepository {
         linkDataBD.setId(rs.getLong(1));
         linkDataBD.setLink(rs.getString(2));
         linkDataBD.setDomainId(rs.getLong(3));
-        linkDataBD.setDataChanges(new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(4)));
+        linkDataBD.setDataChanges(
+                new ConvertorFromMapToJson()
+                        .convertToEntityAttribute((PGobject) rs.getObject(4))
+        );
+        linkDataBD.setPageUpdateDate(
+                new Date(rs.getDate(5).getTime()).toInstant().atOffset(ZoneOffset.UTC)
+        );
         return linkDataBD;
     };
+
+    private static final String INSERT_QUERY = "INSERT INTO links(link, domain_id, data_changes) VALUES (?, ?, ?)";
+    private static final String DELETE_BY_ID_QUERY = "DELETE FROM links WHERE id=?";
+    private static final String DELETE_BY_LINK_QUERY = "DELETE FROM links WHERE link=?";
+    private static final String UPDATE_LATEST_SCHEDULER_DATE_QUERY = "UPDATE links SET scheduler_updated_date = now() WHERE id = ?";
+    private static final String SELECT_BY_LINK_QUERY = "SELECT id, link, domain_id, data_changes, page_updated_date FROM links WHERE link=?";
+    private static final String SELECT_ALL_QUERY = "SELECT id, link, domain_id, data_changes, page_updated_date FROM links ORDER BY %s %s %s";
+    private static final String SELECT_BY_MANY_LINK_ID_QUERY = "SELECT id, link, domain_id, data_changes, page_updated_date FROM links WHERE id IN (%s)";
+
 
     void checkEntity(LinkData linkData) throws BadEntityException {
         if (linkData == null || linkData.getLink() == null
@@ -46,7 +61,7 @@ public class LinkRepositoryImpl implements LinkRepository {
         try {
             checkEntity(link);
             template.update(
-                    "INSERT INTO links(link, domain_id, data_changes) VALUES (?, ?, ?)",
+                    INSERT_QUERY,
                     link.getLink(),
                     link.getDomainId(),
                     new ConvertorFromMapToJson().convertToDatabaseColumn(link.getDataChanges())
@@ -62,56 +77,45 @@ public class LinkRepositoryImpl implements LinkRepository {
 
     @Override
     public void remove(long id) {
-        template.update("DELETE FROM links WHERE id=?", id);
+        template.update(DELETE_BY_ID_QUERY, id);
     }
 
     @Override
     public void remove(String link) {
-        template.update("DELETE FROM links WHERE link=?", link);
-    }
-
-    @Override
-    public LinkData getOldestUpdateLink() throws EmptyResultException {
-        try {
-            return template.queryForObject(
-                    "SELECT id, link, domain_id, data_changes, page_updated_date FROM links ORDER BY scheduler_updated_date LIMIT 1",
-                    (rs, rowNum) -> {
-                        LinkData linkDataBD = new LinkData();
-                        linkDataBD.setId(rs.getLong(1));
-                        linkDataBD.setLink(rs.getString(2));
-                        linkDataBD.setDomainId(rs.getLong(3));
-                        linkDataBD.setDataChanges(new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(4)));
-                        linkDataBD.setPageUpdateDate(new Date(rs.getDate(5).getTime()).toInstant().atOffset(ZoneOffset.UTC));
-                        return linkDataBD;
-                    });
-        } catch (EmptyResultDataAccessException e) {
-            throw new EmptyResultException("Ещё нет ни одной ссылки");
-        }
+        template.update(DELETE_BY_LINK_QUERY, link);
     }
 
     @Override
     public void updateUpdatedDateLink(long linkId) {
-        template.update("UPDATE links SET scheduler_updated_date = now() WHERE id = ?", linkId);
+        template.update(UPDATE_LATEST_SCHEDULER_DATE_QUERY, linkId);
     }
 
     public LinkData getByLink(String link) throws EmptyResultException {
         try {
-            return template.queryForObject("SELECT id, link, domain_id, data_changes FROM links WHERE link=?", rowMapper, link);
+            return template.queryForObject(SELECT_BY_LINK_QUERY, rowMapper, link);
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultException(String.format("Ссылка (%s) отсутвствует в базе данных", link));
         }
     }
 
     @Override
-    public List<LinkData> findAll() {
-        return template.query("SELECT * FROM links", rowMapper);
+    public List<LinkData> findAll(String nameField, boolean orderASC, Integer limit) {
+        return template.query(
+                String.format(
+                        SELECT_ALL_QUERY,
+                        nameField.isEmpty() ? "id" : nameField,
+                        orderASC ? "" : "DESC",
+                        limit == null ? "" : String.format("LIMIT %d", limit)
+                ),
+                rowMapper
+        );
     }
 
     @Override
     public List<LinkData> getByLinkIds(List<Long> arrChatLink) {
         String inSql = String.join(",", Collections.nCopies(arrChatLink.size(), "?"));
         return template.query(
-                String.format("SELECT id, link, domain_id, data_changes FROM links WHERE id IN (%s)", inSql),
+                String.format(SELECT_BY_MANY_LINK_ID_QUERY, inSql),
                 rowMapper,
                 arrChatLink.toArray()
         );

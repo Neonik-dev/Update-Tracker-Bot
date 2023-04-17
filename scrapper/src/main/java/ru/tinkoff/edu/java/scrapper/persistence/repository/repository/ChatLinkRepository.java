@@ -13,4 +13,5 @@ public interface ChatLinkRepository {
     void remove(long chatId, long linkId);
     Collection<ChatLinkData> findAll();
     List<ChatLinkData> findAllByChatId(long chatId);
+    List<ChatLinkData> getAllChatByLink(long linkId);
 }

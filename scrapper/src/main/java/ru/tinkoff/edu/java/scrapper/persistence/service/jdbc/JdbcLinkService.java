@@ -13,11 +13,11 @@ import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatLinkRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.DomainRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.persistence.service.ChatLinkService;
 import ru.tinkoff.edu.java.scrapper.persistence.service.LinkService;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,6 +27,7 @@ public class JdbcLinkService implements LinkService {
     private final DomainRepository domainRepository;
     private final ChatLinkRepository chatLinkRepository;
     private final LinkRepository linkRepository;
+    private final ChatLinkService chatLinkService;
     private final Map<String, String> dataChanges = Map.of("commits", "0", "comments", "0");
 
     @Override
@@ -61,20 +62,14 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public Collection<LinkData> listAll(long tgChatId) {
-        List<ChatLinkData> arrChatLink = chatLinkRepository.findAllByChatId(tgChatId);
-        List<Long> linkIds = arrChatLink.stream().map(ChatLinkData::getLinkId).toList();
-        return linkRepository.getByLinkIds(linkIds);
+        return linkRepository.getByLinkIds(chatLinkService.getAllLink(tgChatId));
     }
 
     @Override
     @Transactional
     public Optional<LinkData> getOldestUpdateLink() {
-        try {
-            LinkData linkData = linkRepository.getOldestUpdateLink();
-            linkRepository.updateUpdatedDateLink(linkData.getId());
-            return Optional.of(linkData);
-        } catch (EmptyResultException e) {
-            return Optional.empty();
-        }
+        LinkData linkData = linkRepository.findAll("scheduler_updated_date", false, 1).get(0);
+        linkRepository.updateUpdatedDateLink(linkData.getId());
+        return Optional.of(linkData);
     }
 }

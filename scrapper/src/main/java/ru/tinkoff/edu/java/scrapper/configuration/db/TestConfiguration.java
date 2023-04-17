@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.configuration;
+package ru.tinkoff.edu.java.scrapper.configuration.db;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

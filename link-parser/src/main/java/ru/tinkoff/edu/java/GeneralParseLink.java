@@ -2,17 +2,17 @@ package ru.tinkoff.edu.java;
 
 import ru.tinkoff.edu.java.parsers.ParseChain;
 import ru.tinkoff.edu.java.parsers.Parser;
-import ru.tinkoff.edu.java.responses.BaseResponse;
+import ru.tinkoff.edu.java.responses.BaseParseResponse;
 
 import java.util.Optional;
 
 
-public class App
+public class GeneralParseLink
 {
-    public BaseResponse main(String link)
+    private static final Parser parser = ParseChain.chain();
+    public BaseParseResponse main(String link)
     {
         // Chain of responsibility
-        Parser parser = ParseChain.chain();
         return parser.parseUrl(Optional.ofNullable(link));
     }
 }

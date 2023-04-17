@@ -3,8 +3,8 @@ package ru.tinkoff.edu.java.parsers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import ru.tinkoff.edu.java.App;
-import ru.tinkoff.edu.java.responses.StackOverflowResponse;
+import ru.tinkoff.edu.java.GeneralParseLink;
+import ru.tinkoff.edu.java.responses.StackOverflowParseResponse;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +24,7 @@ public class StackOverFlowTest {
         // given
 
         // when
-        StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
+        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().main(link);
 
         // then
         assertNull(response);
@@ -41,7 +41,7 @@ public class StackOverFlowTest {
         // given
 
         // when
-        StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
+        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().main(link);
 
         // then
         assertEquals(response.questionId(), "68538851");
@@ -53,7 +53,7 @@ public class StackOverFlowTest {
         String link = "https://stackoverflow.com/questions/1";
 
         // when
-        StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
+        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().main(link);
 
         // then
         assertEquals(response.questionId(), "1");
@@ -65,7 +65,7 @@ public class StackOverFlowTest {
         String link = "https://stackoverflow.com/questions/16677777777777777777777777777777777777777777777777777777777";
 
         // when
-        StackOverflowResponse response = (StackOverflowResponse) new App().main(link);
+        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().main(link);
 
         // then
         assertEquals(response.questionId(), "16677777777777777777777777777777777777777777777777777777777");
