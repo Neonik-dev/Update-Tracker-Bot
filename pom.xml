@@ -13,6 +13,7 @@
         <module>bot</module>
         <module>link-parser</module>
         <module>scrapper</module>
+        <module>scrapper-jooq</module>
     </modules>
 
     <properties>

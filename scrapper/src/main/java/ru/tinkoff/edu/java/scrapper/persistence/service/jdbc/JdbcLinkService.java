@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.persistence.service.jdbc;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,29 +18,39 @@ import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatLinkRe
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.DomainRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.service.ChatLinkService;
+import ru.tinkoff.edu.java.scrapper.persistence.service.GenerateUpdatesService;
 import ru.tinkoff.edu.java.scrapper.persistence.service.LinkService;
 
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class JdbcLinkService implements LinkService {
     private final DomainRepository domainRepository;
     private final ChatLinkRepository chatLinkRepository;
     private final LinkRepository linkRepository;
     private final ChatLinkService chatLinkService;
-    private final Map<String, String> dataChanges = Map.of("commits", "0", "comments", "0" );
+    private final GenerateUpdatesService generateUpdatesService;
+
+    JdbcLinkService(DomainRepository domainRepository, ChatLinkRepository chatLinkRepository,
+                    LinkRepository linkRepository, ChatLinkService chatLinkService,
+                    @Lazy GenerateUpdatesService generateUpdatesService) {
+        this.domainRepository = domainRepository;
+        this.chatLinkRepository = chatLinkRepository;
+        this.linkRepository = linkRepository;
+        this.chatLinkService = chatLinkService;
+        this.generateUpdatesService = generateUpdatesService;
+    }
 
     @Override
     @Transactional
     public LinkData add(long chatId, URI url) throws EmptyResultException, ForeignKeyNotExistsException, BadEntityException, DuplicateUniqueFieldException {
         LinkData linkData = new LinkData();
         linkData.setLink(url.toString());
-        linkData.setDataChanges(dataChanges);
 
         try {
             DomainData domainData = domainRepository.getByName(url.getHost());
@@ -49,10 +59,14 @@ public class JdbcLinkService implements LinkService {
             throw new EmptyResultException("Программа пока не может отслеживать ссылки с доменом " + url.getHost());
         }
 
+        Map<String, String> dataChanges = generateUpdatesService.getSiteDataChanges(linkData.getLink());
+        linkData.setPageUpdateDate(OffsetDateTime.parse(dataChanges.get("updated_date")));
+        dataChanges.remove("updated_date");
+        linkData.setDataChanges(dataChanges);
         try {
             linkRepository.add(linkData);
         } catch (DuplicateKeyException e) {
-            log.warn(String.format("This (link)=(%s) already exists", linkData.getLink()));
+            log.warn(String.format("Эта (link)=(%s) уже существует", linkData.getLink()));
         }
 
         LinkData result = linkRepository.getByLink(linkData.getLink());
@@ -90,9 +104,14 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
+    public void updateDataChanges(Map<String, String> dataChanges, Long linkId) {
+        linkRepository.updateDataChangesLink(dataChanges, linkId);
+    }
+
+    @Override
     @Transactional
     public Optional<LinkData> getOldestUpdateLink() {
-        LinkData linkData = linkRepository.findAll("scheduler_updated_date", false, 1).get(0);
+        LinkData linkData = linkRepository.findAll("scheduler_updated_date", true, 1).get(0);
         linkRepository.updateUpdatedDateLink(linkData.getId());
         return Optional.of(linkData);
     }

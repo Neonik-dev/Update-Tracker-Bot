@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.clients.dto;
 
-import java.util.Map;
+import java.time.OffsetDateTime;
 
 public interface BaseSiteResponse {
-    Map<String, String> getMap();
+    OffsetDateTime updatedDate();
 }

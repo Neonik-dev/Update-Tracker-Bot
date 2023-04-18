@@ -12,10 +12,12 @@ import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
 
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,13 +38,14 @@ public class LinkRepositoryImpl implements LinkRepository {
         return linkDataBD;
     };
 
-    private static final String INSERT_QUERY = "INSERT INTO links(link, domain_id, data_changes) VALUES (?, ?, ?)";
+    private static final String INSERT_QUERY = "INSERT INTO links(link, domain_id, page_updated_date, data_changes) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM links WHERE id=?";
     private static final String DELETE_BY_LINK_QUERY = "DELETE FROM links WHERE link=?";
     private static final String UPDATE_LATEST_SCHEDULER_DATE_QUERY = "UPDATE links SET scheduler_updated_date = now() WHERE id = ?";
     private static final String SELECT_BY_LINK_QUERY = "SELECT id, link, domain_id, data_changes, page_updated_date FROM links WHERE link=?";
     private static final String SELECT_ALL_QUERY = "SELECT id, link, domain_id, data_changes, page_updated_date FROM links ORDER BY %s %s %s";
     private static final String SELECT_BY_MANY_LINK_ID_QUERY = "SELECT id, link, domain_id, data_changes, page_updated_date FROM links WHERE id IN (%s)";
+    private static final String UPDATE_DATA_CHANGES_QUERY = "UPDATE links SET data_changes=?, page_updated_date=? where id=?";
 
 
     void checkEntity(LinkData linkData) throws BadEntityException {
@@ -59,6 +62,7 @@ public class LinkRepositoryImpl implements LinkRepository {
                 INSERT_QUERY,
                 link.getLink(),
                 link.getDomainId(),
+                link.getPageUpdateDate(),
                 new ConvertorFromMapToJson().convertToDatabaseColumn(link.getDataChanges())
         );
     }
@@ -76,6 +80,19 @@ public class LinkRepositoryImpl implements LinkRepository {
     @Override
     public void updateUpdatedDateLink(long linkId) {
         template.update(UPDATE_LATEST_SCHEDULER_DATE_QUERY, linkId);
+    }
+
+    @Override
+    public void updateDataChangesLink(Map<String, String> dataChanges, Long linkId) {
+        String dateUpdate = dataChanges.get("updated_date");
+        dataChanges.remove("updated_date");
+        template.update(
+                UPDATE_DATA_CHANGES_QUERY,
+                new ConvertorFromMapToJson().convertToDatabaseColumn(dataChanges),
+                OffsetDateTime.parse(dateUpdate),
+//                new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateUpdate),
+                linkId
+        );
     }
 
     public LinkData getByLink(String link) {

@@ -7,12 +7,16 @@ import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsExc
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 
 import java.util.List;
+import java.util.Map;
 
 public interface LinkRepository {
     void add(LinkData link) throws BadEntityException, ForeignKeyNotExistsException, DuplicateUniqueFieldException;
     void remove(long id);
     void remove(String link);
     void updateUpdatedDateLink(long linkId);
+
+    void updateDataChangesLink(Map<String, String> dataChanges, Long linkId);
+
     LinkData getByLink(String link) throws EmptyResultException;
     List<LinkData> findAll(String nameField, boolean orderASC, Integer limit);
     List<LinkData> getByLinkIds(List<Long> arrChatLink);
