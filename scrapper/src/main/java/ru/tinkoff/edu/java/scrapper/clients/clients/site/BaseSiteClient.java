@@ -6,4 +6,6 @@ import java.util.Map;
 
 public interface BaseSiteClient {
     Map<String, String> getUpdates(BaseParseResponse response);
+
+    String getUpdatedDate(BaseParseResponse response);
 }

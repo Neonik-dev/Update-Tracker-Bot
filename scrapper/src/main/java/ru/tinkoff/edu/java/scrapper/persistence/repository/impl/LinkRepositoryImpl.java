@@ -83,14 +83,11 @@ public class LinkRepositoryImpl implements LinkRepository {
     }
 
     @Override
-    public void updateDataChangesLink(Map<String, String> dataChanges, Long linkId) {
-        String dateUpdate = dataChanges.get("updated_date");
-        dataChanges.remove("updated_date");
+    public void updateDataChangesLink(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId) {
         template.update(
                 UPDATE_DATA_CHANGES_QUERY,
                 new ConvertorFromMapToJson().convertToDatabaseColumn(dataChanges),
-                OffsetDateTime.parse(dateUpdate),
-//                new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(dateUpdate),
+                updatedDate,
                 linkId
         );
     }

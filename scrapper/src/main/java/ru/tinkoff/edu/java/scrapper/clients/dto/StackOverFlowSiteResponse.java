@@ -11,7 +11,6 @@ public record StackOverFlowSiteResponse(
 ) {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public record StackOverFlowDetailsResponse(
-            @JsonProperty("creation_date") OffsetDateTime createAt,
             @JsonProperty("last_edit_date") OffsetDateTime updatedDate,
             @JsonProperty("question_id") long id
     ) implements BaseSiteResponse {

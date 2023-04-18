@@ -13,7 +13,10 @@ public class JooqCodegen {
                 .withProperties(
                         new Property().withKey("rootPath").withValue("migrations"),
                         new Property().withKey("scripts").withValue("master.xml")
-                );
+                )
+                .withIncludes(".*")
+                .withExcludes("")
+                .withInputSchema("public");
 
         Generate options = new Generate()
                 .withGeneratedAnnotation(true)

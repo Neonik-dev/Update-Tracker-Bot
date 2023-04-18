@@ -8,7 +8,6 @@ import java.time.OffsetDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record GitHubSiteResponse(
-        @JsonProperty("id") Long id,
         @JsonProperty("pushed_at") OffsetDateTime updatedDate
 ) implements BaseSiteResponse {
 }
