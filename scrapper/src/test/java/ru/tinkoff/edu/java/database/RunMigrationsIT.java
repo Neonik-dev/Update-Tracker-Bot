@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class RunMigrationsTest extends IntegrationEnvironment {
+public class RunMigrationsIT extends IntegrationEnvironment {
     @Test
     @SneakyThrows
     public void checkUpdatesDB() {
