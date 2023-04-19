@@ -1,5 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.clients.clients.site;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -13,14 +14,13 @@ public class SitesMap {
     private final GitHubClient gitHubClient;
     private final StackOverFlowClient stackOverFlowClient;
 
+    @PostConstruct
     public void initMap() {
         SITES.put("github.com", gitHubClient);
         SITES.put("stackoverflow.com", stackOverFlowClient);
     }
 
     public BaseSiteClient getClient(String domain) {
-        if (SITES.isEmpty())
-            initMap();
         return SITES.get(domain);
     }
 }

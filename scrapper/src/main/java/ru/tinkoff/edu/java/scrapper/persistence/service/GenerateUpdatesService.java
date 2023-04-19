@@ -29,7 +29,7 @@ public class GenerateUpdatesService {
         LinkData clearLinkData = linkData.get();
         BaseSiteClient client = sitesMap.getClient(URI.create(clearLinkData.getLink()).getHost());
 
-        BaseParseResponse parseResponse = new GeneralParseLink().main(clearLinkData.getLink());
+        BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink());
         String updatedDate = client.getUpdatedDate(parseResponse);
         if (clearLinkData.getPageUpdateDate().toString().equals(updatedDate)) // если время обновлений совпадает, то выходим
             return Optional.empty();

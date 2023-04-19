@@ -11,12 +11,7 @@ import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.service.LinkService;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -26,15 +21,7 @@ public class LinkController {
     private final LinkService linkService;
     @GetMapping
     public ListLinksResponse getLinks(@RequestHeader("Tg-Chat-Id") Long tgChatId) {
-        Collection<LinkData> links = linkService.listAll(tgChatId);
-        if (links.isEmpty()) {
-            return new ListLinksResponse(null, 0);
-        }
-        List<LinkResponse> listLinks = links.stream().map(
-                (value) -> (new LinkResponse(value.getId(), value.getLink()))
-        ).collect(Collectors.toList());
-
-        return new ListLinksResponse(listLinks, listLinks.size());
+        return linkService.listAll(tgChatId);
     }
 
     @PostMapping
@@ -42,9 +29,8 @@ public class LinkController {
             @RequestHeader("Tg-Chat-Id") Long tgChatId,
             @RequestBody AddLinkRequest request
     ) throws DuplicateUniqueFieldException, EmptyResultException, ForeignKeyNotExistsException, BadEntityException {
-//        LinkManager.add(request.url());
-        LinkData linkData = linkService.add(tgChatId, request.url());
-        return new LinkResponse(linkData.getId(), linkData.getLink());
+
+        return linkService.add(tgChatId, request.url());
     }
 
     @DeleteMapping
@@ -52,7 +38,7 @@ public class LinkController {
             @RequestHeader("Tg-Chat-Id") Long tgChatId,
             @RequestBody RemoveLinkRequest request
     ) throws EmptyResultException {
-        LinkData linkData = linkService.remove(tgChatId, request.url());
-        return new LinkResponse(tgChatId, linkData.getLink());
+
+        return linkService.remove(tgChatId, request.url());
     }
 }

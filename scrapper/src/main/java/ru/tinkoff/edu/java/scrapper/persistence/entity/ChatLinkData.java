@@ -1,7 +1,9 @@
 package ru.tinkoff.edu.java.scrapper.persistence.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class ChatLinkData {
     private Long chatId;

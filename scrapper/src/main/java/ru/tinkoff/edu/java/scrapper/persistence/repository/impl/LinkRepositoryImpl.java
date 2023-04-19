@@ -23,20 +23,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LinkRepositoryImpl implements LinkRepository {
     private final JdbcTemplate template;
-    private final RowMapper<LinkData> rowMapper = (rs, rowNum) -> {
-        LinkData linkDataBD = new LinkData();
-        linkDataBD.setId(rs.getLong(1));
-        linkDataBD.setLink(rs.getString(2));
-        linkDataBD.setDomainId(rs.getLong(3));
-        linkDataBD.setDataChanges(
-                new ConvertorFromMapToJson()
-                        .convertToEntityAttribute((PGobject) rs.getObject(4))
-        );
-        linkDataBD.setPageUpdateDate(
-                new Date(rs.getDate(5).getTime()).toInstant().atOffset(ZoneOffset.UTC)
-        );
-        return linkDataBD;
-    };
+    private final RowMapper<LinkData> rowMapper = (rs, rowNum) -> LinkData.builder()
+            .id(rs.getLong(1))
+            .link(rs.getString(2))
+            .domainId(rs.getLong(3))
+            .dataChanges(new ConvertorFromMapToJson()
+                                                     .convertToEntityAttribute((PGobject) rs.getObject(4))
+            ).pageUpdateDate(new Date(rs.getDate(5).getTime()).toInstant().atOffset(ZoneOffset.UTC))
+            .build();
 
     private static final String INSERT_QUERY = "INSERT INTO links(link, domain_id, page_updated_date, data_changes) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM links WHERE id=?";

@@ -11,7 +11,8 @@ import ru.tinkoff.edu.java.GeneralParseLink;
 import ru.tinkoff.edu.java.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.BaseSiteClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
+import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
+import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
@@ -26,9 +27,10 @@ import ru.tinkoff.edu.java.scrapper.persistence.service.LinkService;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,9 +44,8 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     @Transactional
-    public LinkData add(long chatId, URI url) throws EmptyResultException, ForeignKeyNotExistsException, BadEntityException, DuplicateUniqueFieldException {
-        LinkData linkData = new LinkData();
-        linkData.setLink(url.toString());
+    public LinkResponse add(long chatId, URI url) {
+        LinkData linkData = LinkData.builder().link(url.toString()).build();
 
         try {
             DomainData domainData = domainRepository.getByName(url.getHost());
@@ -54,7 +55,7 @@ public class JdbcLinkService implements LinkService {
         }
 
         BaseSiteClient client = sitesMap.getClient(URI.create(linkData.getLink()).getHost());
-        BaseParseResponse parseResponse = new GeneralParseLink().main(linkData.getLink());
+        BaseParseResponse parseResponse = new GeneralParseLink().start(linkData.getLink());
         linkData.setPageUpdateDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
         linkData.setDataChanges(client.getUpdates(parseResponse));
 
@@ -65,37 +66,46 @@ public class JdbcLinkService implements LinkService {
         }
 
         LinkData result = linkRepository.getByLink(linkData.getLink());
-        ChatLinkData chatLinkData = new ChatLinkData();
-        chatLinkData.setLinkId(result.getId());
-        chatLinkData.setChatId(chatId);
+        ChatLinkData chatLinkData = ChatLinkData.builder()
+                                                          .chatId(chatId)
+                                                          .linkId(result.getId())
+                                                          .build();
         try {
             chatLinkRepository.add(chatLinkData);
         } catch (DuplicateKeyException e) {
-            throw new DuplicateUniqueFieldException("У пользователя уже отслуживается данная ссылка" );
+            throw new DuplicateUniqueFieldException("У пользователя уже отслуживается данная ссылка");
         } catch (DataIntegrityViolationException e) {
             throw new ForeignKeyNotExistsException(
                     String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatLinkData.getChatId())
             );
         }
 
-        return result;
+        return new LinkResponse(result.getId(), result.getLink());
     }
 
     @Override
     @Transactional
-    public LinkData remove(long chatId, URI url) throws EmptyResultException {
+    public LinkResponse remove(long chatId, URI url) {
         try {
             LinkData linkData = linkRepository.getByLink(url.toString());
             chatLinkRepository.remove(chatId, linkData.getId());
-            return linkData;
+            return new LinkResponse(chatId, linkData.getLink());
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultException(String.format("Ссылка (%s) отсутвствует в базе данных", url));
         }
     }
 
     @Override
-    public Collection<LinkData> listAll(long tgChatId) {
-        return linkRepository.getByLinkIds(chatLinkService.getAllLink(tgChatId));
+    public ListLinksResponse listAll(long tgChatId) {
+        List<LinkData> links = linkRepository.getByLinkIds(chatLinkService.getAllLink(tgChatId));
+        if (links.isEmpty()) {
+            return new ListLinksResponse(null, 0);
+        }
+
+        List<LinkResponse> listLinks = links.stream().map(
+                                                          (value) -> (new LinkResponse(value.getId(), value.getLink()))
+                                                         ).collect(Collectors.toList());
+        return new ListLinksResponse(listLinks, listLinks.size());
     }
 
     @Override

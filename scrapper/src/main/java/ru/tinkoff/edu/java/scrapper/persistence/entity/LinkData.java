@@ -1,11 +1,13 @@
 package ru.tinkoff.edu.java.scrapper.persistence.entity;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
 
+@Builder
 @Data
 public class LinkData {
     @Id
