@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.repository.impl;
+package ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.DataClassRowMapper;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class ChatLinkRepositoryImpl implements ChatLinkRepository {
+public class JdbcChatLinkRepository implements ChatLinkRepository {
     private final JdbcTemplate template;
     private final RowMapper<ChatLinkData> rowMapper = new DataClassRowMapper<>(ChatLinkData.class);
 
@@ -22,11 +22,6 @@ public class ChatLinkRepositoryImpl implements ChatLinkRepository {
     private static final String SELECT_ALL_QUERY = "SELECT * FROM chat_link";
     private static final String SELECT_BY_CHAT_ID = "SELECT * FROM chat_link WHERE chat_id=?";
     private static final String SELECT_BY_LINK_ID = "SELECT * FROM chat_link WHERE link_id=?";
-
-    private void checkEntity(ChatLinkData chatLinkData) throws BadEntityException {
-        if (chatLinkData == null || chatLinkData.getChatId() == null || chatLinkData.getLinkId() == null)
-            throw new BadEntityException();
-    }
 
     @Override
     public void add(ChatLinkData chatLinkData) throws BadEntityException {
@@ -45,7 +40,7 @@ public class ChatLinkRepositoryImpl implements ChatLinkRepository {
     }
 
     @Override
-    public List<ChatLinkData> findAllByChatId(long chatId) {
+    public List<ChatLinkData> getAllByChatId(long chatId) {
         return template.query(SELECT_BY_CHAT_ID, rowMapper, chatId);
     }
 

@@ -1,11 +1,11 @@
 package ru.tinkoff.edu.java.database.jdbc;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,22 +13,20 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
+import ru.tinkoff.edu.java.database.JdbcUtils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.*;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.impl.ChatLinkRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcChatLinkRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {ChatLinkRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
-public class JdbcChatLinkIT extends IntegrationEnvironment {
-    private final ChatLinkRepositoryImpl chatLinkRepository;
+@ContextConfiguration(classes = {JdbcChatLinkRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+public class JdbcChatLinkRepositoryIT extends IntegrationEnvironment {
+    private final JdbcChatLinkRepository chatLinkRepository;
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<ChatLinkData> rowMapper = new DataClassRowMapper<>(ChatLinkData.class);
     private final JdbcUtils utils;
@@ -44,18 +42,18 @@ public class JdbcChatLinkIT extends IntegrationEnvironment {
         linkData = utils.createLinkData();
         linkData.setDomainId(domainData.getId());
 
-        chatLinkData = new ChatLinkData();
-        chatLinkData.setLinkId(linkData.getId());
-        chatLinkData.setChatId(chatData.getId());
+        chatLinkData = ChatLinkData.builder()
+                .linkId(linkData.getId())
+                .chatId(chatData.getId())
+                .build();
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void addUniqueChatLink_OK() {
         // given
-        initEnvironment();
+        utils.initEnvironmentChatLink(domainData, chatData, linkData);
 
         // when
         chatLinkRepository.add(chatLinkData);
@@ -67,35 +65,30 @@ public class JdbcChatLinkIT extends IntegrationEnvironment {
                 chatLinkData.getChatId(),
                 chatLinkData.getLinkId()
         );
-        assertNotNull(result);
-        assertAll(
-                () -> assertEquals(result.getChatId(), chatLinkData.getChatId()),
-                () -> assertEquals(result.getLinkId(), chatLinkData.getLinkId())
-        );
+        utils.assertChatLinkResult(result, chatLinkData);
     }
 
     @Test
     @Transactional
     @Rollback
-    void addChatLinkNotExistsLinkId_ThrowsForeignKeyNotExistsException() {
+    void addChatLinkNotExistsLinkId_ThrowsDataIntegrityViolationException() {
         // given
         jdbcTemplate.update("INSERT INTO chats(id) VALUES (?)", chatData.getId());
 
         // when/then
-        assertThrows(ForeignKeyNotExistsException.class, () -> chatLinkRepository.add(chatLinkData));
+        assertThrows(DataIntegrityViolationException.class, () -> chatLinkRepository.add(chatLinkData));
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
-    void addDuplicateChatLink_ThrowsDuplicateUniqueFieldException() {
+    void addDuplicateChatLink_ThrowsDataIntegrityViolationException() {
         // given
-        initEnvironment();
+        utils.initEnvironmentChatLink(domainData, chatData, linkData);
         chatLinkRepository.add(chatLinkData);
 
         // when/then
-        assertThrows(DuplicateUniqueFieldException.class, () -> chatLinkRepository.add(chatLinkData));
+        assertThrows(DataIntegrityViolationException.class, () -> chatLinkRepository.add(chatLinkData));
     }
 
     @Test
@@ -114,19 +107,18 @@ public class JdbcChatLinkIT extends IntegrationEnvironment {
     @Rollback
     void addEmptyChatLink_ThrowsBadEntityException() {
         // given
-        chatLinkData = new ChatLinkData();
+        chatLinkData = ChatLinkData.builder().build();
 
         // when/then
         assertThrows(BadEntityException.class, () -> chatLinkRepository.add(chatLinkData));
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void removeChatLink_OK() {
         // given
-        initEnvironment();
+        utils.initEnvironmentChatLink(domainData, chatData, linkData);
         chatLinkRepository.add(chatLinkData);
 
         // when
@@ -137,12 +129,11 @@ public class JdbcChatLinkIT extends IntegrationEnvironment {
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void removeNotExistsChatLink_OK() {
         // given
-        initEnvironment();
+        utils.initEnvironmentChatLink(domainData, chatData, linkData);
 
         // when
         chatLinkRepository.remove(chatLinkData.getChatId(), chatLinkData.getLinkId());
@@ -150,18 +141,4 @@ public class JdbcChatLinkIT extends IntegrationEnvironment {
         // then
         assertTrue(utils.checkMissingDataChatLink(chatLinkData.getChatId(), chatLinkData.getLinkId()));
     }
-
-    private void initEnvironment() {
-        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", domainData.getId(), domainData.getName());
-        jdbcTemplate.update("INSERT INTO chats(id) VALUES (?)", chatData.getId());
-        jdbcTemplate.update(
-                "INSERT INTO links(id, link, domain_id, data_changes) VALUES (?, ?, ?, ?)",
-                linkData.getId(),
-                linkData.getLink(),
-                linkData.getDomainId(),
-                new ConvertorFromMapToJson().convertToDatabaseColumn(linkData.getDataChanges())
-        );
-    }
-
-
 }

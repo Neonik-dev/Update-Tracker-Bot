@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.service.jdbc;
+package ru.tinkoff.edu.java.scrapper.persistence.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,11 +10,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class JdbcChatLinkService implements ChatLinkService {
+public class ChatLinkServiceImpl implements ChatLinkService {
     private final ChatLinkRepository chatLinkRepository;
     @Override
     public List<Long> getAllLink(long chatId) {
-        List<ChatLinkData> arrChatLink = chatLinkRepository.findAllByChatId(chatId);
+        List<ChatLinkData> arrChatLink = chatLinkRepository.getAllByChatId(chatId);
         return arrChatLink.stream().map(ChatLinkData::getLinkId).toList();
     }
 

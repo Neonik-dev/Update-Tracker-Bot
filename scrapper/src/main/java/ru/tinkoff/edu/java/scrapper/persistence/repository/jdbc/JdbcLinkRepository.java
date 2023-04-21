@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.repository.impl;
+package ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.postgresql.util.PGobject;
@@ -7,9 +7,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
 
 import java.time.OffsetDateTime;
@@ -21,14 +19,15 @@ import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
-public class LinkRepositoryImpl implements LinkRepository {
+public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate template;
+    private static final ConvertorFromMapToJson CONVERTOR = new ConvertorFromMapToJson();
     private final RowMapper<LinkData> rowMapper = (rs, rowNum) -> LinkData.builder()
             .id(rs.getLong(1))
             .link(rs.getString(2))
             .domainId(rs.getLong(3))
-            .dataChanges(new ConvertorFromMapToJson()
-                                                     .convertToEntityAttribute((PGobject) rs.getObject(4))
+            .dataChanges(CONVERTOR
+                    .convertToEntityAttribute((PGobject) rs.getObject(4))
             ).pageUpdateDate(new Date(rs.getDate(5).getTime()).toInstant().atOffset(ZoneOffset.UTC))
             .build();
 
@@ -41,23 +40,16 @@ public class LinkRepositoryImpl implements LinkRepository {
     private static final String SELECT_BY_MANY_LINK_ID_QUERY = "SELECT id, link, domain_id, data_changes, page_updated_date FROM links WHERE id IN (%s)";
     private static final String UPDATE_DATA_CHANGES_QUERY = "UPDATE links SET data_changes=?, page_updated_date=? where id=?";
 
-
-    void checkEntity(LinkData linkData) throws BadEntityException {
-        if (linkData == null || linkData.getLink() == null
-                || linkData.getDataChanges() == null || linkData.getDomainId() == null)
-            throw new BadEntityException();
-    }
-
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void add(LinkData link) throws BadEntityException {
-        checkEntity(link);
+    public void add(LinkData linkData) {
+        checkEntity(linkData);
         template.update(
                 INSERT_QUERY,
-                link.getLink(),
-                link.getDomainId(),
-                link.getPageUpdateDate(),
-                new ConvertorFromMapToJson().convertToDatabaseColumn(link.getDataChanges())
+                linkData.getLink(),
+                linkData.getDomainId(),
+                linkData.getPageUpdateDate(),
+                CONVERTOR.convertToDatabaseColumn(linkData.getDataChanges())
         );
     }
 
@@ -80,7 +72,7 @@ public class LinkRepositoryImpl implements LinkRepository {
     public void updateDataChangesLink(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId) {
         template.update(
                 UPDATE_DATA_CHANGES_QUERY,
-                new ConvertorFromMapToJson().convertToDatabaseColumn(dataChanges),
+                CONVERTOR.convertToDatabaseColumn(dataChanges),
                 updatedDate,
                 linkId
         );

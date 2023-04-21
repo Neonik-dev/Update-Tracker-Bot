@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,26 +15,22 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
+import ru.tinkoff.edu.java.database.JdbcUtils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.impl.DomainRepositoryImpl;
-
-import java.time.LocalDate;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcDomainRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {DomainRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
-public class JdbcDomainIT extends IntegrationEnvironment {
-    private final DomainRepositoryImpl domainRepository;
+@ContextConfiguration(classes = {JdbcDomainRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+public class JdbcDomainRepositoryIT extends IntegrationEnvironment {
+    private final JdbcDomainRepository domainRepository;
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<DomainData> rowMapper = new DataClassRowMapper<>(DomainData.class);
     private final JdbcUtils utils;
+    private final RowMapper<DomainData> rowMapper = new DataClassRowMapper<>(DomainData.class);
     private DomainData domainData;
 
     @BeforeEach
@@ -52,29 +50,18 @@ public class JdbcDomainIT extends IntegrationEnvironment {
 
         // then
         DomainData result = jdbcTemplate.queryForObject("SELECT * FROM domains where name = ?", rowMapper, domainData.getName());
-        assertResult(result);
+        utils.assertDomainResult(result, domainData);
     }
 
     @Test
     @Transactional
     @Rollback
-    void addExistsDomainName_ThrowsDuplicateUniqueFieldException() {
+    void addExistsDomainName_ThrowsDuplicateKeyException() {
         // given
         jdbcTemplate.update("INSERT INTO domains(name) VALUES (?)", domainData.getName());
 
         // when/then
-        assertThrows(DuplicateUniqueFieldException.class, () -> domainRepository.add(domainData));
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    void addExistsDomainId_ThrowsDuplicateUniqueFieldException() {
-        // given
-        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", domainData.getId(), domainData.getName());
-
-        // when/then
-        assertThrows(DuplicateUniqueFieldException.class, () -> domainRepository.add(domainData));
+        assertThrows(DuplicateKeyException.class, () -> domainRepository.add(domainData));
     }
 
     @Test
@@ -143,24 +130,16 @@ public class JdbcDomainIT extends IntegrationEnvironment {
         DomainData result = domainRepository.getByName(domainData.getName());
 
         // then
-        assertResult(result);
+        utils.assertDomainResult(result, domainData);
     }
 
     @Test
     @Transactional
     @Rollback
-    void getByNotExistsName_OK() {
+    void getByNotExistsName_ThrowsEmptyResultDataAccessException() {
         // given
 
         // when/then
-        assertThrows(EmptyResultException.class, () -> domainRepository.getByName(domainData.getName()));
-    }
-
-    void assertResult(DomainData result) {
-        assertNotNull(result);
-        assertAll(
-                () -> assertEquals(result.getName(), domainData.getName()),
-                () -> assertEquals(result.getCreatedDate(), LocalDate.now())
-        );
+        assertThrows(EmptyResultDataAccessException.class, () -> domainRepository.getByName(domainData.getName()));
     }
 }

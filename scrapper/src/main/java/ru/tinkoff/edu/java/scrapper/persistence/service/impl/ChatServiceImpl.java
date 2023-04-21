@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.service.jdbc;
+package ru.tinkoff.edu.java.scrapper.persistence.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
@@ -10,7 +10,7 @@ import ru.tinkoff.edu.java.scrapper.persistence.service.ChatService;
 
 @Service
 @RequiredArgsConstructor
-public class JdbcChatService implements ChatService {
+public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     @Override
     public void register(Long tgChatId) {

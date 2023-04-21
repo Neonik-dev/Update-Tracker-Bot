@@ -1,45 +1,42 @@
 package ru.tinkoff.edu.java.database.jdbc;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
+import ru.tinkoff.edu.java.database.JdbcUtils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ConvertorFromMapToJson;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.impl.LinkRepositoryImpl;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcLinkRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {LinkRepositoryImpl.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
-public class JdbcLinkIT extends IntegrationEnvironment {
+@ContextConfiguration(classes = {JdbcLinkRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+public class JdbcLinkRepositoryIT extends IntegrationEnvironment {
     private final JdbcTemplate jdbcTemplate;
-    private final LinkRepositoryImpl linkRepository;
+    private final JdbcLinkRepository linkRepository;
     private final JdbcUtils utils;
-    private final RowMapper<LinkData> rowMapper = (rs, rowNum) -> {
-        LinkData linkDataBD = new LinkData();
-        linkDataBD.setLink(rs.getString(1));
-        linkDataBD.setDomainId(rs.getLong(2));
-        linkDataBD.setDataChanges(new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(3)));
-        return linkDataBD;
-    };
+    private final RowMapper<LinkData> rowMapper = (rs, rowNum) -> LinkData.builder()
+            .link(rs.getString(1))
+            .domainId(rs.getLong(2))
+            .dataChanges(new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(3)))
+            .build();
     private LinkData linkData;
 
     @BeforeEach
@@ -48,7 +45,6 @@ public class JdbcLinkIT extends IntegrationEnvironment {
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void addLinkWithExistsDomainId_OK() {
@@ -64,29 +60,28 @@ public class JdbcLinkIT extends IntegrationEnvironment {
                 rowMapper,
                 linkData.getLink()
         );
-        assertResult(result);
+        utils.assertLinkResult(result, linkData);
     }
 
     @Test
     @Transactional
     @Rollback
-    void addLinkWithNoExistsDomainId_ThrowsForeignKeyNotExistsException() {
+    void addLinkWithNoExistsDomainId_ThrowsDataIntegrityViolationException() {
         // given
 
         // then/when
-        assertThrows(ForeignKeyNotExistsException.class, () -> linkRepository.add(linkData));
+        assertThrows(DataIntegrityViolationException.class, () -> linkRepository.add(linkData));
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
-    void addExistsLink_ThrowsDuplicateUniqueFieldException() {
+    void addExistsLink_ThrowsDataIntegrityViolationException() {
         // given
         addDomainAndLink();
 
         // then/when
-        assertThrows(DuplicateUniqueFieldException.class, () -> linkRepository.add(linkData));
+        assertThrows(DataIntegrityViolationException.class, () -> linkRepository.add(linkData));
     }
 
     @Test
@@ -105,7 +100,7 @@ public class JdbcLinkIT extends IntegrationEnvironment {
     @Rollback
     void addEmptyLinkData_ThrowsBadEntityException() {
         // given
-        linkData = new LinkData();
+        linkData = LinkData.builder().build();
 
         // then/when
         assertThrows(BadEntityException.class, () -> linkRepository.add(linkData));
@@ -141,13 +136,11 @@ public class JdbcLinkIT extends IntegrationEnvironment {
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void getByExistsName_OK() {
         // given
-        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), utils.DOMAIN_NAME);
-        linkRepository.add(linkData);
+        addDomainAndLink();
 
         // when
         LinkData result = linkRepository.getByLink(linkData.getLink());
@@ -159,11 +152,11 @@ public class JdbcLinkIT extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void getByNotExistsName_OK() {
+    void getByNotExistsName_ThrowsEmptyResultDataAccessException() {
         // given
 
         // when/then
-        assertThrows(EmptyResultException.class, () -> linkRepository.getByLink(linkData.getLink()));
+        assertThrows(EmptyResultDataAccessException.class, () -> linkRepository.getByLink(linkData.getLink()));
     }
 
     void assertResult(LinkData result) {
@@ -176,7 +169,6 @@ public class JdbcLinkIT extends IntegrationEnvironment {
         );
     }
 
-    @SneakyThrows
     private void addDomainAndLink() {
         jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), utils.DOMAIN_NAME);
         linkRepository.add(linkData);

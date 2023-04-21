@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.service.jdbc;
+package ru.tinkoff.edu.java.scrapper.persistence.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class JdbcLinkService implements LinkService {
+public class LinkServiceImpl implements LinkService {
     private final DomainRepository domainRepository;
     private final ChatLinkRepository chatLinkRepository;
     private final LinkRepository linkRepository;

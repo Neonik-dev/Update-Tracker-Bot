@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.persistence.entity;
+package ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
