@@ -2,13 +2,11 @@ package ru.tinkoff.edu.java.scrapper.persistence.service.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.service.ChatService;
 
-@Service
 @RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;

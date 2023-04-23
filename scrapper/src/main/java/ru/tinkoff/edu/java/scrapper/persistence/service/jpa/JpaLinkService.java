@@ -1,11 +1,9 @@
 package ru.tinkoff.edu.java.scrapper.persistence.service.jpa;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.GeneralParseLink;
 import ru.tinkoff.edu.java.responses.BaseParseResponse;
@@ -29,8 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Primary
-@Service
 @RequiredArgsConstructor
 public class JpaLinkService implements LinkService {
     private final JpaLinkRepository linkRepository;
@@ -100,7 +96,7 @@ public class JpaLinkService implements LinkService {
     @Transactional
     public void updateDataChanges(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId) {
         Links link = linkRepository.findById(linkId).orElseThrow(
-                () -> new EmptyResultException(String.format("Ссылки с таким (link_id)=() не существует", linkId)));
+                () -> new EmptyResultException(String.format("Ссылки с таким (link_id)=(%s) не существует", linkId)));
         link.setDataChanges(dataChanges);
         link.setPageUpdatedDate(updatedDate);
         linkRepository.save(link);
@@ -110,12 +106,10 @@ public class JpaLinkService implements LinkService {
 //    @Transactional(readOnly = true)
     @Transactional
     public Optional<Links> getOldestUpdateLink() {
-        int i = 1;
         Page<Links> page = linkRepository.findAll(
                 PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "schedulerUpdateDate"))
         );
         Links link = page.getContent().get(0);
-        System.out.println(link);
         link.setSchedulerUpdateDate(OffsetDateTime.now());
         linkRepository.save(link);
 

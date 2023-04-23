@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.postgresql.util.PGobject;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
@@ -17,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-@Repository
 @RequiredArgsConstructor
 public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate template;

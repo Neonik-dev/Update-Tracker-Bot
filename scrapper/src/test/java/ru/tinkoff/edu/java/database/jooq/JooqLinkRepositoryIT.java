@@ -49,7 +49,6 @@ public class JooqLinkRepositoryIT extends IntegrationEnvironment {
         linkRepository.add(linkData);
 
         // then
-        System.out.println(linkData.getDataChanges().toString());
         LinkData result = dsl.select(LINKS.LINK, LINKS.DOMAIN_ID, LINKS.DATA_CHANGES)
                 .from(LINKS)
                 .where(LINKS.LINK.eq(linkData.getLink()))

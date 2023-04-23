@@ -8,7 +8,6 @@ import ru.tinkoff.edu.java.scrapper.clients.clients.site.BaseSiteClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
 import ru.tinkoff.edu.java.scrapper.clients.dto.LinkUpdateRequest;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.jpa.Links;
-import ru.tinkoff.edu.java.scrapper.persistence.service.jpa.JpaLinkService;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -19,8 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class GenerateUpdatesService {
-//    private final LinkService linkService;
-    private final JpaLinkService linkService;
+    private final LinkService linkService;
     private final ChatLinkService chatLinkService;
     private final SitesMap sitesMap;
 

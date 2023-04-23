@@ -2,9 +2,7 @@ package ru.tinkoff.edu.java.scrapper.persistence.repository.jooq;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.stereotype.Repository;
 
 import static ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Domains.DOMAINS;
 
@@ -13,8 +11,6 @@ import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.DomainRepo
 
 import java.util.List;
 
-@Primary
-@Repository
 @RequiredArgsConstructor
 public class JooqDomainRepository implements DomainRepository {
     private final DSLContext dsl;
