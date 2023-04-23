@@ -30,7 +30,6 @@ public class JdbcLinkRepository implements LinkRepository {
                     .convertToEntityAttribute((PGobject) rs.getObject(4))
             ).pageUpdateDate(new Date(rs.getDate(5).getTime()).toInstant().atOffset(ZoneOffset.UTC))
             .build();
-
     private static final String INSERT_QUERY = "INSERT INTO links(link, domain_id, page_updated_date, data_changes) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM links WHERE id=?";
     private static final String DELETE_BY_LINK_QUERY = "DELETE FROM links WHERE link=?";
