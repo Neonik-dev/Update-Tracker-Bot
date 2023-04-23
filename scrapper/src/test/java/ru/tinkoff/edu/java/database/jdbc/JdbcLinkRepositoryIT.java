@@ -19,7 +19,7 @@ import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.ConvertorFromMapToJson;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcLinkRepository;
 
 import static org.junit.jupiter.api.Assertions.*;

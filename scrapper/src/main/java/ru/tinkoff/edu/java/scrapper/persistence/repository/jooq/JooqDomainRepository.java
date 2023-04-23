@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import static ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Domains.DOMAINS;
 
-import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.DomainRepository;
 
 import java.util.List;

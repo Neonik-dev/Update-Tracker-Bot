@@ -14,7 +14,7 @@ import ru.tinkoff.edu.java.database.JdbcUtils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jooq.ConverterJson;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jooq.JooqDomainRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jooq.JooqLinkRepository;

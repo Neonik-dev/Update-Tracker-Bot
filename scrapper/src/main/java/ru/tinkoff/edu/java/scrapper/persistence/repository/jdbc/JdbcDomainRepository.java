@@ -5,7 +5,7 @@ import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.DomainRepository;
 
 import java.util.List;

@@ -6,7 +6,7 @@ import org.jooq.Record;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
 
 import static ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Links.LINKS;
@@ -90,7 +90,7 @@ public class JooqLinkRepository implements LinkRepository {
 
         if (limit != null)
             query.addLimit(limit);
-        return query.fetch().into(LinkData.class);
+        return query.fetch().map(record -> new RecordLinkMapper().map(record));
     }
 
     @Override

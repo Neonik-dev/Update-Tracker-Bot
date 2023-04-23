@@ -3,10 +3,10 @@ package ru.tinkoff.edu.java.database;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatLinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.ConvertorFromMapToJson;
 
 import java.time.LocalDate;

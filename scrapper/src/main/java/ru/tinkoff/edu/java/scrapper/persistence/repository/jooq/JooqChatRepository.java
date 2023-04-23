@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatRepository;
 
 import java.util.List;

@@ -1,8 +1,8 @@
-package ru.tinkoff.edu.java.scrapper.persistence.service.impl;
+package ru.tinkoff.edu.java.scrapper.persistence.service.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatLinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatLinkRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.service.ChatLinkService;
 

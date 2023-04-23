@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatLinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatLinkRepository;
 
 import java.util.Collection;

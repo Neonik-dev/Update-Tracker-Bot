@@ -17,7 +17,10 @@ import ru.tinkoff.edu.java.database.JdbcUtils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.*;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatLinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcChatLinkRepository;
 
 import static org.junit.jupiter.api.Assertions.*;

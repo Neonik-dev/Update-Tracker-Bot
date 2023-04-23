@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.persistence.repository.repository;
 
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
 
 import java.time.OffsetDateTime;
 import java.util.List;

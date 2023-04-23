@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.persistence.repository.repository;
 
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatData;
 
 import java.util.List;
 

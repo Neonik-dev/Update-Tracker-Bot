@@ -2,7 +2,7 @@ package ru.tinkoff.edu.java.scrapper.persistence.repository.jooq;
 
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Record;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
 
 import java.time.ZoneOffset;
 

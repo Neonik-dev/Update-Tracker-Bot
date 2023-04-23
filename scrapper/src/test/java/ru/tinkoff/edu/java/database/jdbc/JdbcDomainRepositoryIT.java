@@ -18,7 +18,7 @@ import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.database.JdbcUtils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcDomainRepository;
 
 import static org.junit.jupiter.api.Assertions.*;

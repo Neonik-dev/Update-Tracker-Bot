@@ -7,7 +7,8 @@ import ru.tinkoff.edu.java.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.BaseSiteClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
 import ru.tinkoff.edu.java.scrapper.clients.dto.LinkUpdateRequest;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.jpa.Links;
+import ru.tinkoff.edu.java.scrapper.persistence.service.jpa.JpaLinkService;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -18,20 +19,23 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class GenerateUpdatesService {
-    private final LinkService linkService;
+//    private final LinkService linkService;
+    private final JpaLinkService linkService;
     private final ChatLinkService chatLinkService;
     private final SitesMap sitesMap;
 
     public Optional<LinkUpdateRequest> getUpdates() {
-        Optional<LinkData> linkData = linkService.getOldestUpdateLink();
+//        Optional<LinkData> linkData = linkService.getOldestUpdateLink();
+        Optional<Links> linkData = linkService.getOldestUpdateLink();
         if (linkData.isEmpty()) // если нет ни одной ссылки в бд
             return Optional.empty();
-        LinkData clearLinkData = linkData.get();
+//        LinkData clearLinkData = linkData.get();
+        Links clearLinkData = linkData.get();
         BaseSiteClient client = sitesMap.getClient(URI.create(clearLinkData.getLink()).getHost());
 
         BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink());
         String updatedDate = client.getUpdatedDate(parseResponse);
-        if (clearLinkData.getPageUpdateDate().toString().equals(updatedDate)) // если время обновлений совпадает, то выходим
+        if (clearLinkData.getPageUpdatedDate().toString().equals(updatedDate)) // если время обновлений совпадает, то выходим
             return Optional.empty();
 
         Map<String, String> responseDataChanges = client.getUpdates(parseResponse); // Обновленные данный из апи
