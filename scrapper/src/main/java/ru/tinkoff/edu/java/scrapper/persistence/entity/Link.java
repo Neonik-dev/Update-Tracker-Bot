@@ -1,7 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -61,5 +60,13 @@ public class Link {
         this.userCheckDate = userCheckDate;
         this.domain = new Domain(domainId, null, null);
         this.dataChanges = dataChanges;
+    }
+
+    public void setDomain(Domain domain) {
+        this.domain = domain;
+    }
+
+    public void setDomain(Long domainId) {
+        this.domain = new Domain(domainId, null, null);
     }
 }

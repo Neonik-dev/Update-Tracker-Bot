@@ -9,10 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
 
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +24,7 @@ public class JdbcLinkRepository implements LinkRepository {
             rs.getLong(1),
             rs.getString(2),
             null,
-            new Date(rs.getDate(3).getTime()).toInstant().atOffset(ZoneOffset.UTC),
+            new Timestamp(rs.getTimestamp(3).getTime()).toLocalDateTime().atOffset(ZoneOffset.UTC),
             null,
             rs.getLong(4),
             CONVERTOR.convertToEntityAttribute((PGobject) rs.getObject(5))

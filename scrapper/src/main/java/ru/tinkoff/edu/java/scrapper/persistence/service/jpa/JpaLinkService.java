@@ -98,7 +98,6 @@ public class JpaLinkService implements LinkService {
                 () -> new EmptyResultException(String.format("Ссылки с таким (link_id)=(%s) не существует", linkId)));
         link.setDataChanges(dataChanges);
         link.setPageUpdatedDate(updatedDate);
-        System.out.println(updatedDate);
         linkRepository.save(link);
     }
 

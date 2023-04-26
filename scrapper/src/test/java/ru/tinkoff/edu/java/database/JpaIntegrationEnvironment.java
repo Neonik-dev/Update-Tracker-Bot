@@ -11,7 +11,6 @@ import ru.tinkoff.edu.java.scrapper.configuration.ApplicationConfig;
 public class JpaIntegrationEnvironment {
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
-        System.out.println("Хотя бы сюдааа");
         registry.add("app.database-access-type", () -> ApplicationConfig.AccessType.JPA);
     }
 }

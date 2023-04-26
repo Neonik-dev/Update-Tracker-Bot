@@ -28,7 +28,6 @@ public class JdbcAccessConfiguration {
     private final JdbcTemplate jdbcTemplate;
     @Bean
     public ChatLinkRepository chatLinkRepository() {
-        System.out.println("Зашли");
         return new JdbcChatLinkRepository(jdbcTemplate);
     }
 
