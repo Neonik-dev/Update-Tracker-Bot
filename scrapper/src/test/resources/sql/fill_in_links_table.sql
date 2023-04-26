@@ -1,4 +1,3 @@
-insert into domains(id, name) values(11, 'nonamedomain.org');
 insert into links(link, scheduler_updated_date, domain_id, data_changes)
 VALUES
         ('https://nonamedomain.org/1', '2023-04-25 09:27:20.714785', 11, '{}'),

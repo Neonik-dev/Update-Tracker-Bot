@@ -12,6 +12,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.database.utils.Utils;
 import ru.tinkoff.edu.java.scrapper.ScrapperApplication;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
@@ -37,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = ScrapperApplication.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @ContextConfiguration(classes = {Utils.class, DBConfiguration.class})
-public class JpaLinkServiceIT {
+@Sql("/sql/fill_base_domains.sql")
+public class JpaLinkServiceIT extends IntegrationEnvironment {
     private final JpaChatService chatService;
     private final JpaLinkService linkService;
     private final JpaLinkRepository linkRepository;
@@ -116,7 +118,7 @@ public class JpaLinkServiceIT {
     @Test
     @Transactional
     @Rollback
-    @Sql("/sql/fill_in links_table.sql")
+    @Sql("/sql/fill_base_domains.sql")
     void getOldestUpdateLink_OK() {
         // given
 
@@ -134,7 +136,6 @@ public class JpaLinkServiceIT {
     @Test
     @Transactional
     @Rollback
-    @Sql("/sql/fill_base_domains.sql")
     void updateDataChanges_OK() {
         // given
         linkData.setPageUpdatedDate(OffsetDateTime.of(2023, 1,1, 1, 1, 1, 1, ZoneOffset.UTC));
