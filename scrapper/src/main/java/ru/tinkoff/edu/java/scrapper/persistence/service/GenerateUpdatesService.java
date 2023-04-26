@@ -32,7 +32,7 @@ public class GenerateUpdatesService {
 
         URI uriLink = URI.create(clearLinkData.getLink());
         BaseSiteClient client = sitesMap.getClient(uriLink.getHost());
-        BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink()); // прасим ссылку и получаем необходимые поля
+        BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink()); // парсим ссылку и получаем необходимые поля
 
         String updatedDate = client.getUpdatedDate(parseResponse);
         String dbUpdatedDate = clearLinkData.getPageUpdatedDate().toString();
