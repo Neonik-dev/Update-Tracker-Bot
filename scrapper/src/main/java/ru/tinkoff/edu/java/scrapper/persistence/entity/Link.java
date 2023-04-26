@@ -2,7 +2,9 @@ package ru.tinkoff.edu.java.scrapper.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.ColumnTransformer;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -16,7 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "links")
-@Data
+@Getter
+@Setter
 public class Link {
     @Id
     @SequenceGenerator(name="link_id_seq", allocationSize=1)

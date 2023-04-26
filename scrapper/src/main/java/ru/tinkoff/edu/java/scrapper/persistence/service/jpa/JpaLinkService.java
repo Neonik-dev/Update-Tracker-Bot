@@ -78,7 +78,7 @@ public class JpaLinkService implements LinkService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ListLinksResponse listAll(long tgChatId) {
         List<Link> links = linkRepository.findAllById(chatLinkRepository.findAllByChatId(tgChatId));
         if (links.isEmpty()) {
@@ -92,18 +92,17 @@ public class JpaLinkService implements LinkService {
     }
 
     @Override
-//    @Transactional(readOnly = true)
     @Transactional
     public void updateDataChanges(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId) {
         Link link = linkRepository.findById(linkId).orElseThrow(
                 () -> new EmptyResultException(String.format("Ссылки с таким (link_id)=(%s) не существует", linkId)));
         link.setDataChanges(dataChanges);
         link.setPageUpdatedDate(updatedDate);
+        System.out.println(updatedDate);
         linkRepository.save(link);
     }
 
     @Override
-//    @Transactional(readOnly = true)
     @Transactional
     public Optional<Link> getOldestUpdateLink() {
         Page<Link> page = linkRepository.findAll(
