@@ -23,11 +23,9 @@ public class GenerateUpdatesService {
     private final SitesMap sitesMap;
 
     public Optional<LinkUpdateRequest> getUpdates() {
-//        Optional<Link> linkData = linkService.getOldestUpdateLink();
         Optional<Link> linkData = linkService.getOldestUpdateLink();
         if (linkData.isEmpty()) // если нет ни одной ссылки в бд
             return Optional.empty();
-//        Link clearLinkData = linkData.get();
         Link clearLinkData = linkData.get();
         BaseSiteClient client = sitesMap.getClient(URI.create(clearLinkData.getLink()).getHost());
 

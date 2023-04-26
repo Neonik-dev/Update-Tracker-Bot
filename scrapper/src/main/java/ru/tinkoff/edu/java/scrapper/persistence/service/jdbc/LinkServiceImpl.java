@@ -115,9 +115,8 @@ public class LinkServiceImpl implements LinkService {
     @Override
     @Transactional
     public Optional<Link> getOldestUpdateLink() {
-//        Link linkData = linkRepository.findAll("scheduler_updated_date", true, 1).get(0);
-//        linkRepository.updateUpdatedDateLink(linkData.getId());
-//        return Optional.of(linkData);
-        return Optional.empty();
+        Link linkData = linkRepository.findAll("scheduler_updated_date", true, 1).get(0);
+        linkRepository.updateUpdatedDateLink(linkData.getId());
+        return Optional.of(linkData);
     }
 }

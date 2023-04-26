@@ -13,12 +13,10 @@ public class ChatLink {
     private ChatLinkPK id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="chat", referencedColumnName = "id", nullable = false)
     @MapsId("chatId")
     private Chat chat;
 
     @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name="link", referencedColumnName = "id", nullable = false)
     @MapsId("linkId")
     private Link link;
 

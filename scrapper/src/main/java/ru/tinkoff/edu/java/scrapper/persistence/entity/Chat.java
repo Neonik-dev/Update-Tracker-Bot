@@ -24,8 +24,4 @@ public class Chat {
     private OffsetDateTime createdDate;
     @Column(name = "last_call_date", nullable = false)
     private LocalDate lastCallDate;
-
-//    @OneToMany(mappedBy = "chat", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    private List<ChatLink> links = new ArrayList<>();
 }

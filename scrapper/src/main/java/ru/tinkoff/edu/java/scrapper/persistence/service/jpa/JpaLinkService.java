@@ -43,13 +43,6 @@ public class JpaLinkService implements LinkService {
         Domain domain = domainRepository.findByName(url.getHost());
         link.setDomain(domain);
 
-//        try {
-//            Domain domainData = domainRepository.getByName(url.getHost());
-//            linkData.setDomainId(domainData.getId());
-//        } catch (EmptyResultDataAccessException e) {
-//            throw new EmptyResultException("Программа пока не может отслеживать ссылки с доменом " + url.getHost());
-//        }
-
         BaseParseResponse parseResponse = new GeneralParseLink().start(link.getLink());
         BaseSiteClient client = sitesMap.getClient(url.getHost());
         link.setPageUpdatedDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));

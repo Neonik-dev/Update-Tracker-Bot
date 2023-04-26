@@ -25,9 +25,4 @@ public class JpaChatLinkServiceIT {
     public void initChatData() {
         chatData = utils.createChatData();
     }
-
-//    @Test
-//    @Transactional
-//    @Rollback
-//    public
 }

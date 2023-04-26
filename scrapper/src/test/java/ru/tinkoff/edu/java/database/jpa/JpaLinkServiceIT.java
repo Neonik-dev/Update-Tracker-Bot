@@ -17,7 +17,6 @@ import ru.tinkoff.edu.java.scrapper.ScrapperApplication;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.Chat;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLink;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.ConvertorFromMapToJson;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jpa.JpaDomainRepository;
@@ -84,7 +83,6 @@ public class JpaLinkServiceIT {
         Integer countChatLink = jdbcTemplate.queryForObject(SELECT_CHAT_LINK_QUERY, Integer.class, chatData.getId(), result.getId());
         assertAll(
                 () -> assertEquals(result.getLink(), LINK),
-//                () -> assertTrue(result.getChats().contains(chatData.getId())),
                 () -> assertEquals(
                         result.getDomain().getId(),
                         domainRepository.findByName(URI.create(LINK).getHost()).getId()

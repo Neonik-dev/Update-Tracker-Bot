@@ -46,7 +46,6 @@ public class JdbcAccessConfiguration {
         return new JdbcLinkRepository(jdbcTemplate);
     }
 
-    // services
     @Bean
     public ChatLinkService chatLinkService(ChatLinkRepository chatLinkRepository) {
         return new ChatLinkServiceImpl(chatLinkRepository);

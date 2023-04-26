@@ -16,6 +16,5 @@ public interface LinkService {
 
     void updateDataChanges(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId);
 
-//    Optional<Link> getOldestUpdateLink();
     Optional<Link> getOldestUpdateLink();
 }
