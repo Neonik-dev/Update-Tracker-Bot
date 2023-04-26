@@ -15,10 +15,9 @@ import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatLinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jpa.Links;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLink;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Domain;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatLinkRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.DomainRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.LinkRepository;
@@ -44,18 +43,19 @@ public class LinkServiceImpl implements LinkService {
     @Override
     @Transactional
     public LinkResponse add(long chatId, URI url) {
-        LinkData linkData = LinkData.builder().link(url.toString()).build();
+        Link linkData = new Link();
+        linkData.setLink(url.toString());
 
         try {
-            DomainData domainData = domainRepository.getByName(url.getHost());
-            linkData.setDomainId(domainData.getId());
+            Domain domainData = domainRepository.getByName(url.getHost());
+            linkData.setDomain(domainData);
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultException("Программа пока не может отслеживать ссылки с доменом " + url.getHost());
         }
 
         BaseSiteClient client = sitesMap.getClient(url.getHost());
         BaseParseResponse parseResponse = new GeneralParseLink().start(linkData.getLink());
-        linkData.setPageUpdateDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
+        linkData.setPageUpdatedDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
         linkData.setDataChanges(client.getUpdates(parseResponse));
 
         try {
@@ -64,11 +64,9 @@ public class LinkServiceImpl implements LinkService {
             log.warn(String.format("Эта (link)=(%s) уже существует", linkData.getLink()));
         }
 
-        LinkData result = linkRepository.getByLink(linkData.getLink());
-        ChatLinkData chatLinkData = ChatLinkData.builder()
-                                                          .chatId(chatId)
-                                                          .linkId(result.getId())
-                                                          .build();
+        Link result = linkRepository.getByLink(linkData.getLink());
+        ChatLink chatLinkData = new ChatLink(chatId, result.getId());
+
         try {
             chatLinkRepository.add(chatLinkData);
         } catch (DuplicateKeyException e) {
@@ -86,7 +84,7 @@ public class LinkServiceImpl implements LinkService {
     @Transactional
     public LinkResponse remove(long chatId, URI url) {
         try {
-            LinkData linkData = linkRepository.getByLink(url.toString());
+            Link linkData = linkRepository.getByLink(url.toString());
             chatLinkRepository.remove(chatId, linkData.getId());
             return new LinkResponse(chatId, linkData.getLink());
         } catch (EmptyResultDataAccessException e) {
@@ -97,7 +95,7 @@ public class LinkServiceImpl implements LinkService {
     @Override
     @Transactional
     public ListLinksResponse listAll(long tgChatId) {
-        List<LinkData> links = linkRepository.getByLinkIds(chatLinkService.getAllLink(tgChatId));
+        List<Link> links = linkRepository.getByLinkIds(chatLinkService.getAllLink(tgChatId));
         if (links.isEmpty()) {
             return new ListLinksResponse(null, 0);
         }
@@ -116,8 +114,8 @@ public class LinkServiceImpl implements LinkService {
 
     @Override
     @Transactional
-    public Optional<Links> getOldestUpdateLink() {
-//        LinkData linkData = linkRepository.findAll("scheduler_updated_date", true, 1).get(0);
+    public Optional<Link> getOldestUpdateLink() {
+//        Link linkData = linkRepository.findAll("scheduler_updated_date", true, 1).get(0);
 //        linkRepository.updateUpdatedDateLink(linkData.getId());
 //        return Optional.of(linkData);
         return Optional.empty();

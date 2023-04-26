@@ -7,7 +7,7 @@ import ru.tinkoff.edu.java.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.BaseSiteClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
 import ru.tinkoff.edu.java.scrapper.clients.dto.LinkUpdateRequest;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jpa.Links;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -23,12 +23,12 @@ public class GenerateUpdatesService {
     private final SitesMap sitesMap;
 
     public Optional<LinkUpdateRequest> getUpdates() {
-//        Optional<LinkData> linkData = linkService.getOldestUpdateLink();
-        Optional<Links> linkData = linkService.getOldestUpdateLink();
+//        Optional<Link> linkData = linkService.getOldestUpdateLink();
+        Optional<Link> linkData = linkService.getOldestUpdateLink();
         if (linkData.isEmpty()) // если нет ни одной ссылки в бд
             return Optional.empty();
-//        LinkData clearLinkData = linkData.get();
-        Links clearLinkData = linkData.get();
+//        Link clearLinkData = linkData.get();
+        Link clearLinkData = linkData.get();
         BaseSiteClient client = sitesMap.getClient(URI.create(clearLinkData.getLink()).getHost());
 
         BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink());

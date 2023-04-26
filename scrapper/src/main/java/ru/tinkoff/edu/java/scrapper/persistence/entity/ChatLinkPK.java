@@ -1,8 +1,9 @@
-package ru.tinkoff.edu.java.scrapper.persistence.entity.jpa;
+package ru.tinkoff.edu.java.scrapper.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class ChatLinkPK implements Serializable {
     private Long chatId;
     private Long linkId;

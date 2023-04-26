@@ -13,7 +13,7 @@ import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jpa.*;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.*;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jpa.JpaChatLinkRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jpa.JpaChatRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jpa.JpaDomainRepository;
@@ -38,13 +38,13 @@ public class JpaLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse add(long chatId, URI url) {
-        Links link = new Links();
+        Link link = new Link();
         link.setLink(url.toString());
-        Domains domain =  domainRepository.findByName(url.getHost());
-        link.setDomainId(domain);
+        Domain domain = domainRepository.findByName(url.getHost());
+        link.setDomain(domain);
 
 //        try {
-//            DomainData domainData = domainRepository.getByName(url.getHost());
+//            Domain domainData = domainRepository.getByName(url.getHost());
 //            linkData.setDomainId(domainData.getId());
 //        } catch (EmptyResultDataAccessException e) {
 //            throw new EmptyResultException("Программа пока не может отслеживать ссылки с доменом " + url.getHost());
@@ -55,12 +55,12 @@ public class JpaLinkService implements LinkService {
         link.setPageUpdatedDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
         link.setDataChanges(client.getUpdates(parseResponse));
 
-        Chats chat = chatRepository.findById(chatId).orElseThrow(
+        Chat chat = chatRepository.findById(chatId).orElseThrow(
                 () -> new ForeignKeyNotExistsException(String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatId))
         );
         link.setSchedulerUpdateDate(OffsetDateTime.now());
         link.setUserCheckDate(OffsetDateTime.now());
-        Links saveLink = linkRepository.save(link);
+        Link saveLink = linkRepository.save(link);
         ChatLink chatLink = new ChatLink(chat, saveLink);
         chatLinkRepository.save(chatLink);
 
@@ -70,7 +70,7 @@ public class JpaLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse remove(long chatId, URI url) {
-        Links link = linkRepository.findByLink(url.toString());
+        Link link = linkRepository.findByLink(url.toString());
         chatLinkRepository.deleteById(new ChatLinkPK(chatId, link.getId()));
         if (link.getChats().size() == 0)
             linkRepository.delete(link);
@@ -80,7 +80,7 @@ public class JpaLinkService implements LinkService {
     @Override
     @Transactional
     public ListLinksResponse listAll(long tgChatId) {
-        List<Links> links = linkRepository.findAllById(chatLinkRepository.findAllByChatId(tgChatId));
+        List<Link> links = linkRepository.findAllById(chatLinkRepository.findAllByChatId(tgChatId));
         if (links.isEmpty()) {
             return new ListLinksResponse(null, 0);
         }
@@ -95,7 +95,7 @@ public class JpaLinkService implements LinkService {
 //    @Transactional(readOnly = true)
     @Transactional
     public void updateDataChanges(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId) {
-        Links link = linkRepository.findById(linkId).orElseThrow(
+        Link link = linkRepository.findById(linkId).orElseThrow(
                 () -> new EmptyResultException(String.format("Ссылки с таким (link_id)=(%s) не существует", linkId)));
         link.setDataChanges(dataChanges);
         link.setPageUpdatedDate(updatedDate);
@@ -105,11 +105,11 @@ public class JpaLinkService implements LinkService {
     @Override
 //    @Transactional(readOnly = true)
     @Transactional
-    public Optional<Links> getOldestUpdateLink() {
-        Page<Links> page = linkRepository.findAll(
+    public Optional<Link> getOldestUpdateLink() {
+        Page<Link> page = linkRepository.findAll(
                 PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "schedulerUpdateDate"))
         );
-        Links link = page.getContent().get(0);
+        Link link = page.getContent().get(0);
         link.setSchedulerUpdateDate(OffsetDateTime.now());
         linkRepository.save(link);
 

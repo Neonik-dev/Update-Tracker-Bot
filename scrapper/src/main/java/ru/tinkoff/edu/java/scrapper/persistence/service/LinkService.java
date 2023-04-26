@@ -2,7 +2,7 @@ package ru.tinkoff.edu.java.scrapper.persistence.service;
 
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jpa.Links;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -16,6 +16,6 @@ public interface LinkService {
 
     void updateDataChanges(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId);
 
-//    Optional<LinkData> getOldestUpdateLink();
-    Optional<Links> getOldestUpdateLink();
+//    Optional<Link> getOldestUpdateLink();
+    Optional<Link> getOldestUpdateLink();
 }

@@ -6,7 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 
 import static ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Domains.DOMAINS;
 
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Domain;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.DomainRepository;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class JooqDomainRepository implements DomainRepository {
     private final DSLContext dsl;
 
     @Override
-    public void add(DomainData domainData) {
+    public void add(Domain domainData) {
         checkEntity(domainData);
         dsl.insertInto(DOMAINS, DOMAINS.NAME).values(domainData.getName()).execute();
     }
@@ -32,19 +32,19 @@ public class JooqDomainRepository implements DomainRepository {
     }
 
     @Override
-    public DomainData getByName(String name) {
+    public Domain getByName(String name) {
         return dsl.select(DOMAINS.fields())
                 .from(DOMAINS)
                 .where(DOMAINS.NAME.eq(name))
                 .fetchOptional()
                 .orElseThrow(() -> new EmptyResultDataAccessException(1))
-                .into(DomainData.class);
+                .into(Domain.class);
     }
 
     @Override
-    public List<DomainData> findAll() {
+    public List<Domain> findAll() {
         return dsl.select(DOMAINS.fields())
                 .from(DOMAINS)
-                .fetch().into(DomainData.class);
+                .fetch().into(Domain.class);
     }
 }

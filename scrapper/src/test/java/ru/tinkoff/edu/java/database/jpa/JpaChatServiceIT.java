@@ -1,33 +1,31 @@
-package ru.tinkoff.edu.java.database.jdbc;
+package ru.tinkoff.edu.java.database.jpa;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.DataClassRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.database.utils.Utils;
+import ru.tinkoff.edu.java.scrapper.ScrapperApplication;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
-import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.Chat;
-import org.junit.jupiter.api.Test;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcChatRepository;
+import ru.tinkoff.edu.java.scrapper.persistence.repository.jpa.JpaChatRepository;
+import ru.tinkoff.edu.java.scrapper.persistence.service.jpa.JpaChatService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = ScrapperApplication.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {JdbcChatRepository.class, DBConfiguration.class, TestConfiguration.class, Utils.class})
-public class JdbcChatRepositoryIT extends IntegrationEnvironment {
-    private final JdbcChatRepository chatRepository;
+@ContextConfiguration(classes = {Utils.class, DBConfiguration.class})
+public class JpaChatServiceIT extends IntegrationEnvironment {
+    private final JpaChatService chatService;
+    private final JpaChatRepository chatRepository;
     private final Utils utils;
     private Chat chatData;
 
@@ -37,14 +35,14 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
-    void addUniqueChat_OK() {
+    public void addUniqueChat_OK() {
         // given
 
         // when
-        chatRepository.add(chatData);
+        chatService.register(chatData.getId());
+        chatRepository.flush();
 
         // then
         utils.assertChatResult(chatData);
@@ -53,31 +51,27 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void addExistsChat_ThrowsDuplicateKeyException() {
+    public void addExistsChat_ThrowsDuplicateUniqueFieldException() {
         // given
-        chatRepository.add(chatData);
+        chatService.register(chatData.getId());
+        chatRepository.flush();
 
-        // then/when
-        assertThrows(DuplicateKeyException.class, () -> chatRepository.add(chatData));
+        // when/then
+        assertThrows(
+                DuplicateUniqueFieldException.class,
+                () -> chatService.register(chatData.getId())
+        );
     }
 
     @Test
     @Transactional
     @Rollback
-    void addNullChatId_ThrowsBadEntityException() {
-        // given
-        chatData.setId(null);
-
-        // then/when
-        assertThrows(BadEntityException.class, () -> chatRepository.add(chatData));
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    void addNullChat_ThrowsBadEntityException() {
-        // given/then/when
-        assertThrows(BadEntityException.class, () -> chatRepository.add(null));
+    public void addNullChatId_ThrowsBadEntityException() {
+        // given/when/then
+        assertThrows(
+                BadEntityException.class,
+                () -> chatService.register(null)
+        );
     }
 
     @Test
@@ -85,10 +79,10 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
     @Rollback
     void removeExistsChatId_OK () {
         // given
-        chatRepository.add(chatData);
+        chatService.register(chatData.getId());
 
         // when
-        chatRepository.remove(chatData.getId());
+        chatService.unregister(chatData.getId());
 
         // then
         assertTrue(utils.checkMissingDataChat(chatData.getId()));
@@ -101,7 +95,7 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
         // given
 
         // when
-        chatRepository.remove(chatData.getId());
+        chatService.unregister(chatData.getId());
 
         // then
         assertTrue(utils.checkMissingDataChat(chatData.getId()));
@@ -114,7 +108,7 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
         // given/when/then
         assertThrows(
                 BadEntityException.class,
-                () -> chatRepository.remove(null)
+                () -> chatService.unregister(null)
         );
     }
 }

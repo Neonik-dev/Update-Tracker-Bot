@@ -6,49 +6,48 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.database.IntegrationEnvironment;
-import ru.tinkoff.edu.java.database.JdbcUtils;
+import ru.tinkoff.edu.java.database.utils.Utils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.ChatLinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Chat;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLink;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Domain;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcChatLinkRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {JdbcChatLinkRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
-public class JdbcChatLinkRepositoryIT extends IntegrationEnvironment {
+@ContextConfiguration(classes = {JdbcChatLinkRepository.class, DBConfiguration.class, TestConfiguration.class, Utils.class})
+public class JdbcChatLinkRepositoryIT {
     private final JdbcChatLinkRepository chatLinkRepository;
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<ChatLinkData> rowMapper = new DataClassRowMapper<>(ChatLinkData.class);
-    private final JdbcUtils utils;
-    private ChatLinkData chatLinkData;
-    private ChatData chatData;
-    private LinkData linkData;
-    private DomainData domainData;
+    private final RowMapper<ChatLink> rowMapper =
+            (rs, rowNum) -> new ChatLink(
+                    rs.getLong(1),
+                    rs.getLong(2)
+            );
+    private final Utils utils;
+    private ChatLink chatLinkData;
+    private Chat chatData;
+    private Link linkData;
+    private Domain domainData;
 
     @BeforeEach
     public void initChatLinkData() {
         chatData = utils.createChatData();
         domainData = utils.createDomainData();
         linkData = utils.createLinkData();
-        linkData.setDomainId(domainData.getId());
+        linkData.setDomain(domainData);
 
-        chatLinkData = ChatLinkData.builder()
-                .linkId(linkData.getId())
-                .chatId(chatData.getId())
-                .build();
+        chatLinkData = new ChatLink(chatData.getId(), linkData.getId());
     }
 
     @Test
@@ -62,7 +61,7 @@ public class JdbcChatLinkRepositoryIT extends IntegrationEnvironment {
         chatLinkRepository.add(chatLinkData);
 
         // then
-        ChatLinkData result = jdbcTemplate.queryForObject(
+        ChatLink result = jdbcTemplate.queryForObject(
                 "SELECT * FROM chat_link WHERE chat_id=? AND link_id=?",
                 rowMapper,
                 chatLinkData.getChatId(),
@@ -110,7 +109,7 @@ public class JdbcChatLinkRepositoryIT extends IntegrationEnvironment {
     @Rollback
     void addEmptyChatLink_ThrowsBadEntityException() {
         // given
-        chatLinkData = ChatLinkData.builder().build();
+        chatLinkData = new ChatLink();
 
         // when/then
         assertThrows(BadEntityException.class, () -> chatLinkRepository.add(chatLinkData));
@@ -122,6 +121,7 @@ public class JdbcChatLinkRepositoryIT extends IntegrationEnvironment {
     void removeChatLink_OK() {
         // given
         utils.initEnvironmentChatLink(domainData, chatData, linkData);
+        chatLinkData = new ChatLink(chatData.getId(), linkData.getId());
         chatLinkRepository.add(chatLinkData);
 
         // when

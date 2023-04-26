@@ -15,23 +15,24 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
-import ru.tinkoff.edu.java.database.JdbcUtils;
+import ru.tinkoff.edu.java.database.utils.Utils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.DomainData;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Domain;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcDomainRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {JdbcDomainRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+@ContextConfiguration(classes = {JdbcDomainRepository.class, DBConfiguration.class, TestConfiguration.class, Utils.class})
 public class JdbcDomainRepositoryIT extends IntegrationEnvironment {
     private final JdbcDomainRepository domainRepository;
     private final JdbcTemplate jdbcTemplate;
-    private final JdbcUtils utils;
-    private final RowMapper<DomainData> rowMapper = new DataClassRowMapper<>(DomainData.class);
-    private DomainData domainData;
+    private final Utils utils;
+    private final RowMapper<Domain> rowMapper = new DataClassRowMapper<>(Domain.class);
+    private Domain domainData;
 
     @BeforeEach
     public void initDomainData() {
@@ -39,7 +40,6 @@ public class JdbcDomainRepositoryIT extends IntegrationEnvironment {
     }
 
     @Test
-    @SneakyThrows
     @Transactional
     @Rollback
     void addUniqueDomainName_OK() {
@@ -49,7 +49,7 @@ public class JdbcDomainRepositoryIT extends IntegrationEnvironment {
         domainRepository.add(domainData);
 
         // then
-        DomainData result = jdbcTemplate.queryForObject("SELECT * FROM domains where name = ?", rowMapper, domainData.getName());
+        Domain result = jdbcTemplate.queryForObject("SELECT * FROM domains where name = ?", rowMapper, domainData.getName());
         utils.assertDomainResult(result, domainData);
     }
 
@@ -67,9 +67,24 @@ public class JdbcDomainRepositoryIT extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
+    void addNullDomain_ThrowsBadEntityException() {
+        // given
+        domainData.setName(null);
+
+        // when/then
+        assertAll(
+                () -> assertThrows(BadEntityException.class, () -> domainRepository.add(null)),
+                () -> assertThrows(BadEntityException.class, () -> domainRepository.add(domainData)),
+                () -> assertThrows(BadEntityException.class, () -> domainRepository.add(new Domain()))
+        );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
     void removeByExistsId_OK() {
         // given
-        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", domainData.getId(), domainData.getName());
+        domainRepository.add(domainData);
 
         // when
         domainRepository.remove(domainData.getId());
@@ -127,7 +142,7 @@ public class JdbcDomainRepositoryIT extends IntegrationEnvironment {
         domainRepository.add(domainData);
 
         // when
-        DomainData result = domainRepository.getByName(domainData.getName());
+        Domain result = domainRepository.getByName(domainData.getName());
 
         // then
         utils.assertDomainResult(result, domainData);

@@ -14,12 +14,12 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
-import ru.tinkoff.edu.java.database.JdbcUtils;
+import ru.tinkoff.edu.java.database.utils.Utils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.ConvertorFromMapToJson;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jdbc.LinkData;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcLinkRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,17 +27,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {JdbcLinkRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+@ContextConfiguration(classes = {JdbcLinkRepository.class, DBConfiguration.class, TestConfiguration.class, Utils.class})
 public class JdbcLinkRepositoryIT extends IntegrationEnvironment {
     private final JdbcTemplate jdbcTemplate;
     private final JdbcLinkRepository linkRepository;
-    private final JdbcUtils utils;
-    private final RowMapper<LinkData> rowMapper = (rs, rowNum) -> LinkData.builder()
-            .link(rs.getString(1))
-            .domainId(rs.getLong(2))
-            .dataChanges(new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(3)))
-            .build();
-    private LinkData linkData;
+    private final Utils utils;
+    private final RowMapper<Link> rowMapper = (rs, rowNum) -> new Link(
+            null,
+            rs.getString(1),
+            null, null, null,
+            rs.getLong(2),
+            new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(3))
+    );
+    private Link linkData;
 
     @BeforeEach
     public void createLinkData() {
@@ -49,13 +51,13 @@ public class JdbcLinkRepositoryIT extends IntegrationEnvironment {
     @Rollback
     void addLinkWithExistsDomainId_OK() {
         // given
-        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), utils.DOMAIN_NAME);
+        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomain().getId(), utils.DOMAIN_NAME);
 
         // when
         linkRepository.add(linkData);
 
         // then
-        LinkData result = jdbcTemplate.queryForObject(
+        Link result = jdbcTemplate.queryForObject(
                 "SELECT link, domain_id, data_changes FROM links where link = ?",
                 rowMapper,
                 linkData.getLink()
@@ -99,11 +101,8 @@ public class JdbcLinkRepositoryIT extends IntegrationEnvironment {
     @Transactional
     @Rollback
     void addEmptyLinkData_ThrowsBadEntityException() {
-        // given
-        linkData = LinkData.builder().build();
-
-        // then/when
-        assertThrows(BadEntityException.class, () -> linkRepository.add(linkData));
+        // given/then/when
+        assertThrows(BadEntityException.class, () -> linkRepository.add(new Link()));
     }
 
     @Test
@@ -143,7 +142,7 @@ public class JdbcLinkRepositoryIT extends IntegrationEnvironment {
         addDomainAndLink();
 
         // when
-        LinkData result = linkRepository.getByLink(linkData.getLink());
+        Link result = linkRepository.getByLink(linkData.getLink());
 
         // then
         assertResult(result);
@@ -159,18 +158,18 @@ public class JdbcLinkRepositoryIT extends IntegrationEnvironment {
         assertThrows(EmptyResultDataAccessException.class, () -> linkRepository.getByLink(linkData.getLink()));
     }
 
-    void assertResult(LinkData result) {
+    void assertResult(Link result) {
         assertNotNull(result);
         assertAll(
                 () -> assertEquals(result.getLink(), linkData.getLink()),
-                () -> assertEquals(result.getDomainId(), linkData.getDomainId()),
+                () -> assertEquals(result.getDomain().getId(), linkData.getDomain().getId()),
                 () -> assertEquals(result.getDataChanges().get("commits"), "15"),
                 () -> assertEquals(result.getDataChanges().get("comments"), "11")
         );
     }
 
     private void addDomainAndLink() {
-        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomainId(), utils.DOMAIN_NAME);
+        jdbcTemplate.update("INSERT INTO domains(id, name) VALUES (?, ?)", linkData.getDomain().getId(), utils.DOMAIN_NAME);
         linkRepository.add(linkData);
     }
 }

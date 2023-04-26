@@ -1,16 +1,18 @@
-package ru.tinkoff.edu.java.scrapper.persistence.entity.jpa;
+package ru.tinkoff.edu.java.scrapper.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name = "domains")
-public class Domains {
+public class Domain {
     @Id
     @Column(name = "id")
     @SequenceGenerator(name="domain_id_seq", allocationSize=1)
@@ -20,6 +22,12 @@ public class Domains {
     private String name;
     @Column(name="created_date", nullable = false, updatable = false)
     private LocalDate createdDate;
-    @OneToMany(mappedBy = "domainId", fetch = FetchType.LAZY)
-    private Set<Links> links = new HashSet<>();
+    @OneToMany(mappedBy = "domain", fetch = FetchType.LAZY)
+    private Set<Link> links = new HashSet<>();
+
+    public Domain(Long id, String name, LocalDate createdDate) {
+        this.id = id;
+        this.name = name;
+        this.createdDate = createdDate;
+    }
 }

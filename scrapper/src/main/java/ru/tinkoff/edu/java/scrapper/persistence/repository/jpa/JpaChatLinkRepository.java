@@ -2,8 +2,8 @@ package ru.tinkoff.edu.java.scrapper.persistence.repository.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jpa.ChatLink;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.jpa.ChatLinkPK;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLink;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkPK;
 
 import java.util.List;
 
