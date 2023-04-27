@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import ru.tinkoff.edu.java.scrapper.persistence.repository.jpa.ConverterDataChanges;
+import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -33,8 +33,7 @@ public class Link {
     @Column(name = "user_check_date", nullable = false)
     private OffsetDateTime userCheckDate;
     @Column(name="data_changes", nullable = false, columnDefinition = "jsonb")
-    @Convert(converter = ConverterDataChanges.class)
-    @ColumnTransformer(write = "?::jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, String> dataChanges;
 
     @ManyToOne(fetch = FetchType.LAZY)
