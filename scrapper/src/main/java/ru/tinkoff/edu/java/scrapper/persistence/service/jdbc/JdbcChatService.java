@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 @RequiredArgsConstructor
-public class ChatServiceImpl implements ChatService {
+public class JdbcChatService implements ChatService {
     private final ChatRepository chatRepository;
 
     @Override

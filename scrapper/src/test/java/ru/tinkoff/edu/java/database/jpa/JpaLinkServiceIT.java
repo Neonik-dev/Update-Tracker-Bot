@@ -1,13 +1,17 @@
 package ru.tinkoff.edu.java.database.jpa;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.datasource.init.CompositeDatabasePopulator;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -25,7 +29,10 @@ import ru.tinkoff.edu.java.scrapper.persistence.repository.jpa.JpaLinkRepository
 import ru.tinkoff.edu.java.scrapper.persistence.service.jpa.JpaChatService;
 import ru.tinkoff.edu.java.scrapper.persistence.service.jpa.JpaLinkService;
 
+import javax.sql.DataSource;
 import java.net.URI;
+
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -38,8 +45,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = ScrapperApplication.class)
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @ContextConfiguration(classes = {Utils.class, DBConfiguration.class})
-@Sql("/sql/fill_base_domains.sql")
 public class JpaLinkServiceIT extends IntegrationEnvironment {
+    private final DataSource dataSource;
     private final JpaChatService chatService;
     private final JpaLinkService linkService;
     private final JpaLinkRepository linkRepository;
@@ -62,6 +69,14 @@ public class JpaLinkServiceIT extends IntegrationEnvironment {
             rs.getLong(4),
             new ConvertorFromMapToJson().convertToEntityAttribute((PGobject) rs.getObject(5))
     );
+
+    @PostConstruct
+    public void initData() throws SQLException {
+        var populator = new CompositeDatabasePopulator();
+        populator.addPopulators(new ResourceDatabasePopulator(new ClassPathResource("/sql/fill_base_domains.sql")));
+
+        populator.populate(dataSource.getConnection());
+    }
 
     @BeforeEach
     public void createLinkData() {
@@ -118,7 +133,7 @@ public class JpaLinkServiceIT extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    @Sql("/sql/fill_base_domains.sql")
+    @Sql("/sql/fill_in_links_table.sql")
     void getOldestUpdateLink_OK() {
         // given
 

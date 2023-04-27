@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-public class LinkServiceImpl implements LinkService {
+public class JdbcLinkService implements LinkService {
     private final DomainRepository domainRepository;
     private final ChatLinkRepository chatLinkRepository;
     private final LinkRepository linkRepository;
