@@ -1,7 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.persistence.service.jpa;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
@@ -97,10 +96,13 @@ public class JpaLinkService implements LinkService {
     @Override
     @Transactional
     public Optional<Link> getOldestUpdateLink() {
-        Page<Link> page = linkRepository.findAll(
+        List<Link> page = linkRepository.findAll(
                 PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "schedulerUpdateDate"))
-        );
-        Link link = page.getContent().get(0);
+        ).getContent();
+        if (page.isEmpty())
+            return Optional.empty();
+
+        Link link = page.get(0);
         link.setSchedulerUpdateDate(OffsetDateTime.now());
         linkRepository.save(link);
 

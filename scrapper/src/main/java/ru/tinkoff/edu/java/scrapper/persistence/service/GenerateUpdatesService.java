@@ -56,10 +56,8 @@ public class GenerateUpdatesService {
     }
 
     private Link getOldestsLink() {
-        Optional<Link> linkData = linkService.getOldestUpdateLink();
-        if (linkData.isEmpty()) // если нет ни одной ссылки в бд
-            throw new NullPointerException();
-        return linkData.get();
+        return linkService.getOldestUpdateLink()
+                .orElseThrow(NullPointerException::new); // если нет ни одной ссылки в бд
     }
 
     private String generateBotMessage(Map<String, String> responseDataChanges, Map<String, String> dataChanges) {

@@ -60,6 +60,7 @@ public class JpaLinkServiceIT extends IntegrationEnvironment {
     private static final String SELECT_LINK_ID_QUERY = "SELECT id, link, page_updated_date, domain_id, data_changes FROM links WHERE id=?";
     private static final String SELECT_COINT_LINK_BY_ID_QUERY = "SELECT count(*) FROM links WHERE id=?";
     private static final String SELECT_CHAT_LINK_QUERY = "SELECT count(*) FROM chat_link WHERE chat_id=? AND link_id=?";
+    private static final String TRUNCATE_LINKS_QUERY = "TRUNCATE links CASCADE";
     private final RowMapper<Link> rowMapperLink = (rs, rowNum) -> new Link(
             rs.getLong(1),
             rs.getString(2),
@@ -146,6 +147,21 @@ public class JpaLinkServiceIT extends IntegrationEnvironment {
                 () -> assertEquals(result.get().getLink(), "https://nonamedomain.org/4"),
                 () -> assertEquals(result.get().getSchedulerUpdateDate().toLocalDate(), LocalDate.now())
         );
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void getOldestLinkIfTableLinksEmpty_ReturnOptionalNull() {
+        // given
+        jdbcTemplate.execute(TRUNCATE_LINKS_QUERY);
+
+        // when
+        Optional<Link> result = linkService.getOldestUpdateLink();
+
+        // then
+        assertTrue(result.isEmpty());
+
     }
 
     @Test
