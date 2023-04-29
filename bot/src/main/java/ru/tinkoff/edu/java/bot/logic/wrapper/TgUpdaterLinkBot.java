@@ -6,11 +6,12 @@ import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import lombok.RequiredArgsConstructor;
 import ru.tinkoff.edu.java.bot.configuration.ApplicationConfig;
+import ru.tinkoff.edu.java.bot.logic.commands.BaseCommand;
+import ru.tinkoff.edu.java.bot.logic.commands.InitCommands;
 import ru.tinkoff.edu.java.bot.logic.commands.InputHandler;
-import ru.tinkoff.edu.java.bot.logic.commands.enums.InitBaseCommands;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 @RequiredArgsConstructor
@@ -18,6 +19,7 @@ public class TgUpdaterLinkBot implements TgBot {
     private TelegramBot bot;
     private final ApplicationConfig config;
     private final InputHandler inputHandler;
+//    private final InitCommands initCommands;
 
     @Override
     public void start() {
@@ -27,10 +29,13 @@ public class TgUpdaterLinkBot implements TgBot {
     }
 
     private SetMyCommands getAllCommands() {
-        BotCommand[] commands = Arrays.stream(InitBaseCommands.values())
-                .map((value) -> new BotCommand(value.getName(), value.getDescription()))
-                .toArray(BotCommand[]::new);
-        return new SetMyCommands(commands);
+        Map<String, BaseCommand> commands = InitCommands.getAllCommands();
+        BotCommand[] botCommands = commands.keySet()
+                .stream().map(
+                        (value) -> new BotCommand(value, commands.get(value).getDescription())
+                ).toArray(BotCommand[]::new);
+
+        return new SetMyCommands(botCommands);
     }
 
     @Override

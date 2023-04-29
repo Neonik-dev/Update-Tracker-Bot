@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.persistence.service.jpa;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,19 @@ public class JpaLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse add(long chatId, URI url) {
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(
+                        () -> new ForeignKeyNotExistsException(String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatId))
+                );
+        Link link = linkRepository.findByLink(url.toString()).orElseGet(() -> createLink(url));
+
+        ChatLink chatLink = new ChatLink(chat, link);
+        chatLinkRepository.save(chatLink);
+
+        return new LinkResponse(link.getId(), link.getLink());
+    }
+
+    private Link createLink(URI url) {
         Link link = new Link();
         link.setLink(url.toString());
         Domain domain = domainRepository.findByName(url.getHost());
@@ -47,26 +61,31 @@ public class JpaLinkService implements LinkService {
         link.setPageUpdatedDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
         link.setDataChanges(client.getUpdates(parseResponse));
 
-        Chat chat = chatRepository.findById(chatId).orElseThrow(
-                () -> new ForeignKeyNotExistsException(String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatId))
-        );
         link.setSchedulerUpdateDate(OffsetDateTime.now());
         link.setUserCheckDate(OffsetDateTime.now());
-        Link saveLink = linkRepository.save(link);
-        ChatLink chatLink = new ChatLink(chat, saveLink);
-        chatLinkRepository.save(chatLink);
-
-        return new LinkResponse(saveLink.getId(), saveLink.getLink());
+        return  linkRepository.save(link);
     }
 
     @Override
     @Transactional
     public LinkResponse remove(long chatId, URI url) {
-        Link link = linkRepository.findByLink(url.toString());
-        chatLinkRepository.deleteById(new ChatLinkPK(chatId, link.getId()));
-        if (link.getChats().size() == 0)
-            linkRepository.delete(link);
-        return new LinkResponse(chatId, link.getLink());
+        Link link;
+//        try {
+            link = linkRepository.findByLink(url.toString()).orElseThrow(
+                    () -> new EmptyResultException("Данная ссылка никем не зарегистрирована")
+            );
+//        } catch (EmptyResultDataAccessException e) {
+//            throw new EmptyResultException("Данная ссылка никем не зарегистрирована");
+//        }
+        try {
+            chatLinkRepository.deleteById(new ChatLinkPK(chatId, link.getId()));
+            if (link.getChats().size() == 1)
+                linkRepository.delete(link);
+            return new LinkResponse(chatId, link.getLink());
+        } catch (EmptyResultDataAccessException e) {
+            throw new EmptyResultException(
+                    String.format("Ссылка с (link_id)=(%d) не отслеживается у пользователя (chat_id)=(%d)", link.getId(), chatId));
+        }
     }
 
     @Override
