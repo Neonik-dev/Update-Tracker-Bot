@@ -18,7 +18,7 @@ public class GitHubParserTest {
         // given
 
         // when
-        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().main(link);
+        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertNull(response);
@@ -37,7 +37,7 @@ public class GitHubParserTest {
         // given
 
         // when
-        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().main(link);
+        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertNull(response);
@@ -53,7 +53,7 @@ public class GitHubParserTest {
         // given
 
         // when
-        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().main(link);
+        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertAll(

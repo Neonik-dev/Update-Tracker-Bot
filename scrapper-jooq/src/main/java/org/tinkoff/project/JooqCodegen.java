@@ -3,17 +3,10 @@ package org.tinkoff.project;
 import org.jooq.codegen.GenerationTool;
 import org.jooq.meta.jaxb.*;
 
-public class JooqCodegen {
-    private static final String ENV_DB_URL = "JOOQ_DB_URL";
-    private static final String ENV_DB_USERNAME = "JOOQ_DB_USERNAME";
-    private static final String ENV_DB_PASSWORD = "JOOQ_DB_PASSWORD";
+public class JooqCodegen extends IntegrationEnvironment {
     public static void main(String[] args) throws Exception {
         Database database = new Database()
                 .withName("org.jooq.meta.postgres.PostgresDatabase")
-                .withProperties(
-                        new Property().withKey("rootPath").withValue("migrations"),
-                        new Property().withKey("scripts").withValue("master.xml")
-                )
                 .withIncludes(".*")
                 .withExcludes("")
                 .withInputSchema("public");
@@ -37,9 +30,9 @@ public class JooqCodegen {
 
         Jdbc jdbc = new Jdbc()
                 .withDriver("org.postgresql.Driver")
-                .withUrl(System.getenv(ENV_DB_URL))
-                .withUser(System.getenv(ENV_DB_USERNAME))
-                .withPassword(System.getenv(ENV_DB_PASSWORD));
+                .withUrl(DB_CONTAINER.getJdbcUrl())
+                .withUser(DB_CONTAINER.getUsername())
+                .withPassword(DB_CONTAINER.getPassword());
 
         Target target = new Target()
                 .withPackageName("ru.tinkoff.edu.java.scrapper.domain.jooq")

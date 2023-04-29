@@ -1,23 +1,20 @@
 package ru.tinkoff.edu.java.scrapper.persistence.service;
 
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
+import ru.tinkoff.edu.java.scrapper.dto.ListLinksResponse;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 public interface LinkService {
-    LinkData add(long chatId, URI url) throws EmptyResultException, ForeignKeyNotExistsException, BadEntityException, DuplicateUniqueFieldException;
-    LinkData remove(long chatId, URI url) throws EmptyResultException;
-    Collection<LinkData> listAll(long tgChatId);
+    LinkResponse add(long chatId, URI url);
+    LinkResponse remove(long chatId, URI url);
+    ListLinksResponse listAll(long tgChatId);
 
     void updateDataChanges(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId);
 
-    Optional<LinkData> getOldestUpdateLink();
+    Optional<Link> getOldestUpdateLink();
 }
