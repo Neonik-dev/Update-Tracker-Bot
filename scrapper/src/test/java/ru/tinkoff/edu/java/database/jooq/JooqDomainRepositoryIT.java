@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jooq.JooqTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
-import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
-import ru.tinkoff.edu.java.database.JdbcUtils;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
+import ru.tinkoff.edu.java.database.utils.Utils;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Domain;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jooq.JooqDomainRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,12 +23,12 @@ import static ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Domains.DOMAINS;
 
 @JooqTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {JooqDomainRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+@ContextConfiguration(classes = {JooqDomainRepository.class, DBConfiguration.class, Utils.class})
 public class JooqDomainRepositoryIT extends IntegrationEnvironment {
     private final DSLContext dsl;
     private final JooqDomainRepository domainRepository;
-    private final JdbcUtils utils;
-    private DomainData domainData;
+    private final Utils utils;
+    private Domain domainData;
 
     @BeforeEach
     public void initDomainData() {
@@ -41,10 +43,10 @@ public class JooqDomainRepositoryIT extends IntegrationEnvironment {
         domainRepository.add(domainData);
 
         // then
-        DomainData result = dsl.select(DOMAINS.fields())
+        Domain result = dsl.select(DOMAINS.fields())
                 .from(DOMAINS)
                 .where(DOMAINS.NAME.eq(domainData.getName()))
-                .fetchOneInto(DomainData.class);
+                .fetchOneInto(Domain.class);
 
         utils.assertDomainResult(result, domainData);
     }
@@ -57,6 +59,21 @@ public class JooqDomainRepositoryIT extends IntegrationEnvironment {
 
         // when/then
         assertThrows(DuplicateKeyException.class, () -> domainRepository.add(domainData));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void addNullDomain_ThrowsBadEntityException() {
+        // given
+        domainData.setName(null);
+
+        // when/then
+        assertAll(
+                () -> assertThrows(BadEntityException.class, () -> domainRepository.add(null)),
+                () -> assertThrows(BadEntityException.class, () -> domainRepository.add(domainData)),
+                () -> assertThrows(BadEntityException.class, () -> domainRepository.add(new Domain()))
+        );
     }
 
     @Test
@@ -111,7 +128,7 @@ public class JooqDomainRepositoryIT extends IntegrationEnvironment {
         domainRepository.add(domainData);
 
         // when
-        DomainData result = domainRepository.getByName(domainData.getName());
+        Domain result = domainRepository.getByName(domainData.getName());
 
         // then
         utils.assertDomainResult(result, domainData);

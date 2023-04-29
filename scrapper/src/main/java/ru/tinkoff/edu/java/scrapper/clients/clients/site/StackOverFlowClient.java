@@ -30,6 +30,7 @@ public class StackOverFlowClient implements BaseSiteClient {
                 .retrieve()
                 .bodyToMono(StackOverFlowSiteResponse.class)
                 .block()
-                .questions()[0].updatedDate().toString();
+                .questions()[0]
+                .updatedDate().toString();
     }
 }

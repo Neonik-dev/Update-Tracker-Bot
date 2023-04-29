@@ -11,4 +11,5 @@
     <include file="scripts/sql/2023-04-06-CRS-3_create_links_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/sql/2023-04-06-CRS-4_create_chat_link_table.sql" relativeToChangelogFile="true"/>
     <include file="scripts/sql/2023-04-15-CRS-5_alter_table_links_update_date.sql" relativeToChangelogFile="true"/>
+    <include file="scripts/sql/2023-04-25-CRS-6_alter_default_id_in_links_and_domains_tables.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -13,11 +13,11 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.context.ContextConfiguration;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
-import ru.tinkoff.edu.java.database.JdbcUtils;
+import ru.tinkoff.edu.java.database.utils.Utils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
 import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Chat;
 import org.junit.jupiter.api.Test;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.JdbcChatRepository;
 
@@ -25,13 +25,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {JdbcChatRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+@ContextConfiguration(classes = {JdbcChatRepository.class, DBConfiguration.class, TestConfiguration.class, Utils.class})
 public class JdbcChatRepositoryIT extends IntegrationEnvironment {
     private final JdbcChatRepository chatRepository;
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<ChatData> rowMapper = new DataClassRowMapper<>(ChatData.class);
-    private final JdbcUtils utils;
-    private ChatData chatData;
+    private final Utils utils;
+    private Chat chatData;
 
     @BeforeEach
     public void initChatData() {
@@ -49,8 +47,7 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
         chatRepository.add(chatData);
 
         // then
-        ChatData result = jdbcTemplate.queryForObject("SELECT * FROM chats where id = ?", rowMapper, chatData.getId());
-        utils.assertChatResult(result, chatData);
+        utils.assertChatResult(chatData);
     }
 
     @Test
@@ -58,7 +55,7 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
     @Rollback
     void addExistsChat_ThrowsDuplicateKeyException() {
         // given
-        jdbcTemplate.update("INSERT INTO chats(id) VALUES (?)", chatData.getId());
+        chatRepository.add(chatData);
 
         // then/when
         assertThrows(DuplicateKeyException.class, () -> chatRepository.add(chatData));
@@ -79,11 +76,8 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
     @Transactional
     @Rollback
     void addNullChat_ThrowsBadEntityException() {
-        // given
-        ChatData nullChatData = null;
-
-        // then/when
-        assertThrows(BadEntityException.class, () -> chatRepository.add(nullChatData));
+        // given/then/when
+        assertThrows(BadEntityException.class, () -> chatRepository.add(null));
     }
 
     @Test
@@ -91,7 +85,7 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
     @Rollback
     void removeExistsChatId_OK () {
         // given
-        jdbcTemplate.update("INSERT INTO chats(id) VALUES (?)", chatData.getId());
+        chatRepository.add(chatData);
 
         // when
         chatRepository.remove(chatData.getId());
@@ -111,5 +105,16 @@ public class JdbcChatRepositoryIT extends IntegrationEnvironment {
 
         // then
         assertTrue(utils.checkMissingDataChat(chatData.getId()));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void removeNullChatId_ThrowsBadEntityException() {
+        // given/when/then
+        assertThrows(
+                BadEntityException.class,
+                () -> chatRepository.remove(null)
+        );
     }
 }

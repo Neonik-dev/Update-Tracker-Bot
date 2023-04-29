@@ -1,12 +1,13 @@
-package ru.tinkoff.edu.java.database;
+package ru.tinkoff.edu.java.database.utils;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Chat;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLink;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Domain;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jdbc.ConvertorFromMapToJson;
 
 import java.time.LocalDate;
@@ -19,8 +20,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Component
 @RequiredArgsConstructor
-public class JdbcUtils {
+public class Utils {
     private static final String SELECT_CHATS_BY_ID_QUERY = "SELECT count(*) FROM chats where id = ?";
+    private static final String SELECT_CHAT_BY_ID_QUERY = "SELECT * FROM chats where id = ?";
     private static final String SELECT_DOMAINS_BY_ID_QUERY = "SELECT count(*) FROM domains where id = ?";
     private static final String SELECT_DOMAINS_BY_NAME_QUERY = "SELECT count(*) FROM domains where name = ?";
     private static final String SELECT_LINKS_BY_LINK_QUERY = "SELECT count(*) FROM links where link = ?";
@@ -33,40 +35,39 @@ public class JdbcUtils {
     public final String DOMAIN_NAME = "noNameSiteForTest";
     private final JdbcTemplate jdbcTemplate;
 
-    public ChatData createChatData() {
+    public Chat createChatData() {
         long chatId;
         do {
             chatId = new Random().nextLong();
         } while (!checkMissingDataChat(chatId));
 
-        return ChatData.builder().id(chatId).build();
+        return new Chat(chatId, OffsetDateTime.now(), LocalDate.now());
     }
 
-    public DomainData createDomainData() {
+    public Domain createDomainData() {
         long domainId;
         do {
             domainId = new Random().nextLong();
         } while (!checkMissingDataDomain(domainId));
 
-        return DomainData.builder()
-                .name(DOMAIN_NAME)
-                .id(domainId)
-                .build();
+        return new Domain(domainId, DOMAIN_NAME, LocalDate.now());
     }
 
-    public LinkData createLinkData() {
+    public Link createLinkData() {
         long linkId;
         do {
             linkId = new Random().nextLong();
         } while (!checkMissingDataLink(linkId));
 
-        return LinkData.builder()
-                .id(linkId)
-                .link(LINK)
-                .dataChanges(Map.of("commits", "15", "comments", "11"))
-                .pageUpdateDate(OffsetDateTime.now())
-                .domainId(createDomainData().getId())
-                .build();
+        return new Link(
+                linkId,
+                LINK,
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                createDomainData().getId(),
+                Map.of("commits", "15", "comments", "11")
+        );
     }
 
     public boolean checkMissingDataChat(Long chatId) {
@@ -104,7 +105,7 @@ public class JdbcUtils {
         return result == null || result == 0;
     }
 
-    public void assertDomainResult(DomainData result, DomainData domainData) {
+    public void assertDomainResult(Domain result, Domain domainData) {
         assertNotNull(result);
         assertAll(
                 () -> assertEquals(result.getName(), domainData.getName()),
@@ -112,25 +113,31 @@ public class JdbcUtils {
         );
     }
 
-    public void assertChatResult(ChatData result, ChatData chatData) {
+    public void assertChatResult(Chat chatData) {
+        Chat result = jdbcTemplate.queryForObject(
+                SELECT_CHAT_BY_ID_QUERY,
+                new DataClassRowMapper<>(Chat.class),
+                chatData.getId()
+        );
         assertNotNull(result);
         assertAll(
                 () -> assertEquals(result.getId(), chatData.getId()),
-                () -> assertEquals(result.getLastCallDate(), LocalDate.now())
+                () -> assertEquals(result.getLastCallDate(), LocalDate.now()),
+                () -> assertEquals(result.getCreatedDate().toLocalDate(), LocalDate.now())
         );
     }
 
-    public void assertLinkResult(LinkData result, LinkData linkData) {
+    public void assertLinkResult(Link result, Link linkData) {
         assertNotNull(result);
         assertAll(
                 () -> assertEquals(result.getLink(), linkData.getLink()),
-                () -> assertEquals(result.getDomainId(), linkData.getDomainId()),
+                () -> assertEquals(result.getDomain().getId(), linkData.getDomain().getId()),
                 () -> assertEquals(result.getDataChanges().get("commits"), "15"),
                 () -> assertEquals(result.getDataChanges().get("comments"), "11")
         );
     }
 
-    public void assertChatLinkResult(ChatLinkData result, ChatLinkData chatLinkData) {
+    public void assertChatLinkResult(ChatLink result, ChatLink chatLinkData) {
         assertNotNull(result);
         assertAll(
                 () -> assertEquals(result.getChatId(), chatLinkData.getChatId()),
@@ -138,13 +145,13 @@ public class JdbcUtils {
         );
     }
 
-    public void initEnvironmentChatLink(DomainData domainData, ChatData chatData, LinkData linkData) {
+    public void initEnvironmentChatLink(Domain domainData, Chat chatData, Link linkData) {
         jdbcTemplate.update(INSERT_DOMAINS_QUERY, domainData.getId(), domainData.getName());
         jdbcTemplate.update(INSERT_CHATS_QUERY, chatData.getId());
         jdbcTemplate.update(INSERT_LINKS_QUERY,
                 linkData.getId(),
                 linkData.getLink(),
-                linkData.getDomainId(),
+                linkData.getDomain().getId(),
                 new ConvertorFromMapToJson().convertToDatabaseColumn(linkData.getDataChanges())
         );
     }

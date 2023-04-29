@@ -10,11 +10,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
-import ru.tinkoff.edu.java.database.JdbcUtils;
+import ru.tinkoff.edu.java.database.utils.Utils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
-import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.Link;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jooq.ConverterJson;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jooq.JooqDomainRepository;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jooq.JooqLinkRepository;
@@ -25,12 +24,12 @@ import static ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Links.LINKS;
 
 @JooqTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {JooqDomainRepository.class, JooqLinkRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+@ContextConfiguration(classes = {JooqDomainRepository.class, JooqLinkRepository.class, DBConfiguration.class, Utils.class})
 public class JooqLinkRepositoryIT extends IntegrationEnvironment {
     private final DSLContext dsl;
     private final JooqLinkRepository linkRepository;
-    private final JdbcUtils utils;
-    private LinkData linkData;
+    private final Utils utils;
+    private Link linkData;
     private final ConverterJson converter = new ConverterJson();
 
     @BeforeEach
@@ -42,26 +41,24 @@ public class JooqLinkRepositoryIT extends IntegrationEnvironment {
     void addLinkWithExistsDomainId_OK() {
         // given
         dsl.insertInto(DOMAINS, DOMAINS.ID, DOMAINS.NAME)
-                .values(linkData.getDomainId(), utils.DOMAIN_NAME)
+                .values(linkData.getDomain().getId(), utils.DOMAIN_NAME)
                 .execute();
 
         // when
         linkRepository.add(linkData);
 
         // then
-        System.out.println(linkData.getDataChanges().toString());
-        LinkData result = dsl.select(LINKS.LINK, LINKS.DOMAIN_ID, LINKS.DATA_CHANGES)
+        Link result = dsl.select(LINKS.LINK, LINKS.DOMAIN_ID, LINKS.DATA_CHANGES)
                 .from(LINKS)
                 .where(LINKS.LINK.eq(linkData.getLink()))
                 .fetchOne()
-                .map(
-                        record -> LinkData.builder()
-                                .link(record.getValue(LINKS.LINK))
-                                .domainId(record.getValue(LINKS.DOMAIN_ID))
-                                .dataChanges(
-                                        converter.from(record.getValue(LINKS.DATA_CHANGES).data())
-                                )
-                                .build()
+                .map(record -> new Link(
+                            null,
+                                record.getValue(LINKS.LINK),
+                                null, null, null,
+                                record.getValue(LINKS.DOMAIN_ID),
+                                converter.from(record.getValue(LINKS.DATA_CHANGES).data())
+                        )
                 );
 
         utils.assertLinkResult(result, linkData);
@@ -95,11 +92,8 @@ public class JooqLinkRepositoryIT extends IntegrationEnvironment {
 
     @Test
     void addEmptyLinkData_ThrowsBadEntityException() {
-        // given
-        linkData = LinkData.builder().build();
-
-        // then/when
-        assertThrows(BadEntityException.class, () -> linkRepository.add(linkData));
+        // given/then/when
+        assertThrows(BadEntityException.class, () -> linkRepository.add(new Link()));
     }
 
     @Test
@@ -136,7 +130,7 @@ public class JooqLinkRepositoryIT extends IntegrationEnvironment {
         addDomainAndLink();
 
         // when
-        LinkData result = linkRepository.getByLink(linkData.getLink());
+        Link result = linkRepository.getByLink(linkData.getLink());
 
         // then
         utils.assertLinkResult(result, linkData);
@@ -151,7 +145,7 @@ public class JooqLinkRepositoryIT extends IntegrationEnvironment {
     }
 
     private void addDomainAndLink() {
-        dsl.insertInto(DOMAINS, DOMAINS.ID, DOMAINS.NAME).values(linkData.getDomainId(), utils.DOMAIN_NAME).execute();
+        dsl.insertInto(DOMAINS, DOMAINS.ID, DOMAINS.NAME).values(linkData.getDomain().getId(), utils.DOMAIN_NAME).execute();
         linkRepository.add(linkData);
     }
 }

@@ -9,15 +9,10 @@ import org.springframework.boot.test.autoconfigure.jooq.JooqTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
 import ru.tinkoff.edu.java.database.IntegrationEnvironment;
-import ru.tinkoff.edu.java.database.JdbcUtils;
+import ru.tinkoff.edu.java.database.utils.Utils;
 import ru.tinkoff.edu.java.scrapper.configuration.DBConfiguration;
-import ru.tinkoff.edu.java.scrapper.configuration.db.TestConfiguration;
-import ru.tinkoff.edu.java.scrapper.domain.jooq.tables.ChatLink;
 import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLinkData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.DomainData;
-import ru.tinkoff.edu.java.scrapper.persistence.entity.LinkData;
+import ru.tinkoff.edu.java.scrapper.persistence.entity.*;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.jooq.JooqChatLinkRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,27 +22,24 @@ import static ru.tinkoff.edu.java.scrapper.domain.jooq.Tables.CHAT_LINK;
 
 @JooqTest
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@ContextConfiguration(classes = {JooqChatLinkRepository.class, DBConfiguration.class, TestConfiguration.class, JdbcUtils.class})
+@ContextConfiguration(classes = {JooqChatLinkRepository.class, DBConfiguration.class, Utils.class})
 public class JooqChatLinkRepositoryIT extends IntegrationEnvironment {
     private final DSLContext dsl;
     private final JooqChatLinkRepository chatLinkRepository;
-    private final JdbcUtils utils;
-    private ChatLinkData chatLinkData;
-    private ChatData chatData;
-    private LinkData linkData;
-    private DomainData domainData;
+    private final Utils utils;
+    private ChatLink chatLinkData;
+    private Chat chatData;
+    private Link linkData;
+    private Domain domainData;
 
     @BeforeEach
     public void initChatLinkData() {
         chatData = utils.createChatData();
         domainData = utils.createDomainData();
         linkData = utils.createLinkData();
-        linkData.setDomainId(domainData.getId());
+        linkData.setDomain(domainData);
 
-        chatLinkData = ChatLinkData.builder()
-                .linkId(linkData.getId())
-                .chatId(chatData.getId())
-                .build();
+        chatLinkData = new ChatLink(chatData.getId(), linkData.getId());
     }
 
     @Test
@@ -59,11 +51,17 @@ public class JooqChatLinkRepositoryIT extends IntegrationEnvironment {
         chatLinkRepository.add(chatLinkData);
 
         // then
-        ChatLinkData result = dsl.select(CHAT_LINK.CHAT_ID, CHAT_LINK.LINK_ID)
-                .from(CHAT_LINK)
-                .where(ChatLink.CHAT_LINK.CHAT_ID.eq(chatLinkData.getChatId()))
-                .and(ChatLink.CHAT_LINK.LINK_ID.eq(chatLinkData.getLinkId()))
-                .fetchOneInto(ChatLinkData.class);
+        ChatLink result = new ChatLink(
+                dsl.select(CHAT_LINK.CHAT_ID, CHAT_LINK.LINK_ID)
+                        .from(CHAT_LINK)
+                        .where(
+                                CHAT_LINK.CHAT_ID.eq(chatLinkData.getChatId())
+                        )
+                        .and(
+                                CHAT_LINK.LINK_ID.eq(chatLinkData.getLinkId())
+                        )
+                        .fetchOneInto(ChatLinkPK.class)
+        );
         utils.assertChatLinkResult(result, chatLinkData);
     }
 
@@ -98,7 +96,7 @@ public class JooqChatLinkRepositoryIT extends IntegrationEnvironment {
     @Test
     void addEmptyChatLink_ThrowsBadEntityException() {
         // given
-        chatLinkData = ChatLinkData.builder().build();
+        chatLinkData = new ChatLink();
 
         // when/then
         assertThrows(BadEntityException.class, () -> chatLinkRepository.add(chatLinkData));
