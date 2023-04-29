@@ -3,8 +3,8 @@ package ru.tinkoff.edu.java.parsers;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import ru.tinkoff.edu.java.App;
-import ru.tinkoff.edu.java.responses.GitHubResponse;
+import ru.tinkoff.edu.java.GeneralParseLink;
+import ru.tinkoff.edu.java.responses.GitHubParseResponse;
 
 import java.util.Optional;
 
@@ -18,7 +18,7 @@ public class GitHubParserTest {
         // given
 
         // when
-        GitHubResponse response = (GitHubResponse) new App().main(link);
+        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertNull(response);
@@ -37,7 +37,7 @@ public class GitHubParserTest {
         // given
 
         // when
-        GitHubResponse response = (GitHubResponse) new App().main(link);
+        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertNull(response);
@@ -53,7 +53,7 @@ public class GitHubParserTest {
         // given
 
         // when
-        GitHubResponse response = (GitHubResponse) new App().main(link);
+        GitHubParseResponse response = (GitHubParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertAll(
@@ -72,7 +72,7 @@ public class GitHubParserTest {
         Parser parseChain = ParseChain.chain(new StackOverflowParser(), new GitHubParser());
 
         // when
-        GitHubResponse response = (GitHubResponse) parseChain.parseUrl(Optional.ofNullable(link));
+        GitHubParseResponse response = (GitHubParseResponse) parseChain.parseUrl(Optional.ofNullable(link));
 
         // then
         assertAll(

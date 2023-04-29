@@ -32,7 +32,7 @@ public abstract class IntegrationEnvironment {
     }
 
     @DynamicPropertySource
-    static void jdbsProperties(DynamicPropertyRegistry registry) {
+    static void jdbcProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasourse.url", DB_CONTAINER::getJdbcUrl);
         registry.add("spring.datasourse.username", DB_CONTAINER::getUsername);
         registry.add("spring.datasourse.password", DB_CONTAINER::getPassword);
