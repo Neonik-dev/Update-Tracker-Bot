@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.logic.commands;
 
 import com.pengrad.telegrambot.request.SendMessage;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,14 +17,16 @@ import java.util.HashSet;
 import static org.mockito.Mockito.mockStatic;
 
 @ExtendWith(MockitoExtension.class)
+@RequiredArgsConstructor
 public class ListCommandTest extends CommandTest {
+    private final ListCommand listCommand;
     @Test
     void listLinkEmpty_SpecialText() {
         // given
         String specialText = "Пока нет ни одной отслеживаемой ссылки.\nДобавить ссылку можно с помощью команды /track";
 
         // when
-        SendMessage sendMessage = new ListCommand().execute(message);
+        SendMessage sendMessage = listCommand.execute(message);
 
         // then
         assertMessage(sendMessage, specialText);
@@ -41,7 +44,7 @@ public class ListCommandTest extends CommandTest {
             )));
 
             // when
-            SendMessage sendMessage = new ListCommand().execute(message);
+            SendMessage sendMessage = listCommand.execute(message);
 
             // then
             assertMessage(sendMessage, answer);

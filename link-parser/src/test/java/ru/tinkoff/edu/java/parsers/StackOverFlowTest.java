@@ -24,7 +24,7 @@ public class StackOverFlowTest {
         // given
 
         // when
-        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().main(link);
+        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertNull(response);
@@ -41,7 +41,7 @@ public class StackOverFlowTest {
         // given
 
         // when
-        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().main(link);
+        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertEquals(response.questionId(), "68538851");
@@ -53,7 +53,7 @@ public class StackOverFlowTest {
         String link = "https://stackoverflow.com/questions/1";
 
         // when
-        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().main(link);
+        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertEquals(response.questionId(), "1");
@@ -65,7 +65,7 @@ public class StackOverFlowTest {
         String link = "https://stackoverflow.com/questions/16677777777777777777777777777777777777777777777777777777777";
 
         // when
-        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().main(link);
+        StackOverflowParseResponse response = (StackOverflowParseResponse) new GeneralParseLink().start(link);
 
         // then
         assertEquals(response.questionId(), "16677777777777777777777777777777777777777777777777777777777");

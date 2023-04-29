@@ -10,7 +10,7 @@ import java.util.Optional;
 public class GeneralParseLink
 {
     private static final Parser parser = ParseChain.chain();
-    public BaseParseResponse main(String link)
+    public BaseParseResponse start(String link)
     {
         // Chain of responsibility
         return parser.parseUrl(Optional.ofNullable(link));

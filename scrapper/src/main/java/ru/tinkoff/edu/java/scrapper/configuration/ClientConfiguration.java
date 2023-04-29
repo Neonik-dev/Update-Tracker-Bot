@@ -9,7 +9,6 @@ import ru.tinkoff.edu.java.scrapper.clients.clients.site.GitHubClient;
 
 @Configuration
 @RequiredArgsConstructor
-//@ContextConfiguration(classes = {GitHubConfig.class, StackOverFlowConfig.class, TgBotConfig.class})
 public class ClientConfiguration {
     private final GitHubConfig gitHubConfig;
     private final StackOverFlowConfig stackOverFlowConfig;
