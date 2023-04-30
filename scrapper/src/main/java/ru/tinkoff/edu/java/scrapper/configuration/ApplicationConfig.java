@@ -13,6 +13,7 @@ public record ApplicationConfig(
         @NotNull String test,
         @NotNull Scheduler scheduler,
         @NotNull AccessType databaseAccessType,
+        @NotNull boolean useQueue,
         @NotNull RabbitPropertyConfig rabbit
 ){
     public record Scheduler(Duration interval) {
