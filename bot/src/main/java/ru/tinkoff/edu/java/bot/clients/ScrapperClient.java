@@ -55,7 +55,6 @@ public class ScrapperClient {
     }
 
     public void deleteLink(Long chatId, URI uri) {
-        System.out.println("Запросик отправляем");
         webClient.method(HttpMethod.DELETE)
                 .uri(URL_LINK)
                 .header("Tg-Chat-Id", String.valueOf(chatId))

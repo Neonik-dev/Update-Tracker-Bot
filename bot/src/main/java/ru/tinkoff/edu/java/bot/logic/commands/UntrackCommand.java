@@ -26,7 +26,6 @@ public class UntrackCommand implements BaseCommand, ReplyCommand{
     public SendMessage executeReply(Message message) {
         String text;
         try {
-            System.out.println("Запросик отправляем");
             scrapperClient.deleteLink(message.chat().id(), LinkValidation.validate(message.text()));
 //            ManagerCollection.remove(LinkValidation.validate(message.text()));
             text = FINISH_TEXT;
