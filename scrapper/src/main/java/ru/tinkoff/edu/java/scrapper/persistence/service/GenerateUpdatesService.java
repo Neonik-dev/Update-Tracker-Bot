@@ -34,8 +34,8 @@ public class GenerateUpdatesService {
         BaseSiteClient client = sitesMap.getClient(uriLink.getHost());
         BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink()); // парсим ссылку и получаем необходимые поля
 
-        String updatedDate = client.getUpdatedDate(parseResponse);
-        String dbUpdatedDate = clearLinkData.getPageUpdatedDate().toString();
+        OffsetDateTime updatedDate = client.getUpdatedDate(parseResponse);
+        OffsetDateTime dbUpdatedDate = clearLinkData.getPageUpdatedDate();
         if (dbUpdatedDate.equals(updatedDate)) // если время обновлений совпадает, то выходим
             return Optional.empty();
 
@@ -44,7 +44,7 @@ public class GenerateUpdatesService {
 
         String botText = generateBotMessage(responseDataChanges, dataChanges);
 
-        linkService.updateDataChanges(responseDataChanges, OffsetDateTime.parse(updatedDate), clearLinkData.getId()); // записываю обновленные данные в бд
+        linkService.updateDataChanges(responseDataChanges, updatedDate, clearLinkData.getId()); // записываю обновленные данные в бд
         return Optional.of(
                 new LinkUpdateRequest(
                         clearLinkData.getId(),
@@ -64,9 +64,7 @@ public class GenerateUpdatesService {
         StringBuilder text = new StringBuilder("Есть обновление"); // генерирую сообщение пользователю
         for (String key : responseDataChanges.keySet()) {
             if (dataChanges.get(key) != null && !Objects.equals(dataChanges.get(key), responseDataChanges.get(key))) {
-//                text.append("\n~~").append(key).append(": ").append(dataChanges.get(key)).append("~~ -> ")
-//                .append(key).append(": ").append(responseDataChanges.get(key));    // как лучше сделать?
-                text.append(String.format("\n~~%s: %s~~ -> %s: %s",
+                text.append(String.format("\n~~%s: %s~~ —> %s: %s",
                         key,
                         dataChanges.get(key),
                         key,

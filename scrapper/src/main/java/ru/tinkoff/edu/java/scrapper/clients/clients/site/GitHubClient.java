@@ -6,6 +6,8 @@ import ru.tinkoff.edu.java.responses.GitHubParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.dto.GitHubSiteResponse;
 import ru.tinkoff.edu.java.scrapper.configuration.GitHubConfig;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -39,14 +41,17 @@ public class GitHubClient implements BaseSiteClient {
         return dataUpdates;
     }
     @Override
-    public String getUpdatedDate(BaseParseResponse response) {
+    public OffsetDateTime getUpdatedDate(BaseParseResponse response) {
         GitHubParseResponse clearResponse = (GitHubParseResponse) response;
+
         return webClient
                 .get()
                 .uri(MAIN_INFO_LINK, clearResponse.user(), clearResponse.repo())
                 .retrieve()
                 .bodyToMono(GitHubSiteResponse.class)
-                .block().updatedDate().toString();
+                .block()
+                .updatedDate()
+                .withOffsetSameLocal(ZoneOffset.ofHours(3));
     }
 
     private String getFieldLength(String url) {

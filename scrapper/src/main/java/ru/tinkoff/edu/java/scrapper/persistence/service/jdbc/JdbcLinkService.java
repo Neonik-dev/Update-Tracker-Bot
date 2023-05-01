@@ -55,7 +55,7 @@ public class JdbcLinkService implements LinkService {
 
         BaseSiteClient client = sitesMap.getClient(url.getHost());
         BaseParseResponse parseResponse = new GeneralParseLink().start(linkData.getLink());
-        linkData.setPageUpdatedDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
+        linkData.setPageUpdatedDate(client.getUpdatedDate(parseResponse));
         linkData.setDataChanges(client.getUpdates(parseResponse));
 
         try {

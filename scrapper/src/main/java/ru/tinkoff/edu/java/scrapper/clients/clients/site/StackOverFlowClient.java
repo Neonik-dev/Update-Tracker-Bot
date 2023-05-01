@@ -6,6 +6,8 @@ import ru.tinkoff.edu.java.responses.StackOverflowParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.dto.StackOverFlowSiteResponse;
 import ru.tinkoff.edu.java.scrapper.configuration.StackOverFlowConfig;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +24,7 @@ public class StackOverFlowClient implements BaseSiteClient {
     }
 
     @Override
-    public String getUpdatedDate(BaseParseResponse response) {
+    public OffsetDateTime getUpdatedDate(BaseParseResponse response) {
         StackOverflowParseResponse stackResponse = (StackOverflowParseResponse) response;
         return webClient
                 .get()
@@ -31,6 +33,7 @@ public class StackOverFlowClient implements BaseSiteClient {
                 .bodyToMono(StackOverFlowSiteResponse.class)
                 .block()
                 .questions()[0]
-                .updatedDate().toString();
+                .updatedDate()
+                .withOffsetSameLocal(ZoneOffset.ofHours(3));
     }
 }

@@ -3,6 +3,7 @@ package ru.tinkoff.edu.java.bot.logic.wrapper;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.BotCommand;
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.request.SetMyCommands;
 import lombok.RequiredArgsConstructor;
 import ru.tinkoff.edu.java.bot.configuration.ApplicationConfig;
@@ -19,7 +20,6 @@ public class TgUpdaterLinkBot implements TgBot {
     private TelegramBot bot;
     private final ApplicationConfig config;
     private final InputHandler inputHandler;
-//    private final InitCommands initCommands;
 
     @Override
     public void start() {
@@ -41,6 +41,11 @@ public class TgUpdaterLinkBot implements TgBot {
     @Override
     public void close() {
         bot.removeGetUpdatesListener();
+    }
+
+    @Override
+    public void sendMessage(SendMessage message) {
+        bot.execute(message);
     }
 
     @Override

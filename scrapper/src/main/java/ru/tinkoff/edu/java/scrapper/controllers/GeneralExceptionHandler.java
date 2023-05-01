@@ -8,10 +8,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.tinkoff.edu.java.scrapper.dto.ApiErrorResponse;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.BadEntityException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.DuplicateUniqueFieldException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.EmptyResultException;
-import ru.tinkoff.edu.java.scrapper.exceptions.repository.ForeignKeyNotExistsException;
+import ru.tinkoff.edu.java.scrapper.exceptions.repository.*;
 
 @RestControllerAdvice
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
@@ -28,7 +25,9 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
         ));
     }
 
-    @ExceptionHandler({BadEntityException.class, DuplicateUniqueFieldException.class, MethodArgumentTypeMismatchException.class, EmptyResultException.class, ForeignKeyNotExistsException.class})
+    @ExceptionHandler({BadEntityException.class, DuplicateUniqueFieldException.class,
+            MethodArgumentTypeMismatchException.class, EmptyResultException.class,
+            ForeignKeyNotExistsException.class, InvalidLinkException.class})
     protected ResponseEntity<ApiErrorResponse> handlerInvalidRequestParameters(Exception exception) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 DESCRIPTION_400,

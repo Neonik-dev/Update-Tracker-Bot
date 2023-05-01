@@ -16,6 +16,6 @@ public class JpaChatLinkService implements ChatLinkService {
 
     @Override
     public List<Long> getAllChat(long linkId) {
-        return chatLinkRepository.findAllByChatId(linkId);
+        return chatLinkRepository.findAllByLinkId(linkId);
     }
 }

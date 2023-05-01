@@ -58,12 +58,12 @@ public class JpaLinkService implements LinkService {
 
         BaseParseResponse parseResponse = new GeneralParseLink().start(link.getLink());
         BaseSiteClient client = sitesMap.getClient(url.getHost());
-        link.setPageUpdatedDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
+        link.setPageUpdatedDate(client.getUpdatedDate(parseResponse));
         link.setDataChanges(client.getUpdates(parseResponse));
 
         link.setSchedulerUpdateDate(OffsetDateTime.now());
         link.setUserCheckDate(OffsetDateTime.now());
-        return  linkRepository.save(link);
+        return linkRepository.save(link);
     }
 
     @Override
