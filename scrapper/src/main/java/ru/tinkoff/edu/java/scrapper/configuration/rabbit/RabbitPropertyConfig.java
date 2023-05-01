@@ -7,6 +7,7 @@ public record RabbitPropertyConfig(
         @NotNull QueueProperty queue,
         @NotNull RoutingKeyProperty routingKey,
         @NotNull String host,
+        @NotNull Integer port,
         @NotNull String username,
         @NotNull String password
 ) {

@@ -1,10 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.configuration;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -19,7 +16,10 @@ public class RabbitMQConfig {
 
     @Bean
     public CachingConnectionFactory connectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(config.rabbit().host());
+        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
+                config.rabbit().host(),
+                config.rabbit().port()
+        );
         cachingConnectionFactory.setUsername(config.rabbit().username());
         cachingConnectionFactory.setPassword(config.rabbit().password());
         return cachingConnectionFactory;
@@ -32,7 +32,9 @@ public class RabbitMQConfig {
 
     @Bean("queueUpdate")
     public Queue directQueue1() {
-        return new Queue(config.rabbit().queue().botUpdateQueue());
+        return QueueBuilder.durable(config.rabbit().queue().botUpdateQueue())
+                .withArgument("x-dead-letter-exchange", config.rabbit().exchange().botUpdateExchange() + ".dlx")
+                .build();
     }
 
     @Bean("bindingDirect")

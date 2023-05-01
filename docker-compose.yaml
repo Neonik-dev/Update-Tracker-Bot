@@ -28,6 +28,7 @@ services:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq/mnesia
+
   liquibase-migrations:
     image: liquibase/liquibase:4.18
     depends_on:

@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.bot.configuration;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.ClassMapper;
@@ -21,7 +22,10 @@ public class RabbitMQConfig {
 
     @Bean
     public CachingConnectionFactory connectionFactory() {
-        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(config.rabbit().host());
+        CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory(
+                config.rabbit().host(),
+                config.rabbit().port()
+        );
         cachingConnectionFactory.setUsername(config.rabbit().username());
         cachingConnectionFactory.setPassword(config.rabbit().password());
         return cachingConnectionFactory;
@@ -41,6 +45,21 @@ public class RabbitMQConfig {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter);
         return rabbitTemplate;
+    }
+
+    @Bean("dlxUpdateLink")
+    public Exchange dlxUpdateLink() {
+        return ExchangeBuilder.directExchange(config.rabbit().exchange().updateDLX() + ".dlx").build();
+    }
+
+    @Bean("dlqUpdateLink")
+    public Queue dlqUpdateLink() {
+        return QueueBuilder.durable(config.rabbit().queue().updateDLQ() + ".dlq").build();
+    }
+
+    @Bean("dlqBinding")
+    public Binding dlqBinding(Exchange exchange, Queue queue) {
+        return BindingBuilder.bind(queue).to(exchange).with(config.rabbit().routingKey().dlqUpdateRoutingKey()).noargs();
     }
 
     @Bean
