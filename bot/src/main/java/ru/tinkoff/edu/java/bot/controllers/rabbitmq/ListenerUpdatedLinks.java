@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.rabbitmq;
+package ru.tinkoff.edu.java.bot.controllers.rabbitmq;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;

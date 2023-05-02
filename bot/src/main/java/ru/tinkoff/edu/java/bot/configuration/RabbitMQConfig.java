@@ -48,8 +48,8 @@ public class RabbitMQConfig {
     }
 
     @Bean("dlxUpdateLink")
-    public Exchange dlxUpdateLink() {
-        return ExchangeBuilder.directExchange(config.rabbit().exchange().updateDLX() + ".dlx").build();
+    public FanoutExchange dlxUpdateLink() {
+        return ExchangeBuilder.fanoutExchange(config.rabbit().exchange().updateDLX() + ".dlx").build();
     }
 
     @Bean("dlqUpdateLink")
@@ -58,8 +58,8 @@ public class RabbitMQConfig {
     }
 
     @Bean("dlqBinding")
-    public Binding dlqBinding(Exchange exchange, Queue queue) {
-        return BindingBuilder.bind(queue).to(exchange).with(config.rabbit().routingKey().dlqUpdateRoutingKey()).noargs();
+    public Binding dlqBinding(FanoutExchange exchange, Queue queue) {
+        return BindingBuilder.bind(queue).to(exchange);
     }
 
     @Bean
