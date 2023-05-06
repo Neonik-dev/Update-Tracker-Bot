@@ -1,0 +1,33 @@
+app:
+  test: 12
+  token: ${BOT_TOKEN}
+  rabbit:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    queue:
+      updateQueue: botUpdateQueue
+      deadLetterQueueForLinkUpdate: botUpdateQueue.dlq
+    exchange:
+      deadLetterExchange: botUpdateDirectExchange.dlx
+
+spring:
+  rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: auto
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 3s
+          multiplier: 1.5
+          max-interval: 8s
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+#client:
+#  scrapper:
+#    baseUrl:

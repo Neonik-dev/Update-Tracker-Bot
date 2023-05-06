@@ -1,0 +1,43 @@
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+server:
+  port: 8081
+
+app:
+  test: 1123
+  useQueue: true
+  database-access-type: jpa
+  scheduler:
+    interval: 10s
+  rabbit:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
+    exchange:
+      botUpdateExchange: botUpdateDirectExchange
+    queue:
+      botUpdateQueue: botUpdateQueue
+    routingKey:
+      botUpdateRoutingKey: botUpdateRoutingKey
+
+spring:
+  liquibase:
+    enabled: false
+
+db:
+  postgresql:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+
+#tg:
+#  bot:
+#    baseUrl:
+#client:
+#  github:
+#    baseUrl:
+#  stackoverflow:
+#    baseUrl:

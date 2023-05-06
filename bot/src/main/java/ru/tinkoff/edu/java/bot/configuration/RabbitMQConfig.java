@@ -49,12 +49,12 @@ public class RabbitMQConfig {
 
     @Bean("dlxUpdateLink")
     public FanoutExchange dlxUpdateLink() {
-        return ExchangeBuilder.fanoutExchange(config.rabbit().exchange().updateDLX() + ".dlx").build();
+        return ExchangeBuilder.fanoutExchange(config.rabbit().exchange().deadLetterExchange()).build();
     }
 
     @Bean("dlqUpdateLink")
     public Queue dlqUpdateLink() {
-        return QueueBuilder.durable(config.rabbit().queue().updateDLQ() + ".dlq").build();
+        return QueueBuilder.durable(config.rabbit().queue().deadLetterQueueForLinkUpdate()).build();
     }
 
     @Bean("dlqBinding")

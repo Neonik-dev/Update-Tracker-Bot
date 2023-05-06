@@ -14,6 +14,7 @@ import ru.tinkoff.edu.java.scrapper.clients.clients.site.GitHubClient;
 @Configuration
 @RequiredArgsConstructor
 public class ClientConfiguration {
+    private final ApplicationConfig applicationConfig;
     private final GitHubConfig gitHubConfig;
     private final StackOverFlowConfig stackOverFlowConfig;
     private final TgBotConfig tgBotConfig;
@@ -38,7 +39,7 @@ public class ClientConfiguration {
     @Bean("senderUpdatedLinks")
     @ConditionalOnProperty(prefix = "app", name = "useQueue", havingValue = "true", matchIfMissing = true)
     public SenderUpdatedLinks getScrapperQueueProducer() {
-        return new ScrapperQueueProducer(rabbitTemplate);
+        return new ScrapperQueueProducer(rabbitTemplate, applicationConfig.rabbit());
     }
 
     @Bean("schedulerIntervalMs")
