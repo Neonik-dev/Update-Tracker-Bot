@@ -1,14 +1,13 @@
-package ru.tinkoff.edu.java.parsers;
+package ru.tinkoff.edu.java.link_parser;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import ru.tinkoff.edu.java.parser_link.GeneralParseLink;
-import ru.tinkoff.edu.java.parser_link.parsers.GitHubParser;
-import ru.tinkoff.edu.java.parser_link.parsers.ParseChain;
-import ru.tinkoff.edu.java.parser_link.parsers.Parser;
-import ru.tinkoff.edu.java.parser_link.parsers.StackOverflowParser;
-import ru.tinkoff.edu.java.parser_link.responses.GitHubParseResponse;
+import ru.tinkoff.edu.java.link_parser.parsers.GitHubParser;
+import ru.tinkoff.edu.java.link_parser.parsers.ParseChain;
+import ru.tinkoff.edu.java.link_parser.parsers.Parser;
+import ru.tinkoff.edu.java.link_parser.parsers.StackOverflowParser;
+import ru.tinkoff.edu.java.link_parser.responses.GitHubParseResponse;
 
 import java.util.Optional;
 

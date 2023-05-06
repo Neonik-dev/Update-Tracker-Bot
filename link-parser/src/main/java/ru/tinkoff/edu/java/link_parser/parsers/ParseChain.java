@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.parser_link.parsers;
+package ru.tinkoff.edu.java.link_parser.parsers;
 
 public class ParseChain {
     public static Parser chain() {

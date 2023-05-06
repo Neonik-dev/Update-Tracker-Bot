@@ -1,8 +1,8 @@
 package ru.tinkoff.edu.java.scrapper.clients.clients.site;
 
 import org.springframework.web.reactive.function.client.WebClient;
-import ru.tinkoff.edu.java.parser_link.responses.BaseParseResponse;
-import ru.tinkoff.edu.java.parser_link.responses.StackOverflowParseResponse;
+import ru.tinkoff.edu.java.link_parser.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.link_parser.responses.StackOverflowParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.dto.StackOverFlowSiteResponse;
 import ru.tinkoff.edu.java.scrapper.configuration.StackOverFlowConfig;
 
