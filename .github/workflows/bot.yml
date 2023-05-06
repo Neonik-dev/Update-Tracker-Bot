@@ -5,6 +5,9 @@ on:
     branches:
       - 'master'
       - 'hw8'
+  pull_request:
+    branches:
+      - 'hw8'
 
 jobs:
   build:
