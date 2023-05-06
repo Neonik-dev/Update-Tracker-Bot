@@ -37,7 +37,6 @@
         <spring-boot-starter-jooq.version>3.0.5</spring-boot-starter-jooq.version>
         <jooq-meta-extensions-liquibase.version>3.18.3</jooq-meta-extensions-liquibase.version>
         <liquibase-core.version>4.21.1</liquibase-core.version>
-        <spring-boot-starter-amqp.version>3.0.6</spring-boot-starter-amqp.version>
     </properties>
 
     <dependencies>
