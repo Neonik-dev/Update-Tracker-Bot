@@ -10,4 +10,3 @@
 */target/**
 *.iml
 /.idea
-**/domain/jooq/**
