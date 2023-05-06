@@ -2,8 +2,8 @@ package ru.tinkoff.edu.java.scrapper.persistence.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.java.GeneralParseLink;
-import ru.tinkoff.edu.java.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.parser_link.GeneralParseLink;
+import ru.tinkoff.edu.java.parser_link.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.BaseSiteClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
 import ru.tinkoff.edu.java.scrapper.clients.dto.LinkUpdateRequest;

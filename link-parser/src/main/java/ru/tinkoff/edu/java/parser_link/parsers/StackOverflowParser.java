@@ -1,7 +1,7 @@
-package ru.tinkoff.edu.java.parsers;
+package ru.tinkoff.edu.java.parser_link.parsers;
 
-import ru.tinkoff.edu.java.responses.BaseParseResponse;
-import ru.tinkoff.edu.java.responses.StackOverflowParseResponse;
+import ru.tinkoff.edu.java.parser_link.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.parser_link.responses.StackOverflowParseResponse;
 
 import java.util.Optional;
 

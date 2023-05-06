@@ -3,8 +3,8 @@ package ru.tinkoff.edu.java.parsers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import ru.tinkoff.edu.java.GeneralParseLink;
-import ru.tinkoff.edu.java.responses.StackOverflowParseResponse;
+import ru.tinkoff.edu.java.parser_link.GeneralParseLink;
+import ru.tinkoff.edu.java.parser_link.responses.StackOverflowParseResponse;
 
 
 import static org.junit.jupiter.api.Assertions.*;

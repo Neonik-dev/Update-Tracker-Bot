@@ -1,8 +1,8 @@
-package ru.tinkoff.edu.java;
+package ru.tinkoff.edu.java.parser_link;
 
-import ru.tinkoff.edu.java.parsers.ParseChain;
-import ru.tinkoff.edu.java.parsers.Parser;
-import ru.tinkoff.edu.java.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.parser_link.parsers.ParseChain;
+import ru.tinkoff.edu.java.parser_link.parsers.Parser;
+import ru.tinkoff.edu.java.parser_link.responses.BaseParseResponse;
 
 import java.util.Optional;
 

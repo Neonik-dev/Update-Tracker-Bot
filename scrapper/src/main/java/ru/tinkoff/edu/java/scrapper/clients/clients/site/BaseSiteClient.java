@@ -1,6 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.clients.clients.site;
 
-import ru.tinkoff.edu.java.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.parser_link.responses.BaseParseResponse;
 
 import java.time.OffsetDateTime;
 import java.util.Map;

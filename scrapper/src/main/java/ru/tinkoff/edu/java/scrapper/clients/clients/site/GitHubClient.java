@@ -1,8 +1,8 @@
 package ru.tinkoff.edu.java.scrapper.clients.clients.site;
 
 import org.springframework.web.reactive.function.client.WebClient;
-import ru.tinkoff.edu.java.responses.BaseParseResponse;
-import ru.tinkoff.edu.java.responses.GitHubParseResponse;
+import ru.tinkoff.edu.java.parser_link.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.parser_link.responses.GitHubParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.dto.GitHubSiteResponse;
 import ru.tinkoff.edu.java.scrapper.configuration.GitHubConfig;
 
