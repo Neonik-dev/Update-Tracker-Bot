@@ -18,4 +18,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn pl bot clean package
+        run: mvn -pl bot clean package
