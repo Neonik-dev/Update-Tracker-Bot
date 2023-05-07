@@ -42,5 +42,3 @@ jobs:
 
       - name: Push image
         run: docker push tg-bot-for-tracking-links:latest
-
-      
