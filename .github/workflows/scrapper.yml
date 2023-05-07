@@ -42,3 +42,6 @@ jobs:
 
       - name: Push image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/scrapper-links:latest
+
+      - name: Run checkstyle
+        run: mvn -pl bot -am checkstyle:check

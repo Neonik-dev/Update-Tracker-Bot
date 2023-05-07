@@ -38,6 +38,7 @@
         <jooq-meta-extensions-liquibase.version>3.18.3</jooq-meta-extensions-liquibase.version>
         <liquibase-core.version>4.21.1</liquibase-core.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <maven-checkstyle-plugin.version>3.2.2</maven-checkstyle-plugin.version>
     </properties>
 
     <dependencies>
@@ -213,6 +214,14 @@
                             <mainClass>ru.tinkoff.edu.java.scrapper.ScrapperApplication</mainClass>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
                 </configuration>
             </plugin>
         </plugins>
