@@ -1,13 +1,12 @@
 name: Bot CI
-
 on:
   push:
     branches:
       - 'master'
-      - 'hw8-checkstyle'
+      - 'hw8_checkstyle'
   pull_request:
     branches:
-      - 'hw8-checkstyle'
+      - 'hw8_checkstyle'
 
 jobs:
 #  build:
