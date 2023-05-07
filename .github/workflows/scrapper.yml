@@ -19,3 +19,11 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn package -pl scrapper -am
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: target/scrapper-1.0-SNAPSHOT.jar
+          name: scrapper.jar
+
+#      - name: Build bot image
+#        run: docker build -t scrapper-links:latest -f ../../scrapper/Dockerfile
