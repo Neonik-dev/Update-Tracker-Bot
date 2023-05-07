@@ -74,13 +74,25 @@
         <module name="VisibilityModifier"/>
 
         <!-- https://checkstyle.org/config_javadoc.html -->
+
+        <module name="JavadocType">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="JavadocMethod">
+            <property name="severity" value="ignore"/>
+        </module>
+        <module name="JavadocVariable">
+            <property name="severity" value="ignore"/>
+        </module>
+
+
         <!--         Checks for Javadoc comments.       -->
         <!-- <module name="AtclauseOrder"/> -->
         <!-- <module name="InvalidJavadocPosition"/> -->
         <!--<module name="JavadocContentLocationCheck"/>-->
-         <module name="JavadocMethod">
-             <property name="severity" value="ignore"/>
-         </module>
+<!--         <module name="JavadocMethod">-->
+<!--             <property name="severity" value="ignore"/>-->
+<!--         </module>-->
 <!--        <module name="JavadocMissingLeadingAsteriskCheck"/>-->
 <!--        <module name="JavadocMissingWhitespaceAfterAsterisk"/>-->
         <!-- <module name="JavadocParagraph"/> -->
@@ -91,12 +103,12 @@
 <!--                      value="ANNOTATION_DEF, ANNOTATION_FIELD_DEF, CLASS_DEF, CTOR_DEF, ENUM_CONSTANT_DEF, ENUM_DEF, INTERFACE_DEF, METHOD_DEF, VARIABLE_DEF"/>-->
         <!--</module>-->
         <!--<module name="JavadocTagContinuationIndentation"/>-->
-        <module name="JavadocType">
-            <property name="severity" value="ignore"/>
-        </module>
-         <module name="JavadocVariable">
-             <property name="severity" value="ignore"/>
-         </module>
+<!--        <module name="JavadocType">-->
+<!--            <property name="severity" value="ignore"/>-->
+<!--        </module>-->
+<!--         <module name="JavadocVariable">-->
+<!--             <property name="severity" value="ignore"/>-->
+<!--         </module>-->
         <!-- <module name="MissingJavadocMethod"/> -->
         <!-- <module name="MissingJavadocPackage"/> -->
         <!-- <module name="MissingJavadocType"/> -->
