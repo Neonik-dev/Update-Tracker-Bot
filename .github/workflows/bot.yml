@@ -37,8 +37,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build image
-        run: docker build -t tg-bot-for-tracking-links:latest -f bot/Dockerfile .
+#      - name: Build image
+#        run: docker build -t tg-bot-for-tracking-links:latest -f bot/Dockerfile .
+#
+#      - name: Push image
+#        run: docker push tg-bot-for-tracking-links:latest
 
+      - name: Build image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tg-bot-for-tracking-links:latest -f bot/Dockerfile .
       - name: Push image
-        run: docker push tg-bot-for-tracking-links:latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tg-bot-for-tracking-links:latest
