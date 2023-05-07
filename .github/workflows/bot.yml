@@ -42,3 +42,11 @@ jobs:
 
       - name: Push image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/tg-bot-for-tracking-links:latest
+
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Start checkstyle
+        run: mvn -pl bot -am checkstyle:check
+
