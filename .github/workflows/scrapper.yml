@@ -27,4 +27,4 @@ jobs:
           retention-days: 1
 
       - name: Build image
-        run: docker build -t scrapper-links:latest -f scrapper/Dockerfile
+        run: docker build -t scrapper-links:latest -f scrapper/Dockerfile .
