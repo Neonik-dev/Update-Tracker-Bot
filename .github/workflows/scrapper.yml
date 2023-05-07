@@ -4,7 +4,7 @@
 #  push:
 #    branches:
 #      - 'master'
-#      - 'hw8'
+#      - 'hw8-checkstyle'
 #
 #jobs:
 #  build:

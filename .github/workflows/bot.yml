@@ -7,7 +7,7 @@ on:
       - 'hw8'
   pull_request:
     branches:
-      - 'hw8'
+      - 'hw8-checkstyle'
 
 jobs:
 #  build:

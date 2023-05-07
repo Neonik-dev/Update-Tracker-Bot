@@ -70,6 +70,9 @@
     <module name="SuppressWarningsFilter"/>
 
     <module name="TreeWalker">
+        <module name="DeclarationOrder"/>
+        <module name="VisibilityModifier"/>
+
         <!-- https://checkstyle.org/config_javadoc.html -->
         <!--         Checks for Javadoc comments.       -->
         <!-- <module name="AtclauseOrder"/> -->
@@ -181,6 +184,8 @@
         <module name="EmptyForIteratorPad"/>
         <module name="EmptyLineSeparator">
             <property name="allowNoEmptyLineBetweenFields" value="true"/>
+            <property name="allowMultipleEmptyLines" value="false"/>
+            <property name="allowMultipleEmptyLinesInsideClassMember" value="false"/>
         </module>
         <module name="GenericWhitespace"/>
         <module name="MethodParamPad"/>
@@ -260,7 +265,6 @@
         <!-- <module name="AvoidInlineConditionals"/> -->
         <module name="AvoidNoArgumentSuperConstructorCall"/>
         <module name="CovariantEquals"/>
-        <!--<module name="DeclarationOrder"/>-->
         <module name="DefaultComesLast"/>
         <module name="EmptyStatement"/>
         <!-- <module name="EqualsAvoidNull"/> -->
@@ -346,8 +350,6 @@
         <module name="MutableException"/>
         <module name="OneTopLevelClass"/>
         <!-- <module name="ThrowsCount"/> -->
-        <!-- <module name="VisibilityModifier"/> -->
-
 
         <!-- Miscellaneous other checks.                   -->
         <!-- https://checkstyle.org/config_misc.html -->
