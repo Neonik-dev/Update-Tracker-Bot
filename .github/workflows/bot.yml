@@ -25,10 +25,10 @@ jobs:
       - name: Build with Maven
         run: mvn package -pl bot -am
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
-          name: bot.jar
           path: target/bot-1.0-SNAPSHOT.jar
+          name: bot.jar
 
       - name: Build bot image
         run: docker build -t tg-bot-for-tracking-links:latest .
