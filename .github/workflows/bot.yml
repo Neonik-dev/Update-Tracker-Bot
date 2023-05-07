@@ -31,4 +31,4 @@ jobs:
           name: bot.jar
 
       - name: Build bot image
-        run: docker build -t tg-bot-for-tracking-links:latest -f ../../bot/Dockerfile
+        run: docker build -t tg-bot-for-tracking-links:latest -f ../../bot/Dockerfile .
