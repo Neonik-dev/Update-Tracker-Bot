@@ -29,6 +29,7 @@ jobs:
         with:
           path: bot/target/bot-1.0-SNAPSHOT.jar
           name: bot.jar
+          retention-days: 1
 
       - name: Build bot image
         run: docker build -t tg-bot-for-tracking-links:latest -f ../../bot/Dockerfile .

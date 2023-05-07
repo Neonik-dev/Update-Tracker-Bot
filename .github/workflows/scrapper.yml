@@ -22,8 +22,9 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          path: target/scrapper-1.0-SNAPSHOT.jar
+          path: scrapper/target/scrapper-1.0-SNAPSHOT.jar
           name: scrapper.jar
+          retention-days: 1
 
 #      - name: Build bot image
 #        run: docker build -t scrapper-links:latest -f ../../scrapper/Dockerfile
