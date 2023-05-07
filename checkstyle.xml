@@ -76,7 +76,8 @@
         <!-- <module name="AtclauseOrder"/> -->
         <!-- <module name="InvalidJavadocPosition"/> -->
         <!--<module name="JavadocContentLocationCheck"/>-->
-        <!-- <module name="JavadocMethod"/> -->
+         <module name="JavadocMethod"/>
+            <property name="tokens" value="METHOD_DEF,ANNOTATION_FIELD_DEF"/>
 <!--        <module name="JavadocMissingLeadingAsteriskCheck"/>-->
 <!--        <module name="JavadocMissingWhitespaceAfterAsterisk"/>-->
 <!--         <module name="JavadocParagraph"/> -->
@@ -85,7 +86,7 @@
 <!--            <property name="checkEmptyJavadoc" value="true"/>-->
 <!--            <property name="tokens"-->
 <!--                      value="ANNOTATION_DEF, ANNOTATION_FIELD_DEF, CLASS_DEF, CTOR_DEF, ENUM_CONSTANT_DEF, ENUM_DEF, INTERFACE_DEF, METHOD_DEF, VARIABLE_DEF"/>-->
-<!--        </module>-->
+        </module>
         <!--<module name="JavadocTagContinuationIndentation"/>-->
         <!--<module name="JavadocType">-->
         <!--    <property name="scope" value="public"/>-->
