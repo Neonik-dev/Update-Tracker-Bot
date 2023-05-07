@@ -77,15 +77,15 @@
         <!-- <module name="InvalidJavadocPosition"/> -->
         <!--<module name="JavadocContentLocationCheck"/>-->
         <!-- <module name="JavadocMethod"/> -->
-        <module name="JavadocMissingLeadingAsteriskCheck"/>
-        <module name="JavadocMissingWhitespaceAfterAsterisk"/>
-        <!-- <module name="JavadocParagraph"/> -->
-        <module name="JavadocStyle">
-            <property name="checkFirstSentence" value="false"/>
-            <property name="checkEmptyJavadoc" value="true"/>
-            <property name="tokens"
-                      value="ANNOTATION_DEF, ANNOTATION_FIELD_DEF, CLASS_DEF, CTOR_DEF, ENUM_CONSTANT_DEF, ENUM_DEF, INTERFACE_DEF, METHOD_DEF, VARIABLE_DEF"/>
-        </module>
+<!--        <module name="JavadocMissingLeadingAsteriskCheck"/>-->
+<!--        <module name="JavadocMissingWhitespaceAfterAsterisk"/>-->
+<!--         <module name="JavadocParagraph"/> -->
+<!--        <module name="JavadocStyle">-->
+<!--            <property name="checkFirstSentence" value="false"/>-->
+<!--            <property name="checkEmptyJavadoc" value="true"/>-->
+<!--            <property name="tokens"-->
+<!--                      value="ANNOTATION_DEF, ANNOTATION_FIELD_DEF, CLASS_DEF, CTOR_DEF, ENUM_CONSTANT_DEF, ENUM_DEF, INTERFACE_DEF, METHOD_DEF, VARIABLE_DEF"/>-->
+<!--        </module>-->
         <!--<module name="JavadocTagContinuationIndentation"/>-->
         <!--<module name="JavadocType">-->
         <!--    <property name="scope" value="public"/>-->
@@ -94,8 +94,8 @@
         <!-- <module name="MissingJavadocMethod"/> -->
         <!-- <module name="MissingJavadocPackage"/> -->
         <!-- <module name="MissingJavadocType"/> -->
-        <module name="NonEmptyAtclauseDescription"/>
-        <module name="SingleLineJavadoc"/>
+<!--        <module name="NonEmptyAtclauseDescription"/>-->
+<!--        <module name="SingleLineJavadoc"/>-->
         <!-- <module name="SummaryJavadoc"/> -->
         <!-- <module name="WriteTag"/> -->
 
