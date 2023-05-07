@@ -69,7 +69,6 @@
     <module name="SuppressWithPlainTextCommentFilter"/>
     <module name="SuppressWarningsFilter"/>
 
-
     <module name="TreeWalker">
         <!-- https://checkstyle.org/config_javadoc.html -->
         <!--         Checks for Javadoc comments.       -->
