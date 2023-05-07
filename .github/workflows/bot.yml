@@ -3,9 +3,11 @@ on:
   push:
     branches:
       - 'master'
-      - 'hw8'
+      - 'homework9'
   pull_request:
     branches:
+      - 'Homework9'
+      - 'master'
       - 'hw8'
 
 jobs:

@@ -1,9 +1,15 @@
 name: Scrapper CI
+
 on:
   push:
     branches:
       - 'master'
-      - 'hw8'
+      - 'Homework9'
+    pull_request:
+      branches:
+        - 'Homework9'
+        - 'master'
+        - 'hw8'
 
 jobs:
   build:
