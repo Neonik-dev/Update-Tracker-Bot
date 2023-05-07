@@ -27,7 +27,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          path: target/bot-1.0-SNAPSHOT.jar
+          path: ../../../bot/target/bot-1.0-SNAPSHOT.jar
           name: bot.jar
 
       - name: Build bot image
