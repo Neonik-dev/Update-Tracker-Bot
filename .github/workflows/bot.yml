@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'master'
-      - 'hw8'
+      - 'hw8-checkstyle'
   pull_request:
     branches:
       - 'hw8-checkstyle'
