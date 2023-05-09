@@ -4,14 +4,17 @@ import ru.tinkoff.edu.java.link_parser.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.link_parser.responses.StackOverflowParseResponse;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class StackOverflowParser extends BaseParser {
-    private static final String RE_URL = "https://stackoverflow\\.com/questions/(?:\\d+/.*|\\d+)";
+    private static final Pattern URL_TEMPLATE = Pattern.compile("^https://stackoverflow\\.com/questions/(\\d+)(?:/.*|$)");
+
     @Override
     public BaseParseResponse parseUrl(Optional<String> url) {
-        if (url.isPresent() && url.get().matches(RE_URL)) {
-            String[] args = url.get().split("/");
-            String questionId = args[4];
+        Matcher matcher = URL_TEMPLATE.matcher(url.orElse(""));
+        if (matcher.find()) {
+            String questionId = matcher.group(1);
             return new StackOverflowParseResponse(questionId);
         }
         return nextParse(url);

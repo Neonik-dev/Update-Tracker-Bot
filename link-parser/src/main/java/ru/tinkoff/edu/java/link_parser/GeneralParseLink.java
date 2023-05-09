@@ -6,13 +6,11 @@ import ru.tinkoff.edu.java.link_parser.responses.BaseParseResponse;
 
 import java.util.Optional;
 
+public class GeneralParseLink {
+    private static final Parser PARSER = ParseChain.chain();
 
-public class GeneralParseLink
-{
-    private static final Parser parser = ParseChain.chain();
-    public BaseParseResponse start(String link)
-    {
+    public BaseParseResponse start(String link) {
         // Chain of responsibility
-        return parser.parseUrl(Optional.ofNullable(link));
+        return PARSER.parseUrl(Optional.ofNullable(link));
     }
 }

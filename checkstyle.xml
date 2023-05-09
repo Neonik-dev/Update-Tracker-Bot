@@ -167,7 +167,9 @@
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <!-- <module name="ImportControl"/> -->
         <module name="ImportOrder">
+            <property name="groups" value="ru.tinkoff.edu.java"/>
             <property name="option" value="under"/>
+            <property name="separated" value="true"/>
             <property name="sortStaticImportsAlphabetically" value="true"/>
         </module>
         <module name="RedundantImport"/>

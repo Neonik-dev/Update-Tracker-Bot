@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - 'master'
-      - 'homework9'
+      - 'Homework9'
   pull_request:
     branches:
       - 'Homework9'

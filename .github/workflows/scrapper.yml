@@ -5,11 +5,11 @@ on:
     branches:
       - 'master'
       - 'Homework9'
-    pull_request:
-      branches:
-        - 'Homework9'
-        - 'master'
-        - 'hw8'
+  pull_request:
+    branches:
+      - 'Homework9'
+      - 'master'
+      - 'hw8'
 
 jobs:
   build:
