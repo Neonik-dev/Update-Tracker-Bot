@@ -17,8 +17,8 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class RabbitMQConfig {
-    private final ApplicationConfig config;
     private static final String DTO_PATH_FOR_RABBIT = "ru.tinkoff.edu.java.scrapper.clients.dto.LinkUpdateRequest";
+    private final ApplicationConfig config;
 
     @Bean
     public CachingConnectionFactory connectionFactory() {
@@ -32,7 +32,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public ClassMapper classMapper(){
+    public ClassMapper classMapper() {
         DefaultClassMapper classMapper = new DefaultClassMapper();
         classMapper.setIdClassMapping(
                 Map.of(DTO_PATH_FOR_RABBIT, LinkUpdateRequest.class)
@@ -41,7 +41,10 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(MessageConverter jsonMessageConverter, CachingConnectionFactory connectionFactory) {
+    public RabbitTemplate rabbitTemplate(
+            MessageConverter jsonMessageConverter,
+            CachingConnectionFactory connectionFactory
+    ) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter);
         return rabbitTemplate;

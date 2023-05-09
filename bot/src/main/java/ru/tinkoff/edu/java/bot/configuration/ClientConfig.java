@@ -9,6 +9,7 @@ import ru.tinkoff.edu.java.bot.clients.ScrapperClient;
 @RequiredArgsConstructor
 public class ClientConfig {
     private final ScrapperConfiguration scrapperConfiguration;
+
     @Bean("scrapperClient")
     public ScrapperClient getScrapperClient() {
         return new ScrapperClient(scrapperConfiguration);

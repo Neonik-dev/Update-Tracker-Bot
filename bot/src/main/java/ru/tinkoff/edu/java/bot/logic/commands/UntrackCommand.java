@@ -11,11 +11,11 @@ import ru.tinkoff.edu.java.bot.logic.wrapper.SendSimpleMessage;
 
 @Getter
 @RequiredArgsConstructor
-public class UntrackCommand implements BaseCommand, ReplyCommand{
-    private final ScrapperClient scrapperClient;
+public class UntrackCommand implements BaseCommand, ReplyCommand {
     public static final String REPLY = "Напишите ссылку, отслеживание которой хотите прекратить";
     private static final String FINISH_TEXT = "Ссылка успешно удалена из списка";
     private static final String NAME = "/untrack";
+    private final ScrapperClient scrapperClient;
 
     @Override
     public SendMessage execute(Message message) {
@@ -27,7 +27,6 @@ public class UntrackCommand implements BaseCommand, ReplyCommand{
         String text;
         try {
             scrapperClient.deleteLink(message.chat().id(), LinkValidation.validate(message.text()));
-//            ManagerCollection.remove(LinkValidation.validate(message.text()));
             text = FINISH_TEXT;
         } catch (InvalidLinkException e) {
             text = e.getMessage();

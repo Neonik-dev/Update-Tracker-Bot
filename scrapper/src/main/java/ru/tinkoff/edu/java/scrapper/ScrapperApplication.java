@@ -17,6 +17,6 @@ public class ScrapperApplication {
     public static void main(String[] args) {
         var ctx = SpringApplication.run(ScrapperApplication.class, args);
         ApplicationConfig config = ctx.getBean(ApplicationConfig.class);
-        log.info("Scrapper start");
+        log.info("Scrapper started");
     }
 }

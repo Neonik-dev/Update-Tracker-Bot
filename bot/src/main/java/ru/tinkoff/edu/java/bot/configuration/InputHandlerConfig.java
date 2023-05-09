@@ -10,6 +10,7 @@ import ru.tinkoff.edu.java.bot.logic.commands.InputHandler;
 @RequiredArgsConstructor
 public class InputHandlerConfig {
     private final InitCommands initCommands;
+
     @Bean("inputHandler")
     public InputHandler getInputHandler() {
         return new InputHandler(initCommands);

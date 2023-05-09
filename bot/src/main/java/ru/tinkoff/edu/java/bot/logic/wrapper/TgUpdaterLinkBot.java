@@ -14,7 +14,6 @@ import ru.tinkoff.edu.java.bot.logic.commands.InputHandler;
 import java.util.List;
 import java.util.Map;
 
-
 @RequiredArgsConstructor
 public class TgUpdaterLinkBot implements TgBot {
     private TelegramBot bot;

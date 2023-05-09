@@ -6,6 +6,8 @@ import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.SendMessage;
 
 public class SendSimpleMessage {
+    private SendSimpleMessage() {}
+
     public static SendMessage create(Long chatId, String text) {
         return new SendMessage(chatId, text).parseMode(ParseMode.Markdown);
     }
@@ -16,8 +18,9 @@ public class SendSimpleMessage {
 
     public static SendMessage create(Message message, String text, Boolean isReply) {
         SendMessage sendMessage = create(message.chat().id(), text);
-        if (isReply)
+        if (isReply) {
             sendMessage.replyMarkup(new ForceReply());
+        }
         return sendMessage;
     }
 }

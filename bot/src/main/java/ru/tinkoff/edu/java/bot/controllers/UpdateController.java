@@ -1,6 +1,5 @@
 package ru.tinkoff.edu.java.bot.controllers;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.tinkoff.edu.java.bot.dto.api.LinkUpdateRequest;
