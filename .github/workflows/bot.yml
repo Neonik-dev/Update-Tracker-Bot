@@ -6,7 +6,6 @@ on:
       - 'Homework9'
   pull_request:
     branches:
-      - 'Homework9'
       - 'master'
       - 'hw8'
 
