@@ -17,7 +17,7 @@ public record ApplicationConfig(
         @NotNull AccessType databaseAccessType,
         @NotNull boolean useQueue,
         @NotNull RabbitPropertyConfig rabbit
-){
+) {
     public record Scheduler(Duration interval) {
     }
 

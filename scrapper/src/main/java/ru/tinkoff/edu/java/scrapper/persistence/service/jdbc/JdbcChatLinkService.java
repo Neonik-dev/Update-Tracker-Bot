@@ -10,6 +10,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JdbcChatLinkService implements ChatLinkService {
     private final ChatLinkRepository chatLinkRepository;
+
     @Override
     public List<Long> getAllLink(long chatId) {
         List<ChatLink> arrChatLink = chatLinkRepository.getAllByChatId(chatId);

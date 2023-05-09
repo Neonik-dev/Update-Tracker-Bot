@@ -101,8 +101,8 @@ public class JdbcLinkService implements LinkService {
         }
 
         List<LinkResponse> listLinks = links.stream().map(
-                                                          (value) -> (new LinkResponse(value.getId(), value.getLink()))
-                                                         ).collect(Collectors.toList());
+                (value) -> (new LinkResponse(value.getId(), value.getLink()))
+        ).collect(Collectors.toList());
         return new ListLinksResponse(listLinks, listLinks.size());
     }
 

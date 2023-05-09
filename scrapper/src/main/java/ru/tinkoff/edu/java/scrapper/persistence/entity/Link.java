@@ -21,8 +21,8 @@ import java.util.Set;
 @Setter
 public class Link {
     @Id
-    @SequenceGenerator(name="link_id_seq", allocationSize=1)
-    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="link_id_seq")
+    @SequenceGenerator(name = "link_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "link_id_seq")
     private Long id;
     @Column(name = "link", nullable = false, unique = true)
     private String link;
@@ -32,12 +32,12 @@ public class Link {
     private OffsetDateTime pageUpdatedDate;
     @Column(name = "user_check_date", nullable = false)
     private OffsetDateTime userCheckDate;
-    @Column(name="data_changes", nullable = false, columnDefinition = "jsonb")
+    @Column(name = "data_changes", nullable = false, columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, String> dataChanges;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="domain_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "domain_id", referencedColumnName = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Domain domain;
     @OneToMany(mappedBy = "link", fetch = FetchType.LAZY)
@@ -51,7 +51,7 @@ public class Link {
             OffsetDateTime userCheckDate,
             Long domainId,
             Map<String, String> dataChanges
-            ) {
+    ) {
         this.id = id;
         this.link = link;
         this.schedulerUpdateDate = schedulerUpdateDate;

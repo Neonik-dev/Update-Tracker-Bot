@@ -6,18 +6,16 @@
     Checkstyle configuration
 -->
 <module name="Checker">
-
     <!-- https://checkstyle.org/property_types.html -->
     <property name="charset" value="UTF-8"/>
     <property name="fileExtensions" value="java, properties, xml"/>
 
 
     <!-- https://checkstyle.org/config_filefilters.html -->
-    <!--     Excludes all 'module-info.java' files      -->
+    <!--     Excludes all 'domain/jooq.java' files      -->
     <module name="BeforeExecutionExclusionFileFilter">
-        <property name="fileNamePattern" value="module\-info\.java$"/>
+        <property name="fileNamePattern" value=".*[\\/]domain[\\/]jooq[\\/].*$"/>
     </module>
-
 
     <!-- https://checkstyle.org/config_javadoc.html#JavadocPackage     -->
     <!-- Checks that a package-info.java file exists for each package. -->
@@ -161,17 +159,20 @@
 
         <!-- https://checkstyle.org/config_imports.html -->
         <!--            Checks for imports              -->
-        <module name="AvoidStarImport"/>
+        <module name="AvoidStarImport">
+            <property name="allowClassImports" value="true"/>
+        </module>
         <!-- <module name="AvoidStaticImport"/> -->
         <!-- <module name="CustomImportOrder"/> -->
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <!-- <module name="ImportControl"/> -->
-        <module name="ImportOrder">
-            <property name="groups" value="ru.tinkoff.edu.java"/>
-            <property name="option" value="under"/>
-            <property name="separated" value="true"/>
-            <property name="sortStaticImportsAlphabetically" value="true"/>
-        </module>
+<!--        <module name="ImportOrder">-->
+<!--            <property name="groups" value="java, ru, org, lombok"/>-->
+<!--            <property name="ordered" value="false"/>-->
+<!--            <property name="option" value="under"/>-->
+<!--            <property name="separated" value="true"/>-->
+<!--            <property name="sortStaticImportsAlphabetically" value="true"/>-->
+<!--        </module>-->
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
 

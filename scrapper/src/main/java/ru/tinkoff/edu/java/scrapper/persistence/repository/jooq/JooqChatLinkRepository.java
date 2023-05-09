@@ -1,6 +1,5 @@
 package ru.tinkoff.edu.java.scrapper.persistence.repository.jooq;
 
-
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import ru.tinkoff.edu.java.scrapper.persistence.entity.ChatLink;

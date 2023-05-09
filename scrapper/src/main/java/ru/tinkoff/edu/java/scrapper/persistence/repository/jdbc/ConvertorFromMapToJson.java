@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public final class ConvertorFromMapToJson implements AttributeConverter<Map<String, String>, PGobject> {
-
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
@@ -27,7 +26,6 @@ public final class ConvertorFromMapToJson implements AttributeConverter<Map<Stri
         return po;
     }
 
-
     @Override
     public Map<String, String> convertToEntityAttribute(PGobject dbData) {
         if (dbData == null || dbData.getValue() == null) {
@@ -40,5 +38,4 @@ public final class ConvertorFromMapToJson implements AttributeConverter<Map<Stri
             return null;
         }
     }
-
 }

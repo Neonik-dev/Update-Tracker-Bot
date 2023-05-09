@@ -14,8 +14,14 @@ import ru.tinkoff.edu.java.scrapper.exceptions.repository.*;
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String DESCRIPTION_400 = HttpStatus.BAD_REQUEST.getReasonPhrase();
     private static final String STATUS_CODE_400 = String.valueOf(HttpStatus.BAD_REQUEST.value());
+
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
+    ) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 DESCRIPTION_400,
                 STATUS_CODE_400,

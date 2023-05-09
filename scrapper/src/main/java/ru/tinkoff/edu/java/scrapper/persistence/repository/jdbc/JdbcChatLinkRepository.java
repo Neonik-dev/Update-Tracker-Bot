@@ -12,14 +12,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class JdbcChatLinkRepository implements ChatLinkRepository {
-    private final JdbcTemplate template;
-    private final RowMapper<ChatLink> rowMapper = new DataClassRowMapper<>(ChatLink.class);
-
     private static final String INSERT_QUERY = "INSERT INTO chat_link(chat_id, link_id) VALUES (?, ?)";
-    private static final String DELETE_BY_CHAT_ID_AND_LINK_ID_QUERY = "DELETE FROM chat_link WHERE chat_id=? AND link_id=?";
+    private static final String DELETE_BY_CHAT_ID_AND_LINK_ID_QUERY =
+            "DELETE FROM chat_link WHERE chat_id=? AND link_id=?";
     private static final String SELECT_ALL_QUERY = "SELECT * FROM chat_link";
     private static final String SELECT_BY_CHAT_ID = "SELECT * FROM chat_link WHERE chat_id=?";
     private static final String SELECT_BY_LINK_ID = "SELECT * FROM chat_link WHERE link_id=?";
+    private final JdbcTemplate template;
+    private final RowMapper<ChatLink> rowMapper = new DataClassRowMapper<>(ChatLink.class);
 
     @Override
     public void add(ChatLink chatLinkData) throws BadEntityException {

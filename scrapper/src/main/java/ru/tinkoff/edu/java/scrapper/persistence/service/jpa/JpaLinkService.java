@@ -40,7 +40,9 @@ public class JpaLinkService implements LinkService {
     public LinkResponse add(long chatId, URI url) {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(
-                        () -> new ForeignKeyNotExistsException(String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatId))
+                        () -> new ForeignKeyNotExistsException(
+                                String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatId)
+                        )
                 );
         Link link = linkRepository.findByLink(url.toString()).orElseGet(() -> createLink(url));
 
@@ -70,21 +72,25 @@ public class JpaLinkService implements LinkService {
     @Transactional
     public LinkResponse remove(long chatId, URI url) {
         Link link;
-//        try {
-            link = linkRepository.findByLink(url.toString()).orElseThrow(
-                    () -> new EmptyResultException("Данная ссылка никем не зарегистрирована")
-            );
-//        } catch (EmptyResultDataAccessException e) {
-//            throw new EmptyResultException("Данная ссылка никем не зарегистрирована");
-//        }
+        link = linkRepository.findByLink(url.toString()).orElseThrow(
+                () -> new EmptyResultException("Данная ссылка никем не зарегистрирована")
+        );
+
         try {
             chatLinkRepository.deleteById(new ChatLinkPK(chatId, link.getId()));
-            if (link.getChats().size() == 1)
+            if (link.getChats().size() == 1) {
                 linkRepository.delete(link);
+            }
+
             return new LinkResponse(chatId, link.getLink());
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultException(
-                    String.format("Ссылка с (link_id)=(%d) не отслеживается у пользователя (chat_id)=(%d)", link.getId(), chatId));
+                    String.format(
+                            "Ссылка с (link_id)=(%d) не отслеживается у пользователя (chat_id)=(%d)",
+                            link.getId(),
+                            chatId
+                    )
+            );
         }
     }
 
@@ -118,8 +124,9 @@ public class JpaLinkService implements LinkService {
         List<Link> page = linkRepository.findAll(
                 PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "schedulerUpdateDate"))
         ).getContent();
-        if (page.isEmpty())
+        if (page.isEmpty()) {
             return Optional.empty();
+        }
 
         Link link = page.get(0);
         link.setSchedulerUpdateDate(OffsetDateTime.now());

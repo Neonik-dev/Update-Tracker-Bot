@@ -18,25 +18,31 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class JdbcLinkRepository implements LinkRepository {
-    private final JdbcTemplate template;
     private static final ConvertorFromMapToJson CONVERTOR = new ConvertorFromMapToJson();
-    private final RowMapper<Link> rowMapper = (rs, rowNum) -> new Link(
-            rs.getLong(1),
-            rs.getString(2),
-            null,
-            new Timestamp(rs.getTimestamp(3).getTime()).toLocalDateTime().atOffset(ZoneOffset.UTC),
-            null,
-            rs.getLong(4),
-            CONVERTOR.convertToEntityAttribute((PGobject) rs.getObject(5))
-    );
-    private static final String INSERT_QUERY = "INSERT INTO links(link, domain_id, page_updated_date, data_changes) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_QUERY =
+            "INSERT INTO links(link, domain_id, page_updated_date, data_changes) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM links WHERE id=?";
     private static final String DELETE_BY_LINK_QUERY = "DELETE FROM links WHERE link=?";
-    private static final String UPDATE_LATEST_SCHEDULER_DATE_QUERY = "UPDATE links SET scheduler_updated_date = now() WHERE id = ?";
-    private static final String SELECT_BY_LINK_QUERY = "SELECT id, link, page_updated_date, domain_id, data_changes FROM links WHERE link=?";
-    private static final String SELECT_ALL_QUERY = "SELECT id, link, page_updated_date, domain_id, data_changes FROM links ORDER BY %s %s %s";
-    private static final String SELECT_BY_MANY_LINK_ID_QUERY = "SELECT id, link, page_updated_date, domain_id, data_changes FROM links WHERE id IN (%s)";
-    private static final String UPDATE_DATA_CHANGES_QUERY = "UPDATE links SET data_changes=?, page_updated_date=? where id=?";
+    private static final String UPDATE_LATEST_SCHEDULER_DATE_QUERY =
+            "UPDATE links SET scheduler_updated_date = now() WHERE id = ?";
+    private static final String SELECT_BY_LINK_QUERY =
+            "SELECT id, link, page_updated_date, domain_id, data_changes FROM links WHERE link=?";
+    private static final String SELECT_ALL_QUERY =
+            "SELECT id, link, page_updated_date, domain_id, data_changes FROM links ORDER BY %s %s %s";
+    private static final String SELECT_BY_MANY_LINK_ID_QUERY =
+            "SELECT id, link, page_updated_date, domain_id, data_changes FROM links WHERE id IN (%s)";
+    private static final String UPDATE_DATA_CHANGES_QUERY =
+            "UPDATE links SET data_changes=?, page_updated_date=? where id=?";
+    private final JdbcTemplate template;
+    private final RowMapper<Link> rowMapper = (rs, rowNum) -> new Link(
+            rs.getLong("id"),
+            rs.getString("link"),
+            null,
+            new Timestamp(rs.getTimestamp("page_updated_date").getTime()).toLocalDateTime().atOffset(ZoneOffset.UTC),
+            null,
+            rs.getLong("domain_id"),
+            CONVERTOR.convertToEntityAttribute((PGobject) rs.getObject("data_changes"))
+    );
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)

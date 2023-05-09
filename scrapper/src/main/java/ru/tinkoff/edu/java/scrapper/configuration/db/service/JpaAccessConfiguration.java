@@ -25,6 +25,7 @@ public class JpaAccessConfiguration {
     private final JpaLinkRepository linkRepository;
     private final JpaDomainRepository domainRepository;
     private final SitesMap sitesMap;
+
     @Bean
     public ChatLinkService chatLinkService() {
         return new JpaChatLinkService(chatLinkRepository);

@@ -11,6 +11,7 @@ import ru.tinkoff.edu.java.scrapper.persistence.service.ChatService;
 @RequiredArgsConstructor
 public class TgChatController {
     private final ChatService chatService;
+
     @PostMapping
     public void postTgChat(@PathVariable("id") Long id) throws DuplicateUniqueFieldException, BadEntityException {
         chatService.register(id);

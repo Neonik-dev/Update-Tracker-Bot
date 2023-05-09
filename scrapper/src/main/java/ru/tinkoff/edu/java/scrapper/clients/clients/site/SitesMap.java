@@ -11,6 +11,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class SitesMap {
+    private static final String LINK_ERROR_MESSAGE = "Бот пока не может отслеживать ссылку с таким доменным именем";
     private static final Map<String, BaseSiteClient> SITES = new HashMap<>();
     private final GitHubClient gitHubClient;
     private final StackOverFlowClient stackOverFlowClient;
@@ -23,8 +24,9 @@ public class SitesMap {
 
     public BaseSiteClient getClient(String domain) {
         BaseSiteClient client = SITES.get(domain);
-        if (client == null)
-            throw new InvalidLinkException("Бот пока не может отслеживать ссылку с таким доменным именем");
+        if (client == null) {
+            throw new InvalidLinkException(LINK_ERROR_MESSAGE);
+        }
         return client;
     }
 }
