@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class RabbitMQConfig {
+    private static final String DLX_ARGUMENT_NAME = "x-dead-letter-exchange";
     private final ApplicationConfig config;
 
     @Bean
@@ -25,24 +26,24 @@ public class RabbitMQConfig {
         return cachingConnectionFactory;
     }
 
-    @Bean("exchangeUpdate")
-    public DirectExchange directExchange() {
-        return new DirectExchange(config.rabbit().exchange().botUpdateExchange());
+    @Bean("exchangeForUpdatedLink")
+    public DirectExchange directExchangeForUpdatedLink() {
+        return new DirectExchange(config.rabbit().exchange().botForUpdatedLinkExchange());
     }
 
-    @Bean("queueUpdate")
-    public Queue directQueue1() {
-        return QueueBuilder.durable(config.rabbit().queue().botUpdateQueue())
-                .withArgument("x-dead-letter-exchange", config.rabbit().exchange().botUpdateExchange() + ".dlx")
+    @Bean("queueForUpdatedLink")
+    public Queue directQueueForUpdatedLink() {
+        return QueueBuilder.durable(config.rabbit().queue().botForUpdatedLinkQueue())
+                .withArgument(DLX_ARGUMENT_NAME, config.rabbit().exchange().botForUpdatedLinkExchange() + ".dlx")
                 .build();
     }
 
-    @Bean("bindingDirect")
-    public Binding directBinding(Queue directQueue1, DirectExchange directExchange) {
+    @Bean("bindingDirectForUpdatedLink")
+    public Binding directBindingForUpdatedLink(Queue directQueue, DirectExchange directExchange) {
         return BindingBuilder
-                .bind(directQueue1)
+                .bind(directQueue)
                 .to(directExchange)
-                .with(config.rabbit().routingKey().botUpdateRoutingKey());
+                .with(config.rabbit().routingKey().botForUpdatedLinkRoutingKey());
     }
 
     @Bean
@@ -52,7 +53,7 @@ public class RabbitMQConfig {
     ) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter);
-        rabbitTemplate.setExchange(config.rabbit().exchange().botUpdateExchange());
+        rabbitTemplate.setExchange(config.rabbit().exchange().botForUpdatedLinkExchange());
         return rabbitTemplate;
     }
 

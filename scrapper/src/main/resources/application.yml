@@ -17,11 +17,11 @@ app:
     host: localhost
     port: 5672
     exchange:
-      botUpdateExchange: botUpdateDirectExchange
+      botForUpdatedLinkExchange: botUpdateDirectExchange
     queue:
-      botUpdateQueue: botUpdateQueue
+      botForUpdatedLinkQueue: botUpdateQueue
     routingKey:
-      botUpdateRoutingKey: botUpdateRoutingKey
+      botForUpdatedLinkRoutingKey: botUpdateRoutingKey
 
 spring:
   liquibase:

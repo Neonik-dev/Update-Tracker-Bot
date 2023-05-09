@@ -8,7 +8,7 @@ app:
     password: guest
     queue:
       updateQueue: botUpdateQueue
-      deadLetterQueueForLinkUpdate: botUpdateQueue.dlq
+      deadLetterQueueForUpdatedLink: botUpdateQueue.dlq
     exchange:
       deadLetterExchange: botUpdateDirectExchange.dlx
 
