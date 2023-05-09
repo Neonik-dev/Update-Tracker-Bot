@@ -3,10 +3,10 @@ name: Scrapper CI
 on:
   push:
     paths:
-      - 'bot/**'
+      - 'scrapper/**'
   pull_request:
     paths:
-      - 'bot/**'
+      - 'scrapper/**'
 
 env:
   ARTEFACT_NAME: scrapper.jar
