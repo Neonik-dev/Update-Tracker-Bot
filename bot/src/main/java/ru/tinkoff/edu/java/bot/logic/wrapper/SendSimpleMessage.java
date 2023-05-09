@@ -9,7 +9,7 @@ public class SendSimpleMessage {
     private SendSimpleMessage() {}
 
     public static SendMessage create(Long chatId, String text) {
-        return new SendMessage(chatId, text).parseMode(ParseMode.Markdown);
+        return new SendMessage(chatId, text).parseMode(ParseMode.HTML);
     }
 
     public static SendMessage create(Message message, String text) {

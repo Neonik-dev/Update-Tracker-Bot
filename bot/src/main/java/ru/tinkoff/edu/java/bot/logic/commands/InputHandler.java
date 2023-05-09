@@ -29,7 +29,7 @@ public class InputHandler {
         } catch (Throwable e) {
             return SendSimpleMessage.create(
                     message.chat().id(),
-                    "Возникли небольшие неполадки! ;( \n Попробуйте чуть позже"
+                    "Возникли небольшие неполадки! ;(\nПопробуйте чуть позже"
             );
         }
     }

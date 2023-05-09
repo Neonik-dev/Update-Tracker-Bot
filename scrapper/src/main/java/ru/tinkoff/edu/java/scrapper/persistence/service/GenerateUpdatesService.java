@@ -67,7 +67,7 @@ public class GenerateUpdatesService {
         StringBuilder text = new StringBuilder("Есть обновление"); // генерирую сообщение пользователю
         for (String key : responseDataChanges.keySet()) {
             if (dataChanges.get(key) != null && !Objects.equals(dataChanges.get(key), responseDataChanges.get(key))) {
-                text.append(String.format("\n~~%s: %s~~ —> %s: %s",
+                text.append(String.format("\n<strike>%s: %s</strike> —> %s: %s",
                         key,
                         dataChanges.get(key),
                         key,
