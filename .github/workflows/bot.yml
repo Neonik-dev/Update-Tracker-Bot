@@ -43,7 +43,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build image
-        run: docker build -t IMAGE_NAME -f bot/Dockerfile .
+        run: docker build -t $IMAGE_NAME -f bot/Dockerfile .
 
       - name: Push image
-        run: docker push IMAGE_NAME
+        run: docker push $IMAGE_NAME
