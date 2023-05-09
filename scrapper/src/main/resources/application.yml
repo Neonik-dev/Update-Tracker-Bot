@@ -32,12 +32,3 @@ db:
     url: ${POSTGRES_URL}
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
-
-#tg:
-#  bot:
-#    baseUrl:
-#client:
-#  github:
-#    baseUrl:
-#  stackoverflow:
-#    baseUrl:

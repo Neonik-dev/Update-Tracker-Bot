@@ -27,7 +27,3 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui
-
-#client:
-#  scrapper:
-#    baseUrl:
