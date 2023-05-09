@@ -10,7 +10,7 @@ on:
 
 env:
   ARTEFACT_NAME: scrapper.jar
-  IMAGE_NAME: {{ secrets.DOCKER_USERNAME }}/scrapper-links:latest
+  IMAGE_NAME: ${{ secrets.DOCKER_USERNAME }}/scrapper-links:latest
 
 jobs:
   build:
