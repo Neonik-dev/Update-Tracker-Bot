@@ -4,6 +4,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record QueueProperty(
         @NotNull String updateQueue,
-        @NotNull String updateDLQ
+        @NotNull String deadLetterQueueForUpdatedLink
 ) {
 }

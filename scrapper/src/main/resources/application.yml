@@ -1,0 +1,67 @@
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+server:
+  port: 8081
+
+app:
+  test: 1123
+  useQueue: true
+  database-access-type: jpa
+  scheduler:
+    interval: 10s
+  rabbit:
+    username: guest
+    password: guest
+    host: localhost
+    port: 5672
+    exchange:
+      botForUpdatedLinkExchange: botUpdateDirectExchange
+    queue:
+      botForUpdatedLinkQueue: botUpdateQueue
+    routingKey:
+      botForUpdatedLinkRoutingKey: botUpdateRoutingKey
+
+spring:
+  liquibase:
+    enabled: false
+  application:
+    name: scrapper
+
+db:
+  postgresql:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+
+management:
+  server:
+    port: 8586
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /
+      exposure:
+        include: health,info,prometheus
+      path-mapping:
+        prometheus: /metrics
+  endpoint:
+    prometheus:
+      enabled: true
+    info:
+      enabled: true
+    health:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+#tg:
+#  bot:
+#    baseUrl:
+#client:
+#  github:
+#    baseUrl:
+#  stackoverflow:
+#    baseUrl:

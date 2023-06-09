@@ -15,7 +15,7 @@ public class TgBotConfig {
     private final ApplicationConfig config;
     private final InputHandler inputHandler;
 
-    @Bean("tgBot")
+    @Bean
     public TgBot getTgBot() {
         tgBot = new TgUpdaterLinkBot(config, inputHandler);
         tgBot.start();

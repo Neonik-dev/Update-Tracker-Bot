@@ -12,8 +12,8 @@ public class ScrapperQueueProducer implements SenderUpdatedLinks {
 
     public void sendUpdates(LinkUpdateRequest linkUpdateRequest) {
         rabbitTemplate.convertAndSend(
-                rabbitPropertyConfig.exchange().botUpdateExchange(),
-                rabbitPropertyConfig.routingKey().botUpdateRoutingKey(),
+                rabbitPropertyConfig.exchange().botForUpdatedLinkExchange(),
+                rabbitPropertyConfig.routingKey().botForUpdatedLinkRoutingKey(),
                 linkUpdateRequest
         );
     }

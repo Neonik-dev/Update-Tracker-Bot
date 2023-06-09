@@ -1,7 +1,6 @@
 package ru.tinkoff.edu.java.scrapper;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.SpringApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import ru.tinkoff.edu.java.scrapper.configuration.ApplicationConfig;
@@ -9,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @Slf4j
-@EnableRabbit
 @EnableScheduling
 @SpringBootApplication
 @EnableConfigurationProperties(ApplicationConfig.class)

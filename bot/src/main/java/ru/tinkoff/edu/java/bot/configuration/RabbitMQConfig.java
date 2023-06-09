@@ -50,14 +50,14 @@ public class RabbitMQConfig {
         return rabbitTemplate;
     }
 
-    @Bean("dlxUpdateLink")
-    public FanoutExchange dlxUpdateLink() {
-        return ExchangeBuilder.fanoutExchange(config.rabbit().exchange().updateDLX() + ".dlx").build();
+    @Bean("deadLetterExchange")
+    public FanoutExchange deadLetterExchange() {
+        return ExchangeBuilder.fanoutExchange(config.rabbit().exchange().deadLetterExchange()).build();
     }
 
-    @Bean("dlqUpdateLink")
-    public Queue dlqUpdateLink() {
-        return QueueBuilder.durable(config.rabbit().queue().updateDLQ() + ".dlq").build();
+    @Bean("deadLetterQueueForUpdatedLink")
+    public Queue deadLetterQueueForUpdatedLink() {
+        return QueueBuilder.durable(config.rabbit().queue().deadLetterQueueForUpdatedLink()).build();
     }
 
     @Bean("dlqBinding")
