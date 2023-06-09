@@ -30,5 +30,4 @@ public class DBConfiguration {
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(getDataSource());
     }
-
 }
