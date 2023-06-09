@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "Link updater"
+
+    static_configs:
+      - targets: ['bot:8585', 'scrapper:8586']

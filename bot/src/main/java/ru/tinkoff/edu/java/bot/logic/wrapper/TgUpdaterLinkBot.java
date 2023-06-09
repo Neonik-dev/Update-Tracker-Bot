@@ -10,6 +10,7 @@ import ru.tinkoff.edu.java.bot.configuration.ApplicationConfig;
 import ru.tinkoff.edu.java.bot.logic.commands.BaseCommand;
 import ru.tinkoff.edu.java.bot.logic.commands.InitCommands;
 import ru.tinkoff.edu.java.bot.logic.commands.InputHandler;
+import ru.tinkoff.edu.java.bot.metrics.ProcessedMessagesInBot;
 
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,7 @@ public class TgUpdaterLinkBot implements TgBot {
     public int process(List<Update> updates) {
         for (Update update : updates) {
             bot.execute(inputHandler.run(update));
+            ProcessedMessagesInBot.messageCount();
         }
         return CONFIRMED_UPDATES_ALL;
     }

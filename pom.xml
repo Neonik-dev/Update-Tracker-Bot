@@ -39,6 +39,7 @@
         <liquibase-core.version>4.21.1</liquibase-core.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-checkstyle-plugin.version>3.2.2</maven-checkstyle-plugin.version>
+        <annotations.version>23.1.0</annotations.version>
     </properties>
 
     <dependencies>
@@ -72,7 +73,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.1.0</version>
+            <version>${annotations.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
