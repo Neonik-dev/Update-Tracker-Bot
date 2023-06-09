@@ -4,8 +4,7 @@ import ru.tinkoff.edu.java.link_parser.responses.BaseParseResponse;
 
 import java.util.Optional;
 
-
-public sealed abstract class BaseParser implements Parser permits GitHubParser, StackOverflowParser{
+public sealed abstract class BaseParser implements Parser permits GitHubParser, StackOverflowParser {
     private Parser successor;
 
     public void setSuccessor(Parser successor) {

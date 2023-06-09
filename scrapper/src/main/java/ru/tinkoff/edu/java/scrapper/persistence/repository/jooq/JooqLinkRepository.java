@@ -15,8 +15,8 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 public class JooqLinkRepository implements LinkRepository {
-    private final DSLContext dsl;
     private static final ConverterJson CONVERTER = new ConverterJson();
+    private final DSLContext dsl;
 
     @Override
     public void add(Link linkData) {
@@ -67,7 +67,7 @@ public class JooqLinkRepository implements LinkRepository {
                 .where(LINKS.LINK.eq(link))
                 .fetchOptional()
                 .orElseThrow(() -> new EmptyResultDataAccessException(1))
-                .map(record -> new RecordLinkMapper().map(record));
+                .map(row -> new RecordLinkMapper().map(row));
     }
 
     @Override
@@ -76,17 +76,18 @@ public class JooqLinkRepository implements LinkRepository {
         query.addSelect(LINKS.fields());
         query.addFrom(LINKS);
 
-        if (nameField == null || nameField.isEmpty())
-            nameField = "id";
+        String name = nameField == null || nameField.isEmpty() ? "id" : nameField;
 
-        if (orderASC)
-            query.addOrderBy(LINKS.field(nameField).asc());
-        else
-            query.addOrderBy(LINKS.field(nameField).desc());
+        if (orderASC) {
+            query.addOrderBy(LINKS.field(name).asc());
+        } else {
+            query.addOrderBy(LINKS.field(name).desc());
+        }
 
-        if (limit != null)
+        if (limit != null) {
             query.addLimit(limit);
-        return query.fetch().map(record -> new RecordLinkMapper().map(record));
+        }
+        return query.fetch().map(row -> new RecordLinkMapper().map(row));
     }
 
     @Override
@@ -95,6 +96,6 @@ public class JooqLinkRepository implements LinkRepository {
                 .from(LINKS)
                 .where(LINKS.ID.in(arrChatLink))
                 .fetch()
-                .map(record -> new RecordLinkMapper().map(record));
+                .map(row -> new RecordLinkMapper().map(row));
     }
 }

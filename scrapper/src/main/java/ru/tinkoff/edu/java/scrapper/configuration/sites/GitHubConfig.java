@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.configuration;
+package ru.tinkoff.edu.java.scrapper.configuration.sites;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -15,12 +15,12 @@ import java.util.Set;
 public class Domain {
     @Id
     @Column(name = "id")
-    @SequenceGenerator(name="domain_id_seq", allocationSize=1)
-    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="domain_id_seq")
+    @SequenceGenerator(name = "domain_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "domain_id_seq")
     private Long id;
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-    @Column(name="created_date", nullable = false, updatable = false)
+    @Column(name = "created_date", nullable = false, updatable = false)
     private LocalDate createdDate;
     @OneToMany(mappedBy = "domain", fetch = FetchType.LAZY)
     private Set<Link> links = new HashSet<>();

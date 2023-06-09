@@ -10,6 +10,7 @@ import java.util.List;
 public interface JpaChatLinkRepository extends JpaRepository<ChatLink, ChatLinkPK> {
     @Query(value = "SELECT link_id FROM chat_link t where link_id = :chatId", nativeQuery = true)
     List<Long> findAllByChatId(Long chatId);
+
     @Query(value = "SELECT chat_id FROM chat_link t where link_id = :linkId", nativeQuery = true)
     List<Long> findAllByLinkId(Long linkId);
 }

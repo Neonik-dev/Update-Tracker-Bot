@@ -32,19 +32,22 @@ public class GenerateUpdatesService {
 
         URI uriLink = URI.create(clearLinkData.getLink());
         BaseSiteClient client = sitesMap.getClient(uriLink.getHost());
-        BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink()); // парсим ссылку и получаем необходимые поля
+        // парсим ссылку и получаем необходимые поля
+        BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink());
 
         OffsetDateTime updatedDate = client.getUpdatedDate(parseResponse);
         OffsetDateTime dbUpdatedDate = clearLinkData.getPageUpdatedDate();
-        if (dbUpdatedDate.equals(updatedDate)) // если время обновлений совпадает, то выходим
+        if (dbUpdatedDate.equals(updatedDate)) { // если время обновлений совпадает, то выходим
             return Optional.empty();
+        }
 
         Map<String, String> responseDataChanges = client.getUpdates(parseResponse); // Обновленные данный из апи
         Map<String, String> dataChanges = clearLinkData.getDataChanges(); // Данные из бд, которые отслеживаем у ссылки
 
         String botText = generateBotMessage(responseDataChanges, dataChanges);
 
-        linkService.updateDataChanges(responseDataChanges, updatedDate, clearLinkData.getId()); // записываю обновленные данные в бд
+        // записываю обновленные данные в бд
+        linkService.updateDataChanges(responseDataChanges, updatedDate, clearLinkData.getId());
         return Optional.of(
                 new LinkUpdateRequest(
                         clearLinkData.getId(),
@@ -64,7 +67,7 @@ public class GenerateUpdatesService {
         StringBuilder text = new StringBuilder("Есть обновление"); // генерирую сообщение пользователю
         for (String key : responseDataChanges.keySet()) {
             if (dataChanges.get(key) != null && !Objects.equals(dataChanges.get(key), responseDataChanges.get(key))) {
-                text.append(String.format("\n~~%s: %s~~ —> %s: %s",
+                text.append(String.format("\n<strike>%s: %s</strike> —> %s: %s",
                         key,
                         dataChanges.get(key),
                         key,

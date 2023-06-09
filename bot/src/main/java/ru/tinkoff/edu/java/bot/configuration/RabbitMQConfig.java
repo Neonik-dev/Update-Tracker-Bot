@@ -17,8 +17,8 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class RabbitMQConfig {
-    private final ApplicationConfig config;
     private static final String DTO_PATH_FOR_RABBIT = "ru.tinkoff.edu.java.scrapper.clients.dto.LinkUpdateRequest";
+    private final ApplicationConfig config;
 
     @Bean
     public CachingConnectionFactory connectionFactory() {
@@ -32,7 +32,7 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public ClassMapper classMapper(){
+    public ClassMapper classMapper() {
         DefaultClassMapper classMapper = new DefaultClassMapper();
         classMapper.setIdClassMapping(
                 Map.of(DTO_PATH_FOR_RABBIT, LinkUpdateRequest.class)
@@ -41,20 +41,23 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(MessageConverter jsonMessageConverter, CachingConnectionFactory connectionFactory) {
+    public RabbitTemplate rabbitTemplate(
+            MessageConverter jsonMessageConverter,
+            CachingConnectionFactory connectionFactory
+    ) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter);
         return rabbitTemplate;
     }
 
-    @Bean("dlxUpdateLink")
-    public FanoutExchange dlxUpdateLink() {
-        return ExchangeBuilder.fanoutExchange(config.rabbit().exchange().updateDLX() + ".dlx").build();
+    @Bean("deadLetterExchange")
+    public FanoutExchange deadLetterExchange() {
+        return ExchangeBuilder.fanoutExchange(config.rabbit().exchange().deadLetterExchange()).build();
     }
 
-    @Bean("dlqUpdateLink")
-    public Queue dlqUpdateLink() {
-        return QueueBuilder.durable(config.rabbit().queue().updateDLQ() + ".dlq").build();
+    @Bean("deadLetterQueueForUpdatedLink")
+    public Queue deadLetterQueueForUpdatedLink() {
+        return QueueBuilder.durable(config.rabbit().queue().deadLetterQueueForUpdatedLink()).build();
     }
 
     @Bean("dlqBinding")

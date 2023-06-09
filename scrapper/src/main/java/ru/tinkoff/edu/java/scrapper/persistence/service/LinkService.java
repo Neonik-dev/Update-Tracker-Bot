@@ -11,7 +11,9 @@ import java.util.Optional;
 
 public interface LinkService {
     LinkResponse add(long chatId, URI url);
+
     LinkResponse remove(long chatId, URI url);
+
     ListLinksResponse listAll(long tgChatId);
 
     void updateDataChanges(Map<String, String> dataChanges, OffsetDateTime updatedDate, Long linkId);

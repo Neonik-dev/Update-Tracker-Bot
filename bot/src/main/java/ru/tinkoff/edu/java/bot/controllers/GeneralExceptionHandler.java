@@ -12,14 +12,18 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.tinkoff.edu.java.bot.dto.api.ApiErrorResponse;
 
-
 @RestControllerAdvice
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String DESCRIPTION_400 = HttpStatus.BAD_REQUEST.getReasonPhrase();
     private static final String STATUS_CODE_400 = String.valueOf(HttpStatus.BAD_REQUEST.value());
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request
+    ) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 DESCRIPTION_400,
                 STATUS_CODE_400,
@@ -30,7 +34,9 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity<ApiErrorResponse> handlerInvalidRequestParameters(MethodArgumentTypeMismatchException exception) {
+    protected ResponseEntity<ApiErrorResponse> handlerInvalidRequestParameters(
+            MethodArgumentTypeMismatchException exception
+    ) {
         return ResponseEntity.badRequest().body(new ApiErrorResponse(
                 DESCRIPTION_400,
                 STATUS_CODE_400,

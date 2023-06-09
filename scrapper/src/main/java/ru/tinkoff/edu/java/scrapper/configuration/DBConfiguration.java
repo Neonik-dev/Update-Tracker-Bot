@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
-
 @Configuration
 @RequiredArgsConstructor
 @EnableConfigurationProperties(PostgresqlConfig.class)
@@ -31,5 +30,4 @@ public class DBConfiguration {
     public JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(getDataSource());
     }
-
 }

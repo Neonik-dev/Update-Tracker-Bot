@@ -8,18 +8,18 @@ import java.time.ZoneOffset;
 
 import static ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Links.LINKS;
 
-public class RecordLinkMapper{
+public class RecordLinkMapper {
     private static final ConverterJson CONVERTER = new ConverterJson();
 
-    public @Nullable Link map(Record record) {
+    public @Nullable Link map(Record row) {
         return new Link(
-                record.getValue(LINKS.ID),
-                record.getValue(LINKS.LINK),
-                record.getValue(LINKS.SCHEDULER_UPDATED_DATE).atOffset(ZoneOffset.UTC),
-                record.getValue(LINKS.USER_CHECK_DATE).atOffset(ZoneOffset.UTC),
-                record.getValue(LINKS.PAGE_UPDATED_DATE).atOffset(ZoneOffset.UTC),
-                record.getValue(LINKS.DOMAIN_ID),
-                CONVERTER.from(record.getValue(LINKS.DATA_CHANGES).data())
+                row.getValue(LINKS.ID),
+                row.getValue(LINKS.LINK),
+                row.getValue(LINKS.SCHEDULER_UPDATED_DATE).atOffset(ZoneOffset.UTC),
+                row.getValue(LINKS.USER_CHECK_DATE).atOffset(ZoneOffset.UTC),
+                row.getValue(LINKS.PAGE_UPDATED_DATE).atOffset(ZoneOffset.UTC),
+                row.getValue(LINKS.DOMAIN_ID),
+                CONVERTER.from(row.getValue(LINKS.DATA_CHANGES).data())
         );
     }
 }

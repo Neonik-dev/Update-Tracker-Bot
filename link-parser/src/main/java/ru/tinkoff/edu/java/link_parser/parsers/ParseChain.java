@@ -1,6 +1,8 @@
 package ru.tinkoff.edu.java.link_parser.parsers;
 
 public class ParseChain {
+    private ParseChain() {}
+
     public static Parser chain() {
         return chain(new GitHubParser(), new StackOverflowParser());
     }

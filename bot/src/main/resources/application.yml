@@ -1,0 +1,57 @@
+app:
+  test: 12
+  token: ${BOT_TOKEN}
+  rabbit:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    queue:
+      updateQueue: botUpdateQueue
+      deadLetterQueueForUpdatedLink: botUpdateQueue.dlq
+    exchange:
+      deadLetterExchange: botUpdateDirectExchange.dlx
+
+spring:
+  rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: auto
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 3s
+          multiplier: 1.5
+          max-interval: 8s
+  application:
+    name: bot
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+
+management:
+  server:
+    port: 8585
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /
+      exposure:
+        include: health,info,prometheus
+      path-mapping:
+        prometheus: /metrics
+  endpoint:
+    prometheus:
+      enabled: true
+    info:
+      enabled: true
+    health:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+#client:
+#  scrapper:
+#    baseUrl:

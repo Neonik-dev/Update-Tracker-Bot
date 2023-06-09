@@ -10,7 +10,7 @@ import ru.tinkoff.edu.java.bot.logic.SendBotUpdatedLink;
 @Component
 @RabbitListener(queues = "${app.rabbit.queue.updateQueue}")
 @RequiredArgsConstructor
-public class ListenerUpdatedLinks {
+public class UpdatedLinksListener {
     private final SendBotUpdatedLink sendBotUpdatedLink;
 
     @RabbitHandler

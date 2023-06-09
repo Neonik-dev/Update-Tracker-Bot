@@ -26,6 +26,7 @@ import ru.tinkoff.edu.java.scrapper.persistence.service.jdbc.JdbcLinkService;
 @RequiredArgsConstructor
 public class JdbcAccessConfiguration {
     private final JdbcTemplate jdbcTemplate;
+
     @Bean
     public ChatLinkRepository chatLinkRepository() {
         return new JdbcChatLinkRepository(jdbcTemplate);
