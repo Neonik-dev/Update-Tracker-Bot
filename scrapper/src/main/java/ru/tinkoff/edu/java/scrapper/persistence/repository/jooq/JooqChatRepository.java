@@ -8,6 +8,7 @@ import ru.tinkoff.edu.java.scrapper.persistence.entity.Chat;
 import ru.tinkoff.edu.java.scrapper.persistence.repository.repository.ChatRepository;
 
 import java.util.List;
+
 import static ru.tinkoff.edu.java.scrapper.domain.jooq.tables.Chats.CHATS;
 
 @RequiredArgsConstructor

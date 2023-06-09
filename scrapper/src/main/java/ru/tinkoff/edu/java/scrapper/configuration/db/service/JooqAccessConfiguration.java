@@ -26,6 +26,7 @@ import ru.tinkoff.edu.java.scrapper.persistence.service.jdbc.JdbcLinkService;
 @RequiredArgsConstructor
 public class JooqAccessConfiguration {
     private final DSLContext dslContext;
+
     @Bean
     public ChatLinkRepository chatLinkRepository() {
         return new JooqChatLinkRepository(dslContext);

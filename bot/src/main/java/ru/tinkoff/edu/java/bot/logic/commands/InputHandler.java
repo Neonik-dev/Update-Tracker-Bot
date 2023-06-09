@@ -9,31 +9,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InputHandler {
-    private static Map<String, BaseCommand> COMMANDS = new HashMap<>();
-    private static Map<String, ReplyCommand> REPLY_COMMANDS =  new HashMap<>();
+    private static Map<String, BaseCommand> commands = new HashMap<>();
+    private static Map<String, ReplyCommand> replyCommands = new HashMap<>();
 
     public InputHandler(InitCommands initCommands) {
-        if (COMMANDS.isEmpty()) {
-            COMMANDS = initCommands.getAllCommands();
-            REPLY_COMMANDS = initCommands.getReplyCommands();
+        if (commands.isEmpty()) {
+            commands = initCommands.getAllCommands();
+            replyCommands = initCommands.getReplyCommands();
         }
     }
 
     public SendMessage run(Update update) {
         Message message = update.message();
         try {
-            BaseCommand baseCommand = COMMANDS.get(message.text());
+            BaseCommand baseCommand = commands.get(message.text());
             return baseCommand.execute(message);
         } catch (NullPointerException e) {
             return checkReplyMessage(message);
         } catch (Throwable e) {
-            return SendSimpleMessage.create(message.chat().id(), "Возникли небольшие неполадки! ;( \n Попробуйте чуть позже");
+            return SendSimpleMessage.create(
+                    message.chat().id(),
+                    "Возникли небольшие неполадки! ;(\nПопробуйте чуть позже"
+            );
         }
     }
 
     private SendMessage checkReplyMessage(Message message) {
         try {
-            ReplyCommand replyCommand = REPLY_COMMANDS.get(message.replyToMessage().text());
+            ReplyCommand replyCommand = replyCommands.get(message.replyToMessage().text());
             return replyCommand.executeReply(message);
         } catch (NullPointerException e) {
             return InvalidCommand.execute(message);

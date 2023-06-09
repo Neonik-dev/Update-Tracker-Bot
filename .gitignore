@@ -8,6 +8,6 @@
 /dataSources.local.xml
 /bot/target
 */target/**
+/target/*
 *.iml
 /.idea
-**/domain/jooq/**

@@ -37,6 +37,9 @@
         <spring-boot-starter-jooq.version>3.0.5</spring-boot-starter-jooq.version>
         <jooq-meta-extensions-liquibase.version>3.18.3</jooq-meta-extensions-liquibase.version>
         <liquibase-core.version>4.21.1</liquibase-core.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <maven-checkstyle-plugin.version>3.2.2</maven-checkstyle-plugin.version>
+        <annotations.version>23.1.0</annotations.version>
     </properties>
 
     <dependencies>
@@ -70,7 +73,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.1.0</version>
+            <version>${annotations.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -184,6 +187,11 @@
                         <parameters>true</parameters>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -197,6 +205,25 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>ru.tinkoff.edu.java.scrapper.ScrapperApplication</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                </configuration>
             </plugin>
         </plugins>
     </build>

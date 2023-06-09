@@ -5,8 +5,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.GeneralParseLink;
-import ru.tinkoff.edu.java.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.link_parser.GeneralParseLink;
+import ru.tinkoff.edu.java.link_parser.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.BaseSiteClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
@@ -40,7 +40,9 @@ public class JpaLinkService implements LinkService {
     public LinkResponse add(long chatId, URI url) {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(
-                        () -> new ForeignKeyNotExistsException(String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatId))
+                        () -> new ForeignKeyNotExistsException(
+                                String.format("Отсутствует пользователь с таким (chat_id)=(%d)", chatId)
+                        )
                 );
         Link link = linkRepository.findByLink(url.toString()).orElseGet(() -> createLink(url));
 
@@ -58,33 +60,37 @@ public class JpaLinkService implements LinkService {
 
         BaseParseResponse parseResponse = new GeneralParseLink().start(link.getLink());
         BaseSiteClient client = sitesMap.getClient(url.getHost());
-        link.setPageUpdatedDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
+        link.setPageUpdatedDate(client.getUpdatedDate(parseResponse));
         link.setDataChanges(client.getUpdates(parseResponse));
 
         link.setSchedulerUpdateDate(OffsetDateTime.now());
         link.setUserCheckDate(OffsetDateTime.now());
-        return  linkRepository.save(link);
+        return linkRepository.save(link);
     }
 
     @Override
     @Transactional
     public LinkResponse remove(long chatId, URI url) {
         Link link;
-//        try {
-            link = linkRepository.findByLink(url.toString()).orElseThrow(
-                    () -> new EmptyResultException("Данная ссылка никем не зарегистрирована")
-            );
-//        } catch (EmptyResultDataAccessException e) {
-//            throw new EmptyResultException("Данная ссылка никем не зарегистрирована");
-//        }
+        link = linkRepository.findByLink(url.toString()).orElseThrow(
+                () -> new EmptyResultException("Данная ссылка никем не зарегистрирована")
+        );
+
         try {
             chatLinkRepository.deleteById(new ChatLinkPK(chatId, link.getId()));
-            if (link.getChats().size() == 1)
+            if (link.getChats().size() == 1) {
                 linkRepository.delete(link);
+            }
+
             return new LinkResponse(chatId, link.getLink());
         } catch (EmptyResultDataAccessException e) {
             throw new EmptyResultException(
-                    String.format("Ссылка с (link_id)=(%d) не отслеживается у пользователя (chat_id)=(%d)", link.getId(), chatId));
+                    String.format(
+                            "Ссылка с (link_id)=(%d) не отслеживается у пользователя (chat_id)=(%d)",
+                            link.getId(),
+                            chatId
+                    )
+            );
         }
     }
 
@@ -118,8 +124,9 @@ public class JpaLinkService implements LinkService {
         List<Link> page = linkRepository.findAll(
                 PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "schedulerUpdateDate"))
         ).getContent();
-        if (page.isEmpty())
+        if (page.isEmpty()) {
             return Optional.empty();
+        }
 
         Link link = page.get(0);
         link.setSchedulerUpdateDate(OffsetDateTime.now());

@@ -9,6 +9,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JpaChatLinkService implements ChatLinkService {
     private final JpaChatLinkRepository chatLinkRepository;
+
     @Override
     public List<Long> getAllLink(long chatId) {
         return chatLinkRepository.findAllByChatId(chatId);
@@ -16,6 +17,6 @@ public class JpaChatLinkService implements ChatLinkService {
 
     @Override
     public List<Long> getAllChat(long linkId) {
-        return chatLinkRepository.findAllByChatId(linkId);
+        return chatLinkRepository.findAllByLinkId(linkId);
     }
 }

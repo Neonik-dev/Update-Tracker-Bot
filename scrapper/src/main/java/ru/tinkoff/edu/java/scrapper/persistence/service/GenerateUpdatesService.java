@@ -2,8 +2,8 @@ package ru.tinkoff.edu.java.scrapper.persistence.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.edu.java.GeneralParseLink;
-import ru.tinkoff.edu.java.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.link_parser.GeneralParseLink;
+import ru.tinkoff.edu.java.link_parser.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.BaseSiteClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
 import ru.tinkoff.edu.java.scrapper.clients.dto.LinkUpdateRequest;
@@ -32,19 +32,22 @@ public class GenerateUpdatesService {
 
         URI uriLink = URI.create(clearLinkData.getLink());
         BaseSiteClient client = sitesMap.getClient(uriLink.getHost());
-        BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink()); // парсим ссылку и получаем необходимые поля
+        // парсим ссылку и получаем необходимые поля
+        BaseParseResponse parseResponse = new GeneralParseLink().start(clearLinkData.getLink());
 
-        String updatedDate = client.getUpdatedDate(parseResponse);
-        String dbUpdatedDate = clearLinkData.getPageUpdatedDate().toString();
-        if (dbUpdatedDate.equals(updatedDate)) // если время обновлений совпадает, то выходим
+        OffsetDateTime updatedDate = client.getUpdatedDate(parseResponse);
+        OffsetDateTime dbUpdatedDate = clearLinkData.getPageUpdatedDate();
+        if (dbUpdatedDate.equals(updatedDate)) { // если время обновлений совпадает, то выходим
             return Optional.empty();
+        }
 
         Map<String, String> responseDataChanges = client.getUpdates(parseResponse); // Обновленные данный из апи
         Map<String, String> dataChanges = clearLinkData.getDataChanges(); // Данные из бд, которые отслеживаем у ссылки
 
         String botText = generateBotMessage(responseDataChanges, dataChanges);
 
-        linkService.updateDataChanges(responseDataChanges, OffsetDateTime.parse(updatedDate), clearLinkData.getId()); // записываю обновленные данные в бд
+        // записываю обновленные данные в бд
+        linkService.updateDataChanges(responseDataChanges, updatedDate, clearLinkData.getId());
         return Optional.of(
                 new LinkUpdateRequest(
                         clearLinkData.getId(),
@@ -64,9 +67,7 @@ public class GenerateUpdatesService {
         StringBuilder text = new StringBuilder("Есть обновление"); // генерирую сообщение пользователю
         for (String key : responseDataChanges.keySet()) {
             if (dataChanges.get(key) != null && !Objects.equals(dataChanges.get(key), responseDataChanges.get(key))) {
-//                text.append("\n~~").append(key).append(": ").append(dataChanges.get(key)).append("~~ -> ")
-//                .append(key).append(": ").append(responseDataChanges.get(key));    // как лучше сделать?
-                text.append(String.format("\n~~%s: %s~~ -> %s: %s",
+                text.append(String.format("\n<strike>%s: %s</strike> —> %s: %s",
                         key,
                         dataChanges.get(key),
                         key,

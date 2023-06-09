@@ -10,7 +10,7 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CommandTest {
+public abstract class CommandTest {
     protected Long chat_id;
     protected Message message;
 

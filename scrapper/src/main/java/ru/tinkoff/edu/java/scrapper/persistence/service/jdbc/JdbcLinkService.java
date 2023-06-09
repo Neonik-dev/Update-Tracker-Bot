@@ -6,8 +6,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.GeneralParseLink;
-import ru.tinkoff.edu.java.responses.BaseParseResponse;
+import ru.tinkoff.edu.java.link_parser.GeneralParseLink;
+import ru.tinkoff.edu.java.link_parser.responses.BaseParseResponse;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.BaseSiteClient;
 import ru.tinkoff.edu.java.scrapper.clients.clients.site.SitesMap;
 import ru.tinkoff.edu.java.scrapper.dto.LinkResponse;
@@ -55,7 +55,7 @@ public class JdbcLinkService implements LinkService {
 
         BaseSiteClient client = sitesMap.getClient(url.getHost());
         BaseParseResponse parseResponse = new GeneralParseLink().start(linkData.getLink());
-        linkData.setPageUpdatedDate(OffsetDateTime.parse(client.getUpdatedDate(parseResponse)));
+        linkData.setPageUpdatedDate(client.getUpdatedDate(parseResponse));
         linkData.setDataChanges(client.getUpdates(parseResponse));
 
         try {
@@ -101,8 +101,8 @@ public class JdbcLinkService implements LinkService {
         }
 
         List<LinkResponse> listLinks = links.stream().map(
-                                                          (value) -> (new LinkResponse(value.getId(), value.getLink()))
-                                                         ).collect(Collectors.toList());
+                (value) -> (new LinkResponse(value.getId(), value.getLink()))
+        ).collect(Collectors.toList());
         return new ListLinksResponse(listLinks, listLinks.size());
     }
 

@@ -6,6 +6,9 @@ import ru.tinkoff.edu.java.bot.logic.wrapper.SendSimpleMessage;
 
 public class InvalidCommand {
     private static final String TEXT = "Такой команды не существует.\nПопробуйте воспользоваться командой /help";
+
+    private InvalidCommand() {}
+
     public static SendMessage execute(Message message) {
         return SendSimpleMessage.create(message, TEXT);
     }

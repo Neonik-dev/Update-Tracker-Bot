@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 public class TestConfiguration {
     private final DataSource dataSource;
+
     @Bean
     public PlatformTransactionManager transactionManager() {
         JdbcTransactionManager transactionManager = new JdbcTransactionManager();

@@ -9,10 +9,10 @@ import ru.tinkoff.edu.java.bot.logic.wrapper.SendSimpleMessage;
 
 @Getter
 @RequiredArgsConstructor
-public class StartCommand implements BaseCommand{
-    private final ScrapperClient scrapperClient;
+public class StartCommand implements BaseCommand {
     private static final String GREETING = "Добро пожаловать!\nДля списка всех команд напишите команду /help";
     private static final String NAME = "/start";
+    private final ScrapperClient scrapperClient;
 
     @Override
     public String getName() {

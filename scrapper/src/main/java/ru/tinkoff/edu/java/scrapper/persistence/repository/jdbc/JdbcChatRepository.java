@@ -12,12 +12,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class JdbcChatRepository implements ChatRepository {
-    private final JdbcTemplate template;
-    private final RowMapper<Chat> rowMapper = new DataClassRowMapper<>(Chat.class);
-
     private static final String INSERT_QUERY = "INSERT INTO chats(id, created_date, last_call_date) VALUES (?, ?, ?)";
     private static final String SELECT_ALL_QUERY = "SELECT * FROM chats";
     private static final String DELETE_BY_ID_QUERY = "DELETE FROM chats WHERE id=?";
+    private final JdbcTemplate template;
+    private final RowMapper<Chat> rowMapper = new DataClassRowMapper<>(Chat.class);
 
     @Override
     public void add(Chat chatData) throws BadEntityException {

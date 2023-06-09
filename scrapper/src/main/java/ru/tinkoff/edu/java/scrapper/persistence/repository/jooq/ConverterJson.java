@@ -12,7 +12,8 @@ public class ConverterJson implements Converter<String, Map<String, String>> {
     public Map<String, String> from(String jsonString) {
         return new Gson().fromJson(
                 jsonString,
-                new TypeToken<Map<String, String>>(){}.getType()
+                new TypeToken<Map<String, String>>() {
+                }.getType()
         );
     }
 
