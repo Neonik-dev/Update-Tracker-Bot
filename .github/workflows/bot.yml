@@ -30,7 +30,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: bot/target/bot-1.0-SNAPSHOT.jar
-          name: $ARTEFACT_NAME
+          name: ${{ env.ARTEFACT_NAME }}
           retention-days: 1
 
       - name: Run checkstyle
