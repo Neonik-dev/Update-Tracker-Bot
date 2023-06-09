@@ -8,10 +8,8 @@
 * PostgreSQL 15
 * Liquibase
 * RabbitMQ 3
-* JUnit
-* Mockito
-* Prometheus
-* Grafana
+* JUnit, Mockito
+* Prometheus, Grafana
 
 ## Какой функционал?
 Вот небольшое видео, как работает бот:
