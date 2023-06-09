@@ -13,7 +13,6 @@ public final class GitHubParser extends BaseParser {
     @Override
     public BaseParseResponse parseUrl(Optional<String> url) {
         Matcher matcher = URL_TEMPLATE.matcher(url.orElse(""));
-        int i = 1;
         if (matcher.find()) {
             String user = matcher.group(1);
             String repo = matcher.group(2);

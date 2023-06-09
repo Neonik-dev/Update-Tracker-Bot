@@ -4,9 +4,15 @@ on:
   push:
     paths:
       - 'scrapper/**'
+      - 'link-parser/**'
+      - 'scrapper-jooq/**'
+      - 'migrations/**'
   pull_request:
     paths:
       - 'scrapper/**'
+      - 'link-parser/**'
+      - 'scrapper-jooq/**'
+      - 'migrations/**'
 
 env:
   ARTEFACT_NAME: scrapper.jar
